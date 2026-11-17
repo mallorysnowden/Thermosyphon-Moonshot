@@ -1,0 +1,4 @@
+config,capex,annualized_capex,om,electricity,opex,annual_cost,cost_per_mwh_th,saving_vs_bau,thermosiphons
+BAU chillers,262500,26736,4500,6750,11250,37986,126.6,0.0,0.0
+Hybrid (chillers kept as backup),1307500,119561,5850,810,6660,126221,420.7,-2.3228,40
+Replace (no chillers),1319750,117406,1688,810,2498,119903,399.7,-2.1565,50
