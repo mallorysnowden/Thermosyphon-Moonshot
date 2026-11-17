@@ -1,0 +1,82 @@
+# Conventions shared by every TEA in this repo, so projects compare apples to apples.
+# Each value is an input like any other (base/low/high/unit/source).
+
+[meta]
+currency = "Real 2026 US dollars (pre-tax). Canadian figures converted at the fx rate below."
+noak = "Unit costs are entered at NOAK (Nth of a kind). The cost of getting there is shown separately with Wright's-law learning curves."
+boundary = "Each project states its system boundary and functional unit in its own inputs file."
+
+[finance.company_discount_rate]
+base = 0.10
+low = 0.08
+high = 0.15
+unit = "fraction/yr, real"
+source = "Assumption: same rate for every project"
+
+[finance.customer_discount_rate]
+base = 0.08
+low = 0.06
+high = 0.10
+unit = "fraction/yr, real"
+source = "Assumption: used for customer life-cycle cost vs BAU"
+
+[finance.horizon]
+base = 15
+unit = "yr"
+source = "Assumption: long enough to reach NOAK in most cases"
+
+[finance.cad_usd]
+base = 0.73
+unit = "USD per CAD"
+source = "Assumption (approximate 2026 rate)"
+
+[scale.big_enough_revenue]
+base = 1_000_000_000
+unit = "$/yr at full scale"
+source = "Judgment: a proxy for the Gimbal's 'big-enough line' for an Alphabet business; not stated in the Gimbal"
+
+[uncertainty.monte_carlo_draws]
+base = 2000
+unit = "draws"
+source = "Convention: triangular distribution on every input with a low/high"
+
+# Rubric weights (Mallory's scorecard)
+[rubric.impact]
+base = 0.20
+unit = "weight"
+source = "Mallory's rubric: transformational impact"
+
+[rubric.breakthrough]
+base = 0.20
+unit = "weight"
+source = "Mallory's rubric: breakthrough potential"
+
+[rubric.feasibility]
+base = 0.15
+unit = "weight"
+source = "Mallory's rubric: technical feasibility"
+
+[rubric.economics]
+base = 0.15
+unit = "weight"
+source = "Mallory's rubric: economic competitiveness"
+
+[rubric.scalability]
+base = 0.10
+unit = "weight"
+source = "Mallory's rubric: scalability"
+
+[rubric.demand]
+base = 0.10
+unit = "weight"
+source = "Mallory's rubric: market demand and adoption"
+
+[rubric.white_space]
+base = 0.05
+unit = "weight"
+source = "Mallory's rubric: competitive white space"
+
+[rubric.validation]
+base = 0.05
+unit = "weight"
+source = "Mallory's rubric: speed and cost of validation"

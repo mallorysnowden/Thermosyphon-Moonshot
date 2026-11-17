@@ -1,0 +1,409 @@
+# Thermosyphon platform ("Project Cryo") TEA, v2 inputs
+#
+# One business selling thermosyphon ground-stabilization systems into several
+# markets. Every market is sized as *addressable installed value per year at
+# incumbent prices*, so one cost structure and one learning curve serve all of
+# them. Unit costs are at NOAK; the FOAK-to-NOAK path comes from the learning
+# rates. Fractions are written as decimals. "Assumption" = judgment, not sourced.
+
+[meta]
+project = "Thermosyphon platform (Project Cryo)"
+boundary = "Supply, install, monitor and maintain thermosyphon systems. Excludes the customer's building, pad or road itself."
+functional_units = "Foundations: $ per m2 protected per year. Roads: $ per km protected per year."
+
+# --- Phasing and company costs --------------------------------------------
+
+[company.rd_years]
+base = 2
+low = 1
+high = 3
+unit = "yr before first revenue"
+source = "Assumption: Phase 1-2 (breakthrough + ground-freezing testbed) before commercial sales; long qualification for critical infrastructure"
+
+[company.rd_opex]
+base = 8_000_000
+low = 5_000_000
+high = 15_000_000
+unit = "$/yr during R&D"
+source = "Assumption: ~30-person team, instrumented testbed and prototypes"
+
+[company.commercial_opex]
+base = 6_000_000
+low = 3_000_000
+high = 12_000_000
+unit = "$/yr once selling"
+source = "Assumption"
+
+[company.ramp]
+base = [0.1, 0.3, 0.6, 1.0]
+unit = "share of addressable volume captured, by commercial year (last value holds)"
+source = "Assumption"
+
+[company.market_growth]
+base = 0.05
+low = 0.0
+high = 0.15
+unit = "fraction/yr"
+source = "Assumption: permafrost thaw and Arctic build-out grow demand over time"
+
+[company.price_discount]
+base = 0.15
+low = 0.05
+high = 0.30
+unit = "fraction below incumbent price"
+source = "Assumption"
+
+[company.incumbent_cost_share]
+base = 0.80
+unit = "incumbent cost / incumbent price"
+source = "Assumption"
+
+# --- Cost structure: share of incumbent installed cost by component -----
+
+[cost.share_hardware]
+base = 0.30
+unit = "fraction of incumbent installed cost"
+source = "Assumption. Dandelion reports drilling and installation are 55-75% of a geothermal system's price, so hardware is a minority share."
+
+[cost.share_install]
+base = 0.40
+unit = "fraction"
+source = "Assumption (drilling and installation labor)"
+
+[cost.share_logistics]
+base = 0.15
+unit = "fraction"
+source = "Assumption (remote mobilization, freight, camps)"
+
+[cost.share_engineering]
+base = 0.15
+unit = "fraction"
+source = "Assumption (site characterization, thermal design, monitoring plan)"
+
+# NOAK cost reduction vs incumbent, by component (the innovation targets)
+[cost.noak_reduction_hardware]
+base = 0.40
+low = 0.20
+high = 0.60
+unit = "fraction"
+source = "Target: factory standardization, automated welding, charging and leak test"
+
+[cost.noak_reduction_install]
+base = 0.15
+low = 0.0
+high = 0.30
+unit = "fraction"
+source = "Target. Dandelion's compact sonic drill raised installation cost in NYSERDA's evaluation, so kept modest."
+
+[cost.noak_reduction_logistics]
+base = 0.10
+low = 0.0
+high = 0.25
+unit = "fraction"
+source = "Target: modular kits, lighter equipment"
+
+[cost.noak_reduction_engineering]
+base = 0.30
+low = 0.10
+high = 0.50
+unit = "fraction"
+source = "Target: standardized design software and digital twins"
+
+# Learning rates (cost decline per doubling of cumulative installed value)
+[learning.rate_hardware]
+base = 0.15
+low = 0.10
+high = 0.20
+unit = "fraction per doubling"
+source = "Assumption: typical for manufactured hardware"
+
+[learning.rate_install]
+base = 0.05
+low = 0.0
+high = 0.10
+unit = "fraction per doubling"
+source = "Drilling speed improves ~5-15% per doubling (Vernon 2023); UK heat-pump installed costs showed ~0% (Renaldi et al. 2020)"
+
+[learning.rate_logistics]
+base = 0.0
+low = 0.0
+high = 0.05
+unit = "fraction per doubling"
+source = "Assumption: remote logistics learn little"
+
+[learning.rate_engineering]
+base = 0.10
+low = 0.05
+high = 0.20
+unit = "fraction per doubling"
+source = "Assumption: design software improves with each project"
+
+[learning.first_year_experience]
+base = 5_000_000
+low = 2_000_000
+high = 10_000_000
+unit = "$ cumulative installed value (incumbent prices) at the end of FOAK"
+source = "Assumption: the first commercial projects"
+
+[learning.noak_experience]
+base = 300_000_000
+low = 100_000_000
+high = 1_000_000_000
+unit = "$ cumulative installed value at which NOAK costs are reached"
+source = "Assumption: definition of NOAK for this project"
+
+# --- Performance and reliability -------------------------------------------
+
+[performance.heat_removal_multiplier]
+base = 1.0
+low = 1.0
+high = 1.5
+unit = "x incumbent heat removed per unit"
+source = "Assumption. Advanced or radiative-cooling condensers could raise it; no field data yet. Cuts hardware and install cost per m2 by 1/x."
+
+[reliability.failure_rate_incumbent]
+base = 0.01
+low = 0.005
+high = 0.05
+unit = "fraction of units replaced per yr"
+source = "Assumption. High case from arXiv 2108.10138: ~30% damaged in mounting and up to 50% more fail within a decade (a paper promoting a competing concept)."
+
+[reliability.failure_rate_entrant]
+base = 0.005
+low = 0.002
+high = 0.02
+unit = "fraction/yr"
+source = "Target: factory QA and serialized testing"
+
+# --- Service revenue on the installed base ---------------------------------
+
+[services.monitoring_fee]
+base = 0.01
+low = 0.005
+high = 0.02
+unit = "fraction of installed value per yr"
+source = "Assumption. CSA S500:21 requires monitoring for thermosyphon foundations."
+
+[services.monitoring_margin]
+base = 0.70
+unit = "fraction"
+source = "Assumption"
+
+[services.maintenance_fee]
+base = 0.01
+low = 0.005
+high = 0.02
+unit = "fraction of installed value per yr"
+source = "Assumption: inspection and replacement contracts (an NWT inspection call-out was ~$5k CAD)"
+
+[services.maintenance_margin]
+base = 0.30
+unit = "fraction"
+source = "Assumption"
+
+[services.attach_rate]
+base = 0.60
+low = 0.30
+high = 0.90
+unit = "fraction of installed base on a service contract"
+source = "Assumption"
+
+# --- Market A: data center and other permafrost foundations ---------------
+
+[foundations.dc_mw_per_year]
+base = 250
+low = 50
+high = 1000
+unit = "MW/yr built on permafrost"
+source = "Assumption. Stak Energy: up to 3 GW planned (50-year lease approved Nov 2026); Air Force: up to 12 data centers on Alaska bases."
+
+[foundations.adoption]
+base = 0.40
+low = 0.20
+high = 0.80
+unit = "share of those sites that need thermosyphons"
+source = "Assumption. Gravel pads, ventilated foundations and piles are alternatives; Canadian guidance says not to use thermosyphons on thaw-stable permafrost or with significant summer surface water."
+
+[foundations.m2_per_mw]
+base = 500
+low = 300
+high = 1000
+unit = "m2 needing thermosyphons per MW"
+source = "Stak's 640-acre pad for up to 3 GW is ~860 m2 of pad per MW; only heated buildings need active cooling."
+
+[foundations.other_m2_per_year]
+base = 10_000
+low = 5_000
+high = 50_000
+unit = "m2/yr (hospitals, schools, industrial, mine buildings)"
+source = "Assumption. About 80 flat-loop thermosyphon foundations were built in Canada by 2008 (review, ERDC/CRREL)."
+
+[foundations.price_per_m2]
+base = 300
+low = 177
+high = 600
+unit = "$/m2, incumbent installed"
+source = "Low: >=$177/m2 for small units (arXiv 2108.10138). Alaska builders: thermosyphons add $15k-40k per house."
+
+[foundations.share]
+base = 0.40
+low = 0.20
+high = 0.70
+unit = "our share"
+source = "Assumption"
+
+# --- Market B: cold bank (seasonal cold storage) ---------------------------
+
+[cold_bank.mw_per_year]
+base = 0
+unit = "MW/yr of data center IT"
+source = "Set to 0 and left out of the sweeps: the cold-bank cooling model puts it at ~3x BAU cooling cost (results/cold_bank_cooling), so no customer would buy it at today's costs."
+
+[cold_bank.value_per_mw]
+base = 1_320_000
+unit = "$ installed per MW of IT"
+source = "Replace case in the cold-bank cooling model (50 thermosyphons at $25k plus loop)"
+
+[cold_bank.share]
+base = 0.30
+unit = "our share"
+source = "Assumption"
+
+# --- Market C: remote sites (telecom towers, antennas, weather stations) ---
+
+[remote.sites_per_year]
+base = 60
+low = 20
+high = 200
+unit = "sites/yr"
+source = "Assumption. Inuvik satellite station added 5 dishes in 2026."
+
+[remote.price_per_site]
+base = 40_000
+low = 15_000
+high = 100_000
+unit = "$/site, incumbent installed"
+source = "Alaska builders: thermosyphons add $15k-40k on top of piles"
+
+[remote.share]
+base = 0.40
+low = 0.20
+high = 0.60
+unit = "our share"
+source = "Assumption"
+
+# --- Market D: roads and runways -------------------------------------------
+
+[roads.km_per_year]
+base = 3
+low = 0.5
+high = 8
+unit = "km/yr treated with thermosyphons"
+source = "Assumption. Dry Creek (Yukon) treated 400 m with 58 thermosyphons; Alaska DOT manages 5,638 centerline miles."
+
+[roads.price_per_km]
+base = 4_200_000
+low = 2_000_000
+high = 6_000_000
+unit = "$/km, incumbent installed incl. design and monitoring"
+source = "Dry Creek: ~$2.3M CAD total for 400 m (Yukon University / Transport Canada), ~$4.2M USD/km at 0.73"
+
+[roads.share]
+base = 0.40
+low = 0.20
+high = 0.70
+unit = "our share"
+source = "Assumption"
+
+[roads.repair_per_km_year]
+base = 22_000
+low = 15_000
+high = 40_000
+unit = "$/km/yr"
+source = "Yukon: ~$30k CAD/km/yr to repair permafrost stretches of the Alaska Highway (vs ~$4k on stable ground), ~$22k USD"
+
+[roads.ace_per_km]
+base = 730_000
+low = 500_000
+high = 1_500_000
+unit = "$/km"
+source = "Yukon: air-convection cooling ~$1M CAD/km, ~$0.73M USD"
+
+[roads.residual_repair]
+base = 0.25
+unit = "fraction of repair cost still needed after stabilization"
+source = "Assumption"
+
+[roads.life]
+base = 30
+unit = "yr"
+source = "Dry Creek design life: 30 years"
+
+# --- Market E: mining and environmental containment -----------------------
+
+[mining.addressable_per_year]
+base = 15_000_000
+low = 5_000_000
+high = 50_000_000
+unit = "$/yr of thermosyphon freeze work"
+source = "Giant Mine freeze program ~$200M CAD over up to 10 years (CIM 2014), ~$15M USD/yr; frozen-core dams at Ekati and others add more."
+
+[mining.share]
+base = 0.25
+low = 0.10
+high = 0.50
+unit = "our share"
+source = "Assumption"
+
+# --- Market F: glacier research --------------------------------------------
+
+[glacier.grants]
+base = 200_000
+low = 0
+high = 4_000_000
+unit = "$/yr"
+source = "Arete Frontier Grants: up to $100k over two years; intervention-technology calls of similar size. High case = ARIA-scale. Cost-reimbursed, no profit."
+
+# --- Foundation life-cycle comparison --------------------------------------
+
+[foundations.life]
+base = 30
+unit = "yr"
+source = "Assumption"
+
+# --- Judgment scores for the rubric (1-5); quantitative evidence is in the report
+
+[score.impact]
+base = 3
+unit = "1-5"
+source = "Judgment: adaptation for a real but regional problem; glacier upside unproven"
+
+[score.breakthrough]
+base = 3
+unit = "1-5"
+source = "Judgment: deployment cost and condenser innovation; deep glacier units would be a 5"
+
+[score.feasibility]
+base = 4
+unit = "1-5"
+source = "Judgment: physics proven; cost reductions unproven"
+
+[score.scalability]
+base = 2
+unit = "1-5"
+source = "Judgment: limited to cold regions"
+
+[score.demand]
+base = 3
+unit = "1-5"
+source = "Judgment: paying customers exist but niches are fragmented"
+
+[score.white_space]
+base = 4
+unit = "1-5"
+source = "Judgment: small craft incumbents"
+
+[score.validation]
+base = 4
+unit = "1-5"
+source = "Judgment: testbed comparison is cheap and fast"
