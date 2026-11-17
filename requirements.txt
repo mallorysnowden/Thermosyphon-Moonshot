@@ -1,0 +1,4 @@
+# The model runs on the Python 3.11+ standard library.
+# Optional:
+matplotlib  # sensitivity chart (results/*/tornado.png)
+pytest      # tests
