@@ -27,7 +27,11 @@ def load_params(path: str | Path) -> dict[str, Param]:
         raw = tomllib.load(f)
     params: dict[str, Param] = {}
     for section, entries in raw.items():
+        if not isinstance(entries, dict):
+            continue
         for name, spec in entries.items():
+            if not isinstance(spec, dict) or "base" not in spec:
+                continue  # metadata such as [meta] titles, not a numeric input
             key = f"{section}.{name}"
             params[key] = Param(
                 key=key,
@@ -42,3 +46,9 @@ def load_params(path: str | Path) -> dict[str, Param]:
 
 def base_values(params: dict[str, Param]) -> dict[str, Any]:
     return {key: p.base for key, p in params.items()}
+
+
+def load_meta(path: str | Path) -> dict[str, Any]:
+    """The [meta] table of an inputs file (project name, functional units, notes)."""
+    with open(path, "rb") as f:
+        return tomllib.load(f).get("meta", {})

@@ -1,0 +1,74 @@
+input,base,low,high,unit,source
+finance.company_discount_rate,0.1,0.08,0.15,"fraction/yr, real",Assumption: same rate for every project
+finance.customer_discount_rate,0.08,0.06,0.1,"fraction/yr, real",Assumption: used for customer life-cycle cost vs BAU
+finance.horizon,15,,,yr,Assumption: long enough to reach NOAK in most cases
+finance.cad_usd,0.73,,,USD per CAD,Assumption (approximate 2026 rate)
+scale.big_enough_revenue,1000000000,,,$/yr at full scale,Judgment: a proxy for the Gimbal's 'big-enough line' for an Alphabet business; not stated in the Gimbal
+uncertainty.monte_carlo_draws,2000,,,draws,Convention: triangular distribution on every input with a low/high
+rubric.impact,0.2,,,weight,Mallory's rubric: transformational impact
+rubric.breakthrough,0.2,,,weight,Mallory's rubric: breakthrough potential
+rubric.feasibility,0.15,,,weight,Mallory's rubric: technical feasibility
+rubric.economics,0.15,,,weight,Mallory's rubric: economic competitiveness
+rubric.scalability,0.1,,,weight,Mallory's rubric: scalability
+rubric.demand,0.1,,,weight,Mallory's rubric: market demand and adoption
+rubric.white_space,0.05,,,weight,Mallory's rubric: competitive white space
+rubric.validation,0.05,,,weight,Mallory's rubric: speed and cost of validation
+company.rd_years,2,1,3,yr before first revenue,Assumption: Phase 1-2 (breakthrough + ground-freezing testbed) before commercial sales; long qualification for critical infrastructure
+company.rd_opex,8000000,5000000,15000000,$/yr during R&D,"Assumption: ~30-person team, instrumented testbed and prototypes"
+company.commercial_opex,6000000,3000000,12000000,$/yr once selling,Assumption
+company.ramp,"[0.1, 0.3, 0.6, 1.0]",,,"share of addressable volume captured, by commercial year (last value holds)",Assumption
+company.market_growth,0.05,0.0,0.15,fraction/yr,Assumption: permafrost thaw and Arctic build-out grow demand over time
+company.price_discount,0.15,0.05,0.3,fraction below incumbent price,Assumption
+company.incumbent_cost_share,0.8,,,incumbent cost / incumbent price,Assumption
+cost.share_hardware,0.3,,,fraction of incumbent installed cost,"Assumption. Dandelion reports drilling and installation are 55-75% of a geothermal system's price, so hardware is a minority share."
+cost.share_install,0.4,,,fraction,Assumption (drilling and installation labor)
+cost.share_logistics,0.15,,,fraction,"Assumption (remote mobilization, freight, camps)"
+cost.share_engineering,0.15,,,fraction,"Assumption (site characterization, thermal design, monitoring plan)"
+cost.noak_reduction_hardware,0.4,0.2,0.6,fraction,"Target: factory standardization, automated welding, charging and leak test"
+cost.noak_reduction_install,0.15,0.0,0.3,fraction,"Target. Dandelion's compact sonic drill raised installation cost in NYSERDA's evaluation, so kept modest."
+cost.noak_reduction_logistics,0.1,0.0,0.25,fraction,"Target: modular kits, lighter equipment"
+cost.noak_reduction_engineering,0.3,0.1,0.5,fraction,Target: standardized design software and digital twins
+learning.rate_hardware,0.15,0.1,0.2,fraction per doubling,Assumption: typical for manufactured hardware
+learning.rate_install,0.05,0.0,0.1,fraction per doubling,Drilling speed improves ~5-15% per doubling (Vernon 2023); UK heat-pump installed costs showed ~0% (Renaldi et al. 2020)
+learning.rate_logistics,0.0,0.0,0.05,fraction per doubling,Assumption: remote logistics learn little
+learning.rate_engineering,0.1,0.05,0.2,fraction per doubling,Assumption: design software improves with each project
+learning.first_year_experience,5000000,2000000,10000000,$ cumulative installed value (incumbent prices) at the end of FOAK,Assumption: the first commercial projects
+learning.noak_experience,300000000,100000000,1000000000,$ cumulative installed value at which NOAK costs are reached,Assumption: definition of NOAK for this project
+performance.heat_removal_multiplier,1.0,1.0,1.5,x incumbent heat removed per unit,Assumption. Advanced or radiative-cooling condensers could raise it; no field data yet. Cuts hardware and install cost per m2 by 1/x.
+reliability.failure_rate_incumbent,0.01,0.005,0.05,fraction of units replaced per yr,Assumption. High case from arXiv 2108.10138: ~30% damaged in mounting and up to 50% more fail within a decade (a paper promoting a competing concept).
+reliability.failure_rate_entrant,0.005,0.002,0.02,fraction/yr,Target: factory QA and serialized testing
+services.monitoring_fee,0.01,0.005,0.02,fraction of installed value per yr,Assumption. CSA S500:21 requires monitoring for thermosyphon foundations.
+services.monitoring_margin,0.7,,,fraction,Assumption
+services.maintenance_fee,0.01,0.005,0.02,fraction of installed value per yr,Assumption: inspection and replacement contracts (an NWT inspection call-out was ~$5k CAD)
+services.maintenance_margin,0.3,,,fraction,Assumption
+services.attach_rate,0.6,0.3,0.9,fraction of installed base on a service contract,Assumption
+foundations.dc_mw_per_year,250,50,1000,MW/yr built on permafrost,Assumption. Stak Energy: up to 3 GW planned (50-year lease approved Nov 2026); Air Force: up to 12 data centers on Alaska bases.
+foundations.adoption,0.4,0.2,0.8,share of those sites that need thermosyphons,"Assumption. Gravel pads, ventilated foundations and piles are alternatives; Canadian guidance says not to use thermosyphons on thaw-stable permafrost or with significant summer surface water."
+foundations.m2_per_mw,500,300,1000,m2 needing thermosyphons per MW,Stak's 640-acre pad for up to 3 GW is ~860 m2 of pad per MW; only heated buildings need active cooling.
+foundations.other_m2_per_year,10000,5000,50000,"m2/yr (hospitals, schools, industrial, mine buildings)","Assumption. About 80 flat-loop thermosyphon foundations were built in Canada by 2008 (review, ERDC/CRREL)."
+foundations.price_per_m2,300,177,600,"$/m2, incumbent installed",Low: >=$177/m2 for small units (arXiv 2108.10138). Alaska builders: thermosyphons add $15k-40k per house.
+foundations.share,0.4,0.2,0.7,our share,Assumption
+foundations.life,30,,,yr,Assumption
+cold_bank.mw_per_year,0,,,MW/yr of data center IT,"Set to 0 and left out of the sweeps: the cold-bank cooling model puts it at ~3x BAU cooling cost (results/cold_bank_cooling), so no customer would buy it at today's costs."
+cold_bank.value_per_mw,1320000,,,$ installed per MW of IT,Replace case in the cold-bank cooling model (50 thermosyphons at $25k plus loop)
+cold_bank.share,0.3,,,our share,Assumption
+remote.sites_per_year,60,20,200,sites/yr,Assumption. Inuvik satellite station added 5 dishes in 2026.
+remote.price_per_site,40000,15000,100000,"$/site, incumbent installed",Alaska builders: thermosyphons add $15k-40k on top of piles
+remote.share,0.4,0.2,0.6,our share,Assumption
+roads.km_per_year,3,0.5,8,km/yr treated with thermosyphons,"Assumption. Dry Creek (Yukon) treated 400 m with 58 thermosyphons; Alaska DOT manages 5,638 centerline miles."
+roads.price_per_km,4200000,2000000,6000000,"$/km, incumbent installed incl. design and monitoring","Dry Creek: ~$2.3M CAD total for 400 m (Yukon University / Transport Canada), ~$4.2M USD/km at 0.73"
+roads.share,0.4,0.2,0.7,our share,Assumption
+roads.repair_per_km_year,22000,15000,40000,$/km/yr,"Yukon: ~$30k CAD/km/yr to repair permafrost stretches of the Alaska Highway (vs ~$4k on stable ground), ~$22k USD"
+roads.ace_per_km,730000,500000,1500000,$/km,"Yukon: air-convection cooling ~$1M CAD/km, ~$0.73M USD"
+roads.residual_repair,0.25,,,fraction of repair cost still needed after stabilization,Assumption
+roads.life,30,,,yr,Dry Creek design life: 30 years
+mining.addressable_per_year,15000000,5000000,50000000,$/yr of thermosyphon freeze work,"Giant Mine freeze program ~$200M CAD over up to 10 years (CIM 2014), ~$15M USD/yr; frozen-core dams at Ekati and others add more."
+mining.share,0.25,0.1,0.5,our share,Assumption
+glacier.grants,200000,0,4000000,$/yr,"Arete Frontier Grants: up to $100k over two years; intervention-technology calls of similar size. High case = ARIA-scale. Cost-reimbursed, no profit."
+score.impact,3,,,1-5,Judgment: adaptation for a real but regional problem; glacier upside unproven
+score.breakthrough,3,,,1-5,Judgment: deployment cost and condenser innovation; deep glacier units would be a 5
+score.feasibility,4,,,1-5,Judgment: physics proven; cost reductions unproven
+score.scalability,2,,,1-5,Judgment: limited to cold regions
+score.demand,3,,,1-5,Judgment: paying customers exist but niches are fragmented
+score.white_space,4,,,1-5,Judgment: small craft incumbents
+score.validation,4,,,1-5,Judgment: testbed comparison is cheap and fast
