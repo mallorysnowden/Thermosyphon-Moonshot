@@ -28,6 +28,7 @@ Requires Python 3.11+. Matplotlib is optional (it draws the sensitivity chart).
 | `tea/finance.py`, `tea/inputs.py` | Shared helpers (discounting, input loading) for this and future TEAs. |
 | `scripts/run_thermosiphon.py` | Runs a case and writes the results. |
 | `results/thermosiphon_base/` | `summary.md` (start here), `cashflow.csv`, `cooling.csv`, `sensitivity.csv`, `tornado.png`. |
+| `inputs/cold_bank_cooling.toml`, `tea/cold_bank_cooling.py`, `scripts/run_cold_bank_cooling.py` | Cold bank vs BAU cooling cost for one data center (see below). |
 | `tests/` | Checks the base case against the spreadsheet version and a few sanity cases. |
 
 ## The model
@@ -45,6 +46,24 @@ Cash flow: gross profit minus a flat operating cost, discounted at the company r
 
 NPV about **$31M**, revenue leveling off near **$37M/yr**. Foundations are ~70% of revenue. See `results/thermosiphon_base/summary.md` for the full output.
 
+## Cold bank vs business-as-usual cooling
+
+`tea/cold_bank_cooling.py` compares the cost of trim cooling for one data center, per MW of IT, in three setups:
+
+- **BAU:** trim chillers sized for peak with N+1 redundancy, the power capacity to run them, and their electricity.
+- **Hybrid:** keep the whole BAU chiller plant as backup and add a cold bank that carries the trim energy (higher capex, lower opex).
+- **Replace:** no chillers; the cold bank is sized for peak with redundancy.
+
+The cold bank is sized by whichever is larger: the trim energy (stored cold × extraction efficiency per thermosiphon, from Tareen et al. 2024) or the peak rate (kW per thermosiphon, an assumption, since the paper does not model extraction).
+
+```bash
+python scripts/run_cold_bank_cooling.py       # -> results/cold_bank_cooling/
+```
+
+Base case: the cold bank cuts electricity and O&M by about $8,700/yr per MW of IT, but adds about $1M of capex, so its annual cost is roughly 3× BAU. It breaks even at about $6,600 per installed 100 m thermosiphon, against a $25,000 base estimate. See `results/cold_bank_cooling/summary.md`.
+
+Note: the platform TEA (`inputs/thermosiphon_base.toml`) still uses an earlier, more optimistic cold-bank cost ($8,000 per unit, no extraction loss).
+
 ## Known limits
 
 - The cold-bank price is an input, so changing chiller COP, electricity price or generation capex moves the customer's saving but not our NPV.
@@ -57,7 +76,9 @@ NPV about **$31M**, revenue leveling off near **$37M/yr**. Foundations are ~70% 
 Sourced figures are cited next to each input. The main ones:
 
 - Thermosiphon unit and mounting cost: [arXiv 2108.10138](https://arxiv.org/abs/2108.10138)
-- Cold stored per thermosiphon: Tareen et al., *Journal of Energy Storage* 84 (2024) 111486
+- Cold stored per thermosiphon, 50-75% extraction efficiency: Tareen et al., *Journal of Energy Storage* 84 (2024) 111486
+- Borehole drilling cost: NLR 2025 US Geothermal Market Report, via [The Driller](https://www.thedriller.com/articles/93881-financing-thermal-energy-networks-capital-flow-determines-whether-rigs-move)
+- Data center lease rates: [CBRE North America Data Center Trends](https://www.cbre.com/insights/books/north-america-data-center-trends)
 - Data center build cost: [JLL 2026 Global Data Center Outlook](https://www.jll.com/en-au/insights/data-center-outlook)
 - Alaska residential thermosyphon cost adder: [Alaska Estimation](https://alaskaestimation.com/why-construction-costs-in-alaska-are-higher-than-the-lower-48/)
 - North Slope data center lease: [News From the States, Nov 11, 2026](https://www.newsfromthestates.com/node/437913)

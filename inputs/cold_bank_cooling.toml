@@ -1,0 +1,139 @@
+# Cold bank vs business-as-usual (BAU) cooling: inputs
+#
+# Everything is per 1 MW of IT load at a cold-climate data center that rejects
+# most heat with dry coolers and needs "trim" cooling on hot days. Dry coolers
+# are the same in every case, so they are left out.
+# Percentages are fractions. "Assumption" means a placeholder judgment.
+
+[load.trim_share]
+base = 0.30
+low = 0.10
+high = 0.50
+unit = "fraction of IT load at peak"
+source = "Assumption: share of heat that dry coolers can't reject on the hottest days"
+
+[load.trim_hours]
+base = 1000
+low = 300
+high = 3000
+unit = "full-load h/yr"
+source = "Assumption"
+
+[load.redundancy]
+base = 1.25
+low = 1.0
+high = 1.5
+unit = "installed / peak capacity"
+source = "Assumption: N+1 on cooling plant"
+
+[finance.discount_rate]
+base = 0.08
+low = 0.06
+high = 0.10
+unit = "fraction/yr"
+source = "Assumption (customer's cost of capital)"
+
+[finance.equipment_life]
+base = 20
+unit = "yr"
+source = "Assumption (chillers, generators, pumps)"
+
+[finance.thermosiphon_life]
+base = 30
+low = 20
+high = 40
+unit = "yr"
+source = "Assumption"
+
+# --- BAU: trim chillers --------------------------------------------------
+
+[chiller.capex]
+base = 400
+low = 250
+high = 800
+unit = "$/kW_th installed"
+source = "Assumption"
+
+[chiller.cop]
+base = 4.0
+low = 3.0
+high = 6.0
+unit = "-"
+source = "Assumption"
+
+[chiller.om_share]
+base = 0.03
+unit = "fraction of capex per yr"
+source = "Assumption"
+
+[power.electricity_price]
+base = 90
+low = 60
+high = 150
+unit = "$/MWh_e"
+source = "Assumption (on-site gas or grid energy)"
+
+[power.capacity_capex]
+base = 1500
+low = 500
+high = 2500
+unit = "$/kW_e"
+source = "Assumption: generation or interconnection capacity needed to run cooling at peak"
+
+# --- Cold bank -------------------------------------------------------------
+
+[cold_bank.mwh_stored_per_unit]
+base = 10
+low = 3.31
+high = 23.19
+unit = "MWh_th/yr per thermosiphon"
+source = "Tareen et al. 2024, J. Energy Storage 84:111486 (100 m CO2 thermosiphons, five Canadian cities)"
+
+[cold_bank.extraction_efficiency]
+base = 0.75
+low = 0.50
+high = 0.75
+unit = "fraction of stored cold recovered"
+source = "Tareen et al. 2024 cite 50-75% and assume 75%"
+
+[cold_bank.peak_kw_per_unit]
+base = 7.5
+low = 3
+high = 15
+unit = "kW_th per thermosiphon at peak"
+source = "Assumption: Tareen et al. do not model extraction rate. 7.5 kW from a 100 m bore is 75 W/m."
+
+[cold_bank.unit_cost]
+base = 25000
+low = 12000
+high = 50000
+unit = "$/thermosiphon installed"
+source = "Assumption. 100 m bore at $12-30/ft completed in the Lower 48 (NLR 2025 US Geothermal Market Report, via The Driller) is ~$4k-10k; plus an Arctic premium, the CO2 thermosiphon with a 39 m2 finned condenser, and a heat-extraction pipe."
+
+[cold_bank.loop_capex]
+base = 150
+low = 75
+high = 300
+unit = "$/kW_th"
+source = "Assumption: pumps, heat exchanger, piping, controls"
+
+[cold_bank.pump_energy]
+base = 0.03
+low = 0.01
+high = 0.06
+unit = "MWh_e per MWh_th delivered"
+source = "Assumption"
+
+[cold_bank.om_share]
+base = 0.03
+unit = "fraction of loop capex per yr"
+source = "Assumption: thermosiphons are passive, so O&M is charged on pumps, heat exchanger and controls only"
+
+# --- Upside if the site is power-capped ------------------------------------
+
+[upside.lease_rate]
+base = 195
+low = 150
+high = 235
+unit = "$/kW-month of IT"
+source = "CBRE North America average asking rate, ~$195/kW-month (H2 2025)"
