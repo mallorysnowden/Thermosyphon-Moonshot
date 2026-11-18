@@ -34,6 +34,27 @@ high = 12_000_000
 unit = "$/yr once selling"
 source = "Assumption"
 
+[company.ga_share]
+base = 0.03
+low = 0.02
+high = 0.05
+unit = "fraction of revenue for G&A"
+source = "Assumption: same 3% G&A share used in the prefab and SAF TEAs"
+
+[company.capex_per_installed]
+base = 0.15
+low = 0.05
+high = 0.30
+unit = "$ capex per $ of added peak annual installed value"
+source = "Assumption: fabrication shop, drill rigs and test equipment (added in the consistency audit)"
+
+[company.service_tail_years]
+base = 15
+low = 5
+high = 25
+unit = "yr of service revenue on the installed base after the horizon"
+source = "Assumption: about half of a 30-yr installation life remains on average"
+
 [company.ramp]
 base = [0.1, 0.3, 0.6, 1.0]
 unit = "share of addressable volume captured, by commercial year (last value holds)"

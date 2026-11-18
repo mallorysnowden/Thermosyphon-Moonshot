@@ -16,6 +16,9 @@ rubric.validation,0.05,,,weight,Mallory's rubric: speed and cost of validation
 company.rd_years,2,1,3,yr before first revenue,Assumption: Phase 1-2 (breakthrough + ground-freezing testbed) before commercial sales; long qualification for critical infrastructure
 company.rd_opex,8000000,5000000,15000000,$/yr during R&D,"Assumption: ~30-person team, instrumented testbed and prototypes"
 company.commercial_opex,6000000,3000000,12000000,$/yr once selling,Assumption
+company.ga_share,0.03,0.02,0.05,fraction of revenue for G&A,Assumption: same 3% G&A share used in the prefab and SAF TEAs
+company.capex_per_installed,0.15,0.05,0.3,$ capex per $ of added peak annual installed value,"Assumption: fabrication shop, drill rigs and test equipment (added in the consistency audit)"
+company.service_tail_years,15,5,25,yr of service revenue on the installed base after the horizon,Assumption: about half of a 30-yr installation life remains on average
 company.ramp,"[0.1, 0.3, 0.6, 1.0]",,,"share of addressable volume captured, by commercial year (last value holds)",Assumption
 company.market_growth,0.05,0.0,0.15,fraction/yr,Assumption: permafrost thaw and Arctic build-out grow demand over time
 company.price_discount,0.15,0.05,0.3,fraction below incumbent price,Assumption

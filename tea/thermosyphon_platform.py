@@ -104,6 +104,7 @@ def run(v) -> StandardResult:
 
     experience = v["learning.first_year_experience"]
     installed_base = 0.0
+    peak_installed = 0.0
     cumulative = 0.0
     rows: list[YearRow] = []
     learning_investment = 0.0
@@ -136,19 +137,33 @@ def run(v) -> StandardResult:
         revenue = sum(streams.values())
         cos = cost_of_sales + service_cost + grants  # grants pay for research of equal cost
         gross = revenue - cos
-        opex = v["company.rd_opex"] if phase == "R&D" else v["company.commercial_opex"]
+        opex = v["company.rd_opex"] if phase == "R&D" else v["company.commercial_opex"] + revenue * v["company.ga_share"]
         ebit = gross - opex
-        cumulative += ebit
+        capex = max(installed - peak_installed, 0.0) * v["company.capex_per_installed"]
+        peak_installed = max(peak_installed, installed)
+        cumulative += ebit - capex
         rows.append(YearRow(t, phase, revenue, cos, gross, opex, ebit, cumulative,
-                            unit_cost / v["company.incumbent_cost_share"], streams))
+                            unit_cost / v["company.incumbent_cost_share"], streams, capex))
 
         experience += installed
         installed_base += installed
         if noak_year is None and experience >= v["learning.noak_experience"]:
             noak_year = t
 
-    cash = [r.ebit for r in rows]
+    cash = [r.ebit - r.capex for r in rows]
     rate = v["finance.company_discount_rate"]
+    # Remaining life of what was built (same rule in all three finalist TEAs): no new sales after the
+    # horizon; the installed base keeps paying for services; overhead continues; stop when cash turns negative.
+    tail = []
+    service_margin = installed_base * attach * (v["services.monitoring_fee"] * v["services.monitoring_margin"]
+                                                + v["services.maintenance_fee"] * v["services.maintenance_margin"])
+    service_rev = installed_base * attach * (v["services.monitoring_fee"] + v["services.maintenance_fee"])
+    for _ in range(int(v["company.service_tail_years"])):
+        c = service_margin - v["company.commercial_opex"] - service_rev * v["company.ga_share"]
+        if c <= 0:
+            break
+        tail.append(c)
+    npv_horizon = npv(rate, cash)
     went_negative = False
     breakeven_year = None
     for r in rows:
@@ -177,8 +192,8 @@ def run(v) -> StandardResult:
     return StandardResult(
         project="Thermosyphon platform (Project Cryo)",
         years=rows,
-        npv=npv(rate, cash),
-        irr=irr(cash),
+        npv=npv(rate, cash + tail),
+        irr=irr(cash + tail),
         peak_cash_need=-min(0.0, min(r.cumulative_cash for r in rows)),
         breakeven_year=breakeven_year,
         full_scale_revenue=rows[-1].revenue,
@@ -188,7 +203,9 @@ def run(v) -> StandardResult:
         learning_investment=learning_investment,
         kill_metrics=kills,
         notes=[
-            "Cash flow is EBIT: no taxes, working capital or capital equipment, and no terminal value.",
+            "Cash flow is operating profit less capex: pre-tax, no working capital.",
+            f"NPV includes remaining-life cash from the installed base (services only, no new sales) while it stays positive; "
+            f"{len(tail)} tail years counted. NPV over the 15-yr horizon alone: ${npv_horizon / 1e6:,.1f}M.",
             "Customer price is value-based (incumbent price less a discount), so our cost cuts become margin, not lower customer cost.",
         ],
     )

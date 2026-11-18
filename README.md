@@ -26,7 +26,7 @@ Python 3.11+. Matplotlib is optional (charts).
 
 ## Thermosyphon platform v2: base case
 
-NPV about **-$34M** over 15 years, peak cash need about **$52M**, revenue about **$29M** in year 15, and a 39% chance of NPV > 0 across the input ranges. It fails all four kill metrics: NOAK cost is 24% below the incumbent (target 30%), well short of the 10x target, roads cost 12x more than repairing them as they settle, and revenue is ~3% of the big-enough line. Full output: `results/thermosyphon_platform/summary.md`.
+NPV about **-$39M**, peak cash need about **$61M**, revenue about **$29M** in year 15, and a 25% chance of NPV > 0 across the input ranges (after the consistency audit added equipment capex and a 3% G&A share; the installed base's service income never covers overhead, so no remaining-life cash is counted). It fails all four kill metrics: NOAK cost is 24% below the incumbent (target 30%), well short of the 10x target, roads cost 12x more than repairing them as they settle, and revenue is ~3% of the big-enough line. Full output: `results/thermosyphon_platform/summary.md`.
 
 ### Changes from v1
 
@@ -45,3 +45,12 @@ v1 is in the git history (commit `b5bfb19`).
 - Prices are value-based (incumbent less a discount), so cost cuts show up as margin, not lower customer prices.
 - Gravel pads, piles and ventilated foundations can't be priced per m² from public data, so foundations are compared only with incumbent thermosyphons.
 - Many inputs are assumptions and are flagged in the inputs file; most ranges lean to the upside of a cautious base, which is why the Monte Carlo median sits above the base case.
+
+## Consistency audit (Nov 2026)
+
+Aligned with the prefab-homes and SAF TEAs so the three finalists compare apples to apples:
+
+- Added equipment capex (fabrication shop, drill rigs): $0.15 per $ of added peak annual installed value.
+- Added the shared 3% G&A share of revenue.
+- Shared remaining-life rule: after the 15-year horizon, assets already built keep earning (here, services on the installed base) with no new sales, counted only while cash stays positive. For this model that adds nothing.
+- Synced the shared framework (capex column, extra tables, include-aware `run_tea.py`).

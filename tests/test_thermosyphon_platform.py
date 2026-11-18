@@ -54,7 +54,8 @@ def test_no_markets_loses_only_operating_cost(v):
             "roads.km_per_year": 0, "mining.addressable_per_year": 0, "cold_bank.mw_per_year": 0}
     res = run(zero)
     rd = int(v["company.rd_years"])
-    expected = -sum((v["company.rd_opex"] if t <= rd else v["company.commercial_opex"]) / 1.1 ** t
+    ga = v["company.ga_share"] * v["glacier.grants"]  # grants are the only revenue left
+    expected = -sum((v["company.rd_opex"] if t <= rd else v["company.commercial_opex"] + ga) / 1.1 ** t
                     for t in range(1, int(v["finance.horizon"]) + 1))
     assert res.npv == pytest.approx(expected)
 
@@ -67,3 +68,9 @@ def test_report_writes_standard_outputs(tmp_path, params, v):
     for section in ("## Headline", "## Customer cost vs BAU", "## FOAK to NOAK", "## Monte Carlo", "## Kill metrics", "## Scorecard"):
         assert section in text
     assert (tmp_path / "cashflow.csv").exists() and (tmp_path / "inputs_used.csv").exists()
+
+
+def test_capex_only_on_added_capacity(v):
+    res = run(v)
+    assert all(r.capex >= 0 for r in res.years)
+    assert sum(r.capex for r in res.years) > 0

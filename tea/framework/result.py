@@ -16,6 +16,7 @@ class YearRow:
     cumulative_cash: float
     cost_multiplier: float  # blended cost vs incumbent; 1.0 = incumbent cost
     revenue_by_stream: dict[str, float] = field(default_factory=dict)
+    capex: float = 0.0  # capital spent this year (cumulative_cash already nets it out)
 
 
 @dataclass
@@ -63,3 +64,4 @@ class StandardResult:
     learning_investment: float  # extra cost paid above NOAK cost while learning
     kill_metrics: list[KillMetric]
     notes: list[str] = field(default_factory=list)
+    tables: list[tuple[str, list[str], list[list[str]]]] = field(default_factory=list)  # (title, headers, rows)
