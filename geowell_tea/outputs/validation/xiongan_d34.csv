@@ -1,0 +1,25 @@
+benchmark,profile,variant,T_top,model_kW_40d,published_kW_40d,ratio,status,flags
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),conduction k=2.5,36.8,434.8889101389252,1049.0,0.4145747475108915,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),conduction k=2.5,52.8,175.3642310234281,596.0,0.2942352869520605,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),conduction k=2.5,59.3,68.73104256423282,442.0,0.15550009629916928,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),conduction k=3.5,36.8,510.10943556229984,1049.0,0.48628163542640596,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),conduction k=3.5,52.8,205.89444859405256,596.0,0.345460484218209,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),conduction k=3.5,59.3,80.68342369705427,442.0,0.18254168257252096,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),"conduction k=2.5, upper section insulated",36.8,467.0347306704908,1049.0,0.4452189996858825,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),"conduction k=2.5, upper section insulated",52.8,273.2780862322832,596.0,0.4585202789132269,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),"conduction k=2.5, upper section insulated",59.3,204.08563034053978,442.0,0.46173219534058774,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),convective-reservoir proxy: k_eff=10 below 3455 m,36.8,559.188624570747,1049.0,0.53306827890443,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),convective-reservoir proxy: k_eff=10 below 3455 m,52.8,268.35210429691307,596.0,0.45025520855186757,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),stated gradients (2.73 then 1.23 C/100m),convective-reservoir proxy: k_eff=10 below 3455 m,59.3,148.46400595798121,442.0,0.3358914161945276,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,conduction k=2.5,36.8,443.658407146552,1049.0,0.422934611197857,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,conduction k=2.5,52.8,184.1938838749086,596.0,0.30905014072971243,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,conduction k=2.5,59.3,77.57470903416431,442.0,0.17550839148000977,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,conduction k=3.5,36.8,520.3769597821597,1049.0,0.4960695517465774,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,conduction k=3.5,52.8,216.2583718043811,596.0,0.3628496171214448,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,conduction k=3.5,59.3,91.06967833051996,442.0,0.20603999622289584,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,"conduction k=2.5, upper section insulated",36.8,475.75995294802857,1049.0,0.4535366567664715,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,"conduction k=2.5, upper section insulated",52.8,282.0856805760368,596.0,0.4732981217718738,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,"conduction k=2.5, upper section insulated",59.3,212.91493808663347,442.0,0.4817080047208902,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,convective-reservoir proxy: k_eff=10 below 3455 m,36.8,574.2891033257421,1049.0,0.5474633968786864,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,convective-reservoir proxy: k_eff=10 below 3455 m,52.8,283.60510652252293,596.0,0.4758474941653069,FEASIBLE,
+Xiong'an D34 (Huang et al. 2024),anchored to 131.8 C BHT at 4507 m,convective-reservoir proxy: k_eff=10 below 3455 m,59.3,163.7537507405585,442.0,0.3704835989605396,FEASIBLE,
