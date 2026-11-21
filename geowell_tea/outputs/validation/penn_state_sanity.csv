@@ -1,0 +1,4 @@
+benchmark,T_in,m_dot,model_kW_y1,model_kW_y20,published_kW
+Penn State 2025 120 kW (different closed-loop design),10,3.0,177.56061466294722,130.65996328460713,120.0
+Penn State 2025 120 kW (different closed-loop design),20,3.0,131.49770172437573,96.08125601906276,120.0
+Penn State 2025 120 kW (different closed-loop design),30,3.0,85.44112065361621,61.508477307793065,120.0

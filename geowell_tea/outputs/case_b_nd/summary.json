@@ -1,0 +1,127 @@
+{
+  "case": "Case B - North Dakota aquaculture (synthetic well)",
+  "model_version": "0.1.0",
+  "config_hash": "d7257ecedfbd",
+  "runtime_s": 24.6,
+  "n_designs": 57,
+  "base_lcoh_ratio_ts_over_c": 1.374521490496173,
+  "monte_carlo": {
+    "p_ts_cheaper": 0.006,
+    "ratio_p10": 1.1740963877987163,
+    "ratio_p50": 1.4630546302374254,
+    "ratio_p90": 1.7904038341956023,
+    "ts_lcoh_p50": 219.03285344033804,
+    "c_lcoh_p50": 150.96214164562053,
+    "p_ts_cheaper_incl_unvalidated": 0.46
+  },
+  "best": [
+    {
+      "architecture": "C_ADAPTIVE",
+      "design": "C_ADAPTIVE VIT89mm m=1.5kg/s T_in=12C",
+      "status": "FEASIBLE",
+      "lcoh": 132.50783987131865,
+      "npv": -1128090.7983482538,
+      "geo_capability_kW_y1": 288.71322635515236,
+      "geo_capability_kW_y20": 232.61565467847254,
+      "E_useful_MWh_total": 41245.85309887909,
+      "SPF_system": 8.115953695272957,
+      "unmet_share": 0.01862805116581175,
+      "site_cost_per_MWh": 131.75626735069886,
+      "incumbent_only_cost_per_MWh": 76.22222222222221,
+      "capex": 1911629.6287268936
+    },
+    {
+      "architecture": "C_DIRECT",
+      "design": "C_DIRECT VIT89mm m=5.0kg/s T_in=var",
+      "status": "FEASIBLE",
+      "lcoh": 124.53850032511792,
+      "npv": -812855.3361594224,
+      "geo_capability_kW_y1": 240.95448545419472,
+      "geo_capability_kW_y20": 176.17553895355869,
+      "E_useful_MWh_total": 33021.389852839595,
+      "SPF_system": 11.454663981144982,
+      "unmet_share": 0.21431457277882396,
+      "site_cost_per_MWh": 115.46573441403928,
+      "incumbent_only_cost_per_MWh": 76.22222222222221,
+      "capex": 1546574.5228689562
+    },
+    {
+      "architecture": "C_HP",
+      "design": "C_HP VIT89mm m=3.0kg/s T_in=20C",
+      "status": "FEASIBLE",
+      "lcoh": 136.2001629316764,
+      "npv": -1208285.989694519,
+      "geo_capability_kW_y1": 317.54959884487465,
+      "geo_capability_kW_y20": 240.5382701517488,
+      "E_useful_MWh_total": 41947.07945204612,
+      "SPF_system": 5.080389033873517,
+      "unmet_share": 0.0019436133113760745,
+      "site_cost_per_MWh": 136.14411207001794,
+      "incumbent_only_cost_per_MWh": 76.22222222222221,
+      "capex": 1903299.0411831627
+    },
+    {
+      "architecture": "T_ADAPTIVE",
+      "design": "T_ADAPTIVE ammonia T_top=35C ins=0m guided",
+      "status": "FEASIBLE",
+      "lcoh": 171.1808450910392,
+      "npv": -1118787.9483186086,
+      "geo_capability_kW_y1": 166.6324470439469,
+      "geo_capability_kW_y20": 122.85993401255243,
+      "E_useful_MWh_total": 24674.962825383667,
+      "SPF_system": 12.141222519600664,
+      "unmet_share": 0.41290300633844795,
+      "site_cost_per_MWh": 134.11013206676628,
+      "incumbent_only_cost_per_MWh": 76.22222222222221,
+      "capex": 1510081.491919059
+    },
+    {
+      "architecture": "T_DIRECT",
+      "design": "T_DIRECT ammonia T_top=40C ins=0m guided",
+      "status": "FEASIBLE",
+      "lcoh": 190.19309773654916,
+      "npv": -919997.0504154083,
+      "geo_capability_kW_y1": 123.40083849949204,
+      "geo_capability_kW_y20": 90.8823334379036,
+      "E_useful_MWh_total": 17115.742058153217,
+      "SPF_system": 67.07598778501654,
+      "unmet_share": 0.5927612625907938,
+      "site_cost_per_MWh": 124.42181298917856,
+      "incumbent_only_cost_per_MWh": 76.22222222222221,
+      "capex": 1212577.1763474606
+    }
+  ],
+  "best_incl_unvalidated": {
+    "C_ADAPTIVE": {
+      "design": "C_ADAPTIVE VIT89mm m=1.5kg/s T_in=12C",
+      "status": "FEASIBLE",
+      "lcoh": 132.50783987131865
+    },
+    "C_DIRECT": {
+      "design": "C_DIRECT VIT89mm m=5.0kg/s T_in=var",
+      "status": "FEASIBLE",
+      "lcoh": 124.53850032511792
+    },
+    "C_HP": {
+      "design": "C_HP VIT89mm m=3.0kg/s T_in=20C",
+      "status": "FEASIBLE",
+      "lcoh": 136.2001629316764
+    },
+    "T_ADAPTIVE": {
+      "design": "T_ADAPTIVE ammonia T_top=32C ins=0m guided",
+      "status": "UNVALIDATED",
+      "lcoh": 151.85981430775075
+    },
+    "T_DIRECT": {
+      "design": "T_DIRECT ammonia T_top=40C ins=1049m guided",
+      "status": "UNVALIDATED",
+      "lcoh": 164.96271141857844
+    },
+    "T_HP": {
+      "design": "T_HP ammonia T_top=20C ins=0m guided",
+      "status": "UNVALIDATED",
+      "lcoh": 123.09845157637757
+    }
+  },
+  "energy_residual_max": 1.0442746511438879e-10
+}

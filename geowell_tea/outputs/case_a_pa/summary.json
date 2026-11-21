@@ -1,0 +1,142 @@
+{
+  "case": "Case A - Western PA greenhouse",
+  "model_version": "0.1.0",
+  "config_hash": "129cfe54fb05",
+  "runtime_s": 43.9,
+  "n_designs": 71,
+  "base_lcoh_ratio_ts_over_c": 0.9677820166369125,
+  "monte_carlo": {
+    "p_ts_cheaper": 0.422,
+    "ratio_p10": 0.8808492928404563,
+    "ratio_p50": 1.0196366007597084,
+    "ratio_p90": 1.1675020191806462,
+    "ts_lcoh_p50": 383.57271746713695,
+    "c_lcoh_p50": 376.89698419263516,
+    "p_ts_cheaper_incl_unvalidated": 0.598
+  },
+  "best": [
+    {
+      "architecture": "C_ADAPTIVE",
+      "design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "status": "FEASIBLE",
+      "lcoh": 313.2706867495444,
+      "npv": -1381044.535450969,
+      "geo_capability_kW_y1": 118.30286347010968,
+      "geo_capability_kW_y20": 97.48052983324598,
+      "E_useful_MWh_total": 12008.219178082189,
+      "SPF_system": 4.5050708627504665,
+      "unmet_share": 3.098345284039776e-18,
+      "site_cost_per_MWh": 313.2706867495444,
+      "incumbent_only_cost_per_MWh": 47.882352941176485,
+      "capex": 1251045.7947776578
+    },
+    {
+      "architecture": "C_DIRECT",
+      "design": "C_DIRECT VIT89mm m=5.0kg/s T_in=var",
+      "status": "FEASIBLE",
+      "lcoh": 546.8848832296852,
+      "npv": -1171281.0509835465,
+      "geo_capability_kW_y1": 40.16185269442571,
+      "geo_capability_kW_y20": 27.32925473937143,
+      "E_useful_MWh_total": 5223.3281736100525,
+      "SPF_system": 35.94883286716648,
+      "unmet_share": 0.5650205833064865,
+      "site_cost_per_MWh": 274.8446201077306,
+      "incumbent_only_cost_per_MWh": 47.882352941176485,
+      "capex": 1099208.814955234
+    },
+    {
+      "architecture": "C_HP",
+      "design": "C_HP VIT114mm m=1.5kg/s T_in=20C",
+      "status": "FEASIBLE",
+      "lcoh": 314.0868696599999,
+      "npv": -1385216.5661794567,
+      "geo_capability_kW_y1": 127.31754623875143,
+      "geo_capability_kW_y20": 107.04579967166612,
+      "E_useful_MWh_total": 12008.219178082189,
+      "SPF_system": 4.261560935516184,
+      "unmet_share": 3.762276416334015e-18,
+      "site_cost_per_MWh": 314.0868696599999,
+      "incumbent_only_cost_per_MWh": 47.882352941176485,
+      "capex": 1246442.4240546487
+    },
+    {
+      "architecture": "T_ADAPTIVE",
+      "design": "T_ADAPTIVE ammonia T_top=42C ins=843m film",
+      "status": "FEASIBLE",
+      "lcoh": 534.3074766607575,
+      "npv": -1312273.314245528,
+      "geo_capability_kW_y1": 42.0412103635635,
+      "geo_capability_kW_y20": 28.836273520743223,
+      "E_useful_MWh_total": 6047.372957766404,
+      "SPF_system": 7.660134702098664,
+      "unmet_share": 0.4963971869530603,
+      "site_cost_per_MWh": 302.10259307466237,
+      "incumbent_only_cost_per_MWh": 47.882352941176485,
+      "capex": 1150811.9278916412
+    },
+    {
+      "architecture": "T_DIRECT",
+      "design": "T_DIRECT ammonia T_top=50C ins=1047m film",
+      "status": "FEASIBLE",
+      "lcoh": 1275.973508169303,
+      "npv": -1276958.4158733035,
+      "geo_capability_kW_y1": 18.61122560198043,
+      "geo_capability_kW_y20": 11.680273127069073,
+      "E_useful_MWh_total": 2294.313103115194,
+      "SPF_system": 20.83577378822781,
+      "unmet_share": 0.8089381057182193,
+      "site_cost_per_MWh": 296.7261182589767,
+      "incumbent_only_cost_per_MWh": 47.882352941176485,
+      "capex": 1103261.7850497228
+    },
+    {
+      "architecture": "T_HP",
+      "design": "T_HP ammonia T_top=25C ins=0m guided",
+      "status": "FEASIBLE",
+      "lcoh": 303.1777369757046,
+      "npv": -1323208.6633238413,
+      "geo_capability_kW_y1": 111.76064422386354,
+      "geo_capability_kW_y20": 86.65882500678478,
+      "E_useful_MWh_total": 11917.45766250202,
+      "SPF_system": 4.1803902612310715,
+      "unmet_share": 0.007558282725704324,
+      "site_cost_per_MWh": 301.97862682175054,
+      "incumbent_only_cost_per_MWh": 47.882352941176485,
+      "capex": 1132918.296852785
+    }
+  ],
+  "best_incl_unvalidated": {
+    "C_ADAPTIVE": {
+      "design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "status": "FEASIBLE",
+      "lcoh": 313.2706867495444
+    },
+    "C_DIRECT": {
+      "design": "C_DIRECT VIT89mm m=5.0kg/s T_in=var",
+      "status": "FEASIBLE",
+      "lcoh": 546.8848832296852
+    },
+    "C_HP": {
+      "design": "C_HP VIT114mm m=1.5kg/s T_in=20C",
+      "status": "FEASIBLE",
+      "lcoh": 314.0868696599999
+    },
+    "T_ADAPTIVE": {
+      "design": "T_ADAPTIVE ammonia T_top=42C ins=843m film",
+      "status": "FEASIBLE",
+      "lcoh": 534.3074766607575
+    },
+    "T_DIRECT": {
+      "design": "T_DIRECT ammonia T_top=50C ins=1047m film",
+      "status": "FEASIBLE",
+      "lcoh": 1275.973508169303
+    },
+    "T_HP": {
+      "design": "T_HP ammonia T_top=25C ins=0m film",
+      "status": "UNVALIDATED",
+      "lcoh": 288.826471757065
+    }
+  },
+  "energy_residual_max": 2.411228093802929e-08
+}

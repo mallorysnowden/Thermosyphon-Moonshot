@@ -24,6 +24,21 @@ Python 3.11+. Matplotlib is optional (charts).
 | `tea/cold_bank_cooling.py` | Cold bank vs BAU cooling for one data center (feeds the platform's cold-bank inputs). |
 | `results/` | Committed outputs of the base cases. |
 
+## geowell_tea: thermosiphons vs coaxial exchangers in spent oil & gas wells
+
+A separate, self-contained application in [`geowell_tea/`](geowell_tea/) (own `pyproject.toml`, tests and
+configs). It compares a deep gravity thermosiphon with a pumped coaxial borehole heat exchanger installed in the
+*same* existing well, both independently optimised, for low-grade heating (greenhouse, aquaculture). A shared
+transient rock model is coupled to depth-resolved two-phase thermosiphon physics and to a coaxial counterflow
+model, followed by heat-pump/direct dispatch, lifetime economics, Monte Carlo, and a depth x temperature x casing
+envelope sweep. Start with [`geowell_tea/RESULTS.md`](geowell_tea/RESULTS.md) and
+[`geowell_tea/MODEL_LIMITATIONS.md`](geowell_tea/MODEL_LIMITATIONS.md).
+
+```bash
+cd geowell_tea && pip install -e .[test] && python -m pytest
+python -m geowell_tea.cli run configs/case_a_pa.yaml
+```
+
 ## Thermosyphon platform v2: base case
 
 NPV about **-$34M** over 15 years, peak cash need about **$52M**, revenue about **$29M** in year 15, and a 39% chance of NPV > 0 across the input ranges. It fails all four kill metrics: NOAK cost is 24% below the incumbent (target 30%), well short of the 10x target, roads cost 12x more than repairing them as they settle, and revenue is ~3% of the big-enough line. Full output: `results/thermosyphon_platform/summary.md`.

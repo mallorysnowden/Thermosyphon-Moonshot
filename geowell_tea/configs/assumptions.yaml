@@ -1,0 +1,69 @@
+# Cost, finance and surface-equipment parameters shared by both cases.
+# Real 2026 USD, pre-tax, unlevered.  Every entry: value, low, high, status, source.
+# status: published | assumed | derived | measured
+# NONE of these are vendor quotes.  "assumed" values are engineering-judgment
+# placeholders sized for screening; replace with quotes before any decision.
+
+finance:
+  discount_rate: {value: 0.10, low: 0.06, high: 0.15, status: assumed, source: "Brief planning assumption (real); matches repo conventions.toml company rate"}
+  years: {value: 20, status: assumed, source: "Brief evaluation horizon"}
+  heat_price_share_of_incumbent: {value: 0.90, low: 0.75, high: 1.00, status: assumed, source: "Heat sold at a 10% discount to the customer's incumbent useful-heat cost (explicit offtake assumption; avoided bill != contract revenue)"}
+
+surface:
+  approach: {value: 5.0, low: 3.0, high: 10.0, status: assumed, source: "HX / evaporator / condenser approach temperature, K"}
+  eta_carnot: {value: 0.50, low: 0.40, high: 0.60, status: assumed, source: "Carnot fraction for water-to-water heat pumps (screening; replace with manufacturer maps)"}
+  cop_max: {value: 8.0, status: assumed, source: "Cap to avoid unrealistic small-lift COPs"}
+  min_lift: {value: 8.0, status: assumed, source: "Minimum compressor lift, K"}
+  controls_W: {value: 500, status: assumed, source: "Controls/standby electricity, both technologies"}
+  delivery_dp_per_m: {value: 250, status: assumed, source: "Hydronic distribution design pressure gradient, Pa/m"}
+  customer_dp: {value: 100000, status: assumed, source: "Customer-side hydronic loop pressure drop, Pa"}
+  equipment_size_factor: {value: 1.3, low: 1.15, high: 1.5, status: assumed, source: "Hourly peak / monthly-average peak sizing factor for HX, condenser, heat pump"}
+
+common_capex:
+  well_acquisition_legal: {value: 50000, low: 20000, high: 150000, status: assumed, source: "Title, transfer of plugging liability, legal"}
+  permits_engineering: {value: 80000, low: 40000, high: 200000, status: assumed, source: "State oil & gas / UIC-equivalent permitting, design engineering"}
+  mit_logging: {value: 40000, low: 20000, high: 80000, status: assumed, source: "Mechanical integrity test, cement bond / caliper / temperature logs"}
+  rig_spread_per_day: {value: 12000, low: 8000, high: 20000, status: assumed, source: "All-in workover spread (rig, crew, support). Bare 500-HP well-service rigs were ~$235-344/h in 2015-16 Hart Energy surveys; uplifted for crew, equipment, 2026 prices"}
+  cleanout_days_base: {value: 2.0, status: assumed, source: "Rig days for cleanout/re-entry"}
+  cleanout_days_per_km: {value: 1.0, status: assumed, source: "Additional rig days per km of depth"}
+  surface_plant_base: {value: 60000, low: 30000, high: 120000, status: assumed, source: "Wellhead skid, valves, enclosure, electrical"}
+  distribution_trench_per_m: {value: 500, low: 300, high: 900, status: assumed, source: "Pre-insulated twin pipe in trench, $/m of route"}
+  instrumentation_controls: {value: 30000, low: 15000, high: 60000, status: assumed, source: "PLC, sensors, metering"}
+  hx_per_kw: {value: 30, low: 15, high: 60, status: assumed, source: "Plate heat exchanger installed, $/kW"}
+  hp_per_kw: {value: 800, low: 500, high: 1300, status: assumed, source: "Installed water-to-water HP $/kW heat output. Equipment ~EUR400-600/kW excl. install (vendor rule of thumb); installed uplift assumed"}
+  hp_replacement_year: {value: 15, status: assumed, source: "Compressor/HP major overhaul year"}
+  hp_replacement_fraction: {value: 0.6, status: assumed, source: "Share of HP capex at overhaul"}
+  hp_om_frac: {value: 0.02, status: assumed, source: "HP maintenance, fraction of HP capex per year"}
+  contingency: {value: 0.20, low: 0.10, high: 0.35, status: assumed, source: "Contingency on subtotal"}
+  om_common_per_yr: {value: 12000, low: 6000, high: 25000, status: assumed, source: "Well integrity monitoring, insurance, admin"}
+
+coax_capex:
+  vit_per_m: {value: 250, low: 120, high: 500, status: assumed, source: "Vacuum-insulated tubing, $/m installed hardware. No public price found; Vallourec markets VIT for geothermal closed loops (sizes 3.5in x 2-3/8in up to 16in x 14in)"}
+  composite_tube_factor: {value: 0.35, status: assumed, source: "Pre-insulated composite/HDPE centre tube relative to VIT cost (used only when VIT does not fit)"}
+  coax_run_m_per_day: {value: 600, low: 400, high: 900, status: assumed, source: "Running speed for VIT centre string"}
+  circ_pump_base: {value: 15000, low: 8000, high: 30000, status: assumed, source: "Circulation pump skid"}
+  circ_pump_per_kw: {value: 400, low: 200, high: 800, status: assumed, source: "$/kW electric pump capacity"}
+  coax_om_per_yr: {value: 5000, low: 2000, high: 10000, status: assumed, source: "Pump/seal maintenance, water treatment"}
+  coax_capex_mult: {value: 1.0, low: 0.85, high: 1.25, status: assumed, source: "Overall coax installation uncertainty (mature-ish, DBHE retrofits exist)"}
+
+ts_capex:
+  ts_string_per_m_base: {value: 40, low: 25, high: 80, status: assumed, source: "Gas-tight premium connections, handling, per m of pressure string"}
+  steel_per_kg: {value: 2.5, low: 1.8, high: 4.0, status: assumed, source: "L80 tubing steel, $/kg"}
+  guide_line_per_m: {value: 35, low: 15, high: 70, status: assumed, source: "Condensate guide line (separated liquid return, Xiong'an-style), $/m"}
+  ts_internals_per_m: {value: 15, low: 0, high: 60, status: assumed, source: "Centralisers, liquid distributors"}
+  ts_run_m_per_day: {value: 450, low: 300, high: 700, status: assumed, source: "Running speed incl. torque/leak testing of gas-tight connections"}
+  ts_pressure_test_charge: {value: 40000, low: 20000, high: 80000, status: assumed, source: "Evacuation, helium/pressure leak test, charging"}
+  ts_fluid_per_kg: {value: 2.0, status: assumed, source: "Working fluid, $/kg"}
+  condenser_base: {value: 15000, status: assumed, source: "Pressure-rated condenser skid"}
+  condenser_per_kw: {value: 60, low: 30, high: 120, status: assumed, source: "Ammonia-rated condenser, $/kW"}
+  ts_safety_ammonia: {value: 40000, low: 20000, high: 100000, status: assumed, source: "Leak detection, relief/vent, emergency procedures"}
+  ts_safety_hydrocarbon: {value: 50000, low: 25000, high: 120000, status: assumed, source: "Hazardous-area classification, detection"}
+  ts_safety_water: {value: 5000, status: assumed, source: "Vacuum system protection only"}
+  ts_safety_co2: {value: 15000, status: assumed, source: "Asphyxiation detection"}
+  psm_rmp_capex: {value: 150000, status: assumed, source: "Program set-up if ammonia inventory > 10,000 lb (OSHA PSM / EPA RMP threshold)"}
+  psm_rmp_per_yr: {value: 30000, status: assumed, source: "Ongoing PSM/RMP compliance"}
+  secondary_loop_cost: {value: 8000, status: assumed, source: "Condenser-to-HP water loop pump/piping"}
+  ts_om_per_yr: {value: 6000, low: 3000, high: 12000, status: assumed, source: "Inspection, pressure monitoring"}
+  ts_leak_allowance_per_yr: {value: 5000, low: 0, high: 20000, status: assumed, source: "Expected value of leak repair / recharge / NCG venting"}
+  ts_ip_license_per_kw: {value: 0, low: 0, high: 100, status: assumed, source: "Possible licence for patented long-pipe internals (e.g. SI23618A packer design); 0 in base case"}
+  ts_capex_mult: {value: 1.0, low: 0.85, high: 1.5, status: assumed, source: "FOAK / novelty uncertainty for km-scale thermosiphon retrofit in a US well"}
