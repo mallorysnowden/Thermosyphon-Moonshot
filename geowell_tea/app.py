@@ -13,6 +13,10 @@ import pandas as pd
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+# Streamlit reruns this script in a long-lived process and only reloads the script itself. After a git pull
+# the old geowell_tea modules would stay cached in sys.modules (-> ImportError on new names), so drop them.
+for _m in [m for m in sys.modules if m == "geowell_tea" or m.startswith("geowell_tea.")]:
+    del sys.modules[_m]
 from geowell_tea.fast import LOAD_SHAPES, Inputs, baked_in_assumptions, preset_inputs, run  # noqa: E402
 
 st.set_page_config(page_title="Thermosiphon heat from reused wells", layout="wide")
