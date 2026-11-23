@@ -38,6 +38,7 @@ import math
 
 import numpy as np
 
+from .correlations import cooper, imura, nusselt_condensation
 from .fluids import G, saturation_table
 from .rock import StepResponse
 from .wellbore import (STEEL_K, Well, burst_pressure, collapse_pressure, darcy_friction,
@@ -70,6 +71,17 @@ class ThermosiphonDesign:
     flooding_C: float = 3.2  # Kutateladze flooding constant (Pushkina-Sorokin)
     yield_pa: float = 552e6  # L80 tubing
     max_design_pressure: float = 150e5  # Pa, surface equipment / string rating cap
+    # --- closures adopted from the benchmark papers ---
+    evap_correlation: str = "cooper"  # "cooper" (Huang/Chen/Gruber SLGHP model), "imura" (Zolfagharroshan), "constant"
+    cond_correlation: str = "nusselt"  # "nusselt" film condensation (Zolfagharroshan Eq. 9) or "constant"
+    roughness_um: float = 1.0  # Cooper surface roughness (Gruber Table 2)
+    # --- architecture ---
+    architecture: str = "conventional"  # "conventional" | "packer" (patent SI23618A, Gruber 2026: IP-flagged)
+    packer_vapor_area_frac: float = 0.5  # share of the string bore used by the packer design's vapour outlet (assumed)
+    adiabatic_insulation: bool = False  # treat the insulated section as perfectly adiabatic (both papers do)
+    check_mechanics: bool = True  # collapse / burst screening (off only for paper benchmarks)
+    wall_thickness: float | None = None  # fix the string wall instead of sizing it for collapse
+    vapor_head: bool = True  # include vapour-column weight in T_sat(z) (Gruber's 10-yr runs neglect it)
     label: str = ""
 
 
@@ -93,11 +105,18 @@ class Thermosiphon:
         self.depth = depth
         self.z = z
         self.dz = dz
+        if design.architecture == "packer" and design.liquid_distribution != "guided":
+            from dataclasses import replace as _replace
+            design = _replace(design, liquid_distribution="guided")
+            self.d = design
         self.sat = saturation_table(design.fluid)
         self.fc = self.sat.fc
         self.geom = self._geometry()
         self.status = self.geom.status
         self.flags: list[str] = list(self.geom.flags)
+        if design.architecture == "packer":
+            self.flags.append("IP: patented packer architecture (SI23618A, Gruber 2026) - licence/FTO required; "
+                              "hardware cost and vapour/liquid channel split are assumed")
         self.ins_mask = z < design.insulated_length
         # static resistances outside the fluid [m K/W] per slice
         r_ci = well.casing_id / 2
@@ -105,7 +124,12 @@ class Thermosiphon:
         r_si = self.geom.d_i / 2
         R_gap = math.log(r_ci / r_so) / (2 * math.pi * well.annulus_fluid_k)
         R_wall = math.log(r_so / r_si) / (2 * math.pi * STEEL_K)
-        R_ins = math.log(r_si / (self.geom.d_i_ins / 2)) / (2 * math.pi * design.k_ins)
+        if design.adiabatic_insulation:
+            R_ins = 1e6
+        elif design.architecture == "packer":
+            R_ins = math.log(r_si / (0.8 * r_si)) / (2 * math.pi * design.k_ins)  # vacuum annulus inside the string
+        else:
+            R_ins = math.log(r_si / (self.geom.d_i_ins / 2)) / (2 * math.pi * design.k_ins)
         self.R_static = well.R_casing_cement + R_gap + R_wall + np.where(self.ins_mask, R_ins, 0.0)
         self.D_wet = np.where(self.ins_mask, self.geom.d_i_ins, self.geom.d_i)
         self.A_vap = np.where(self.ins_mask, self.geom.a_vap_ins, self.geom.a_vap)
@@ -113,6 +137,7 @@ class Thermosiphon:
         self.max_flood = 0.0
         self.max_dp_ratio = 0.0
         self.min_wet = 1.0
+        self.throttled_steps = 0
         self._check_static()
 
     # ------------------------------------------------------------------ geometry
@@ -125,16 +150,25 @@ class Thermosiphon:
         T_low = max(d.T_top - 30.0, self.sat.T_min - 273.15 + 1)
         p_int_low = float(self.sat.psat(T_low + 273.15))
         dp_ext = rho_w * G * self.depth - p_int_low  # water-filled annulus, low-pressure shut-in
-        t = required_wall(od, dp_ext, yield_pa=d.yield_pa)
+        if d.wall_thickness is not None:
+            t = d.wall_thickness
+        else:
+            t = required_wall(od, dp_ext, yield_pa=d.yield_pa) if d.check_mechanics else 0.0065
         if t is None:
             status = INFEASIBLE
             flags.append(f"collapse: no wall <= 0.2*OD resists {dp_ext/1e5:.0f} bar external pressure")
             t = 0.2 * od
         d_i = od - 2 * t
         d_i_ins = d_i - 2 * d.t_ins
-        guide_area = math.pi / 4 * d.guide_od ** 2 if d.liquid_distribution == "guided" else 0.0
+        guided = d.liquid_distribution == "guided" or d.architecture == "packer"
+        guide_area = math.pi / 4 * d.guide_od ** 2 if guided else 0.0
         a_vap = math.pi / 4 * d_i ** 2 - guide_area
         a_vap_ins = math.pi / 4 * d_i_ins ** 2 - guide_area
+        if d.architecture == "packer":
+            # SI23618A: vacuum-insulated annular transport channel + central vapour outlet above the
+            # packer; liquid returns through a separate supply pipe (no counter-current flow there).
+            d_i_ins = d_i
+            a_vap_ins = d.packer_vapor_area_frac * math.pi / 4 * d_i ** 2
         if d_i_ins <= 0.03 or a_vap_ins <= 0:
             status = INFEASIBLE
             flags.append("clearance: insulated bore too small")
@@ -175,7 +209,19 @@ class Thermosiphon:
             h_fg = sat.hfg(Tsat_K)
             # internal film resistance (evaporation where rock hotter, condensation otherwise)
             evap_side = resp.A + 273.15 > Tsat_K
-            h_wet = np.where(evap_side, d.h_evap, d.h_cond)
+            q_flux = np.abs(q) / (math.pi * self.D_wet)
+            if it == 0 or d.evap_correlation == "constant":
+                h_e = np.full(n, d.h_evap)
+            elif d.evap_correlation == "cooper":
+                h_e = cooper(sat, Tsat_K, q_flux, d.roughness_um)
+            else:
+                h_e = imura(sat, Tsat_K, q_flux)
+            if it == 0 or d.cond_correlation == "constant":
+                h_c = np.full(n, d.h_cond)
+            else:
+                L_cond = max(float(np.sum(~evap_side & ~self.ins_mask)) * dz, dz)
+                h_c = nusselt_condensation(sat, Tsat_K, q_flux, L_cond)
+            h_wet = np.where(evap_side, np.maximum(h_e, 50.0), np.maximum(h_c, 50.0))
             h_eff = np.where(evap_side, wet * h_wet + (1 - wet) * d.h_dry, h_wet)
             R_film = 1.0 / (h_eff * math.pi * self.D_wet)
             R_tot = R_rock + self.R_static + R_film
@@ -199,7 +245,7 @@ class Thermosiphon:
             Dh = np.sqrt(4 * self.A_vap / math.pi)
             Re = rho_v * v * Dh / sat.mu_v(Tsat_K)
             f = darcy_friction(Re) * d.friction_mult
-            dPdz = rho_v * G + f / Dh * rho_v * v ** 2 / 2
+            dPdz = (rho_v * G if d.vapor_head else 0.0) + f / Dh * rho_v * v ** 2 / 2
             P = P_top + np.cumsum(dPdz * dz) - dPdz * dz / 2
             # bottom pool: hydrostatic liquid head
             pool = self.z > self.depth - d.pool_depth
@@ -217,23 +263,53 @@ class Thermosiphon:
         return q, Tsat_K - 273.15, aux
 
     def capability(self, resp: StepResponse, T_top: float | None = None):
-        """Heat delivered to the surface condenser at the design setpoint."""
-        T_top = self.d.T_top if T_top is None else T_top
+        """Heat delivered to the surface condenser at the design setpoint.
+
+        If the vapour-transport limits (flooding / entrainment, near-sonic vapour) would be
+        exceeded, the pipe self-limits: the condenser cannot be fed faster, pressure and
+        saturation temperature rise until the limit is just met.  This is modelled by
+        raising T_top ("throttling") rather than declaring the design infeasible; the
+        returned aux["T_top"] is the effective condenser temperature."""
+        T_set = self.d.T_top if T_top is None else T_top
         if self.status == INFEASIBLE:
             return np.zeros(len(self.z)), 0.0, {}
-        q, Tsat, aux = self._profile(resp, T_top)
-        Q = float(np.sum(q) * self.dz)
+        q, aux, Q = self._solve_at(resp, T_set)
         if Q <= 0:
             return np.zeros(len(self.z)), 0.0, aux
+        if self._over_hard_limit(aux):
+            lo, hi = T_set, min(float(np.max(resp.A)), self.sat.T_max - 273.15 - 1)
+            best = None
+            for _ in range(16):
+                mid = 0.5 * (lo + hi)
+                q_m, aux_m, Q_m = self._solve_at(resp, mid)
+                if Q_m <= 0:
+                    hi = mid  # too hot: nothing left to deliver
+                elif self._over_hard_limit(aux_m):
+                    lo = mid  # still beyond the transport limit: throttle harder
+                else:
+                    best, hi = (q_m, aux_m, Q_m, mid), mid
+            self.throttled_steps += 1
+            if best is None:
+                return np.zeros(len(self.z)), 0.0, aux
+            q, aux, Q, T_set = best
+        aux["T_top"] = T_set
+        self._screen(aux, Q, T_set)
+        return q, Q, aux
+
+    def _solve_at(self, resp, T_top):
+        q, _, aux = self._profile(resp, T_top)
         if not aux["converged"]:
             q2, _, aux2 = self._profile(resp, T_top, iters=60)
             if aux2["converged"]:
                 q, aux = q2, aux2
-                Q = float(np.sum(q) * self.dz)
             else:
                 self._flag(UNVALIDATED, "saturation-pressure / flow iteration did not converge")
-        self._screen(aux, Q, T_top)
-        return q, Q, aux
+        return q, aux, float(np.sum(q) * self.dz)
+
+    def _over_hard_limit(self, aux) -> bool:
+        fmax, mach, _ = self._limits(aux)
+        hard = math.sqrt(6.0 / self.d.flooding_C) if self.d.liquid_distribution == "guided" else 1.0
+        return fmax > hard or mach > 0.7
 
     def stagnation(self, resp: StepResponse):
         """Condenser closed: T_top floats until net heat to the surface is zero.
@@ -265,7 +341,8 @@ class Thermosiphon:
         return q, T
 
     # ------------------------------------------------------------------ limits
-    def _screen(self, aux, Q, T_top):
+    def _limits(self, aux):
+        """(flooding ratio, max vapour Mach number, frictional dp / P_top)."""
         d, sat = self.d, self.sat
         Tsat_K = aux["Tsat"] + 273.15
         rho_v = aux["rho_v"]
@@ -280,14 +357,22 @@ class Thermosiphon:
         flood = (np.sqrt(Ku_g) + np.sqrt(Ku_l)) / math.sqrt(d.flooding_C)
         Dh = np.sqrt(4 * self.A_vap / math.pi)
         Dstar = Dh * np.sqrt(G * drho / sigma)
-        # small-diameter tubes: Wallis form (C=0.725) is more restrictive
         jgs = jg * np.sqrt(rho_v / (G * Dh * drho))
         jls = jl * np.sqrt(rho_l / (G * Dh * drho))
         wallis = (np.sqrt(jgs) + np.sqrt(jls)) / math.sqrt(0.725)
         flood = np.where(Dstar < 30, np.maximum(flood, wallis), flood)
+        if d.architecture == "packer":
+            flood = np.where(self.ins_mask, 0.0, flood)  # separate vapour and liquid channels above the packer
         fmax = float(np.max(flood))
         mach = float(np.max(aux["v"] / sat.sound_speed(Tsat_K, aux["P"])))
-        dp_ratio = float((aux["P"][-1] - aux["P_top"] - np.sum(rho_v * G * self.dz)) / aux["P_top"])
+        head = np.sum(rho_v * G * self.dz) if d.vapor_head else 0.0
+        dp_ratio = float((aux["P"][-1] - aux["P_top"] - head) / aux["P_top"])
+        return fmax, mach, dp_ratio
+
+    def _screen(self, aux, Q, T_top):
+        d = self.d
+        fmax, mach, dp_ratio = self._limits(aux)
+        Tsat_K = aux["Tsat"] + 273.15
         self.max_flood = max(self.max_flood, fmax)
         self.max_mach = max(self.max_mach, mach)
         self.max_dp_ratio = max(self.max_dp_ratio, dp_ratio)
@@ -295,19 +380,13 @@ class Thermosiphon:
         if d.liquid_distribution == "guided":
             # Condensate returns in its own line, so the counter-current film correlation is
             # conservative.  The Xiong'an ladder-design SLGHP carried ~1 MW through a 177.8 mm
-            # section (Ku_g ~ 4.4 by our property estimates).  Beyond Ku_g = 3.2 is therefore
-            # UNVALIDATED (outside correlation, inside demonstrated range up to ~6), above 6 INFEASIBLE.
-            if fmax > math.sqrt(6.0 / d.flooding_C):
-                self._flag(INFEASIBLE, "vapour Kutateladze number beyond demonstrated guided-return range (6)")
-            elif fmax > 1.0:
+            # section (Ku_g ~ 4.4 by our property estimates).  Between Ku_g = 3.2 and 6 the
+            # design is UNVALIDATED; above 6 the pipe is throttled (see capability()).
+            if fmax > 1.0:
                 self._flag(UNVALIDATED, "vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)")
-        elif fmax > 1.0:
-            self._flag(INFEASIBLE, "counter-current flooding limit exceeded")
         elif fmax > 0.7:
             self._flag(UNVALIDATED, "within 30 % of flooding limit")
-        if mach > 0.7:
-            self._flag(INFEASIBLE, "vapour velocity near sonic limit")
-        elif mach > 0.2:
+        if mach > 0.2:
             self._flag(UNVALIDATED, "compressible vapour flow (Mach > 0.2) not modelled")
         if dp_ratio > 0.3:
             self._flag(UNVALIDATED, "vapour frictional pressure drop > 30 % of absolute pressure")
@@ -324,7 +403,7 @@ class Thermosiphon:
             p_stag = float(sat.psat(T_stag))
         self.p_stag = p_stag
         p_burst = burst_pressure(self.geom.od, self.geom.t_wall, d.yield_pa)
-        if p_stag > min(p_burst, d.max_design_pressure):
+        if d.check_mechanics and p_stag > min(p_burst, d.max_design_pressure):
             self._flag(INFEASIBLE, f"shut-in pressure {p_stag/1e5:.0f} bar exceeds rating "
                                    f"{min(p_burst, d.max_design_pressure)/1e5:.0f} bar")
 
@@ -350,3 +429,77 @@ class Thermosiphon:
 
     def steel_mass(self) -> float:
         return steel_mass_per_m(self.geom.od, self.geom.t_wall) * self.depth
+
+
+# ---------------------------------------------------------------------------
+# Finite surface condenser (Zolfagharroshan et al. 2024, Eqs. 9-21)
+# ---------------------------------------------------------------------------
+
+@dataclass
+class CoilCondenser:
+    """Condenser section of length ``length`` cooled by water in a helical coil.
+
+    Resistances in series (Zolfagharroshan Eq. 19, condenser part):
+      R3 film condensation (Nusselt, Eq. 9) on the inner condenser area,
+      R4 condenser wall, R5 coil-side convection (Mori-Nakayama, Eqs. 12-15) on the
+      condenser area.  Coolant average temperature = T_in + Q / (2 m cp).
+    The pipe and the condenser are solved together for the saturation
+    temperature at which heat delivered by the pipe equals heat removed."""
+    length: float = 2.0
+    d_in: float = 0.1175
+    d_out: float = 0.1300
+    T_in: float = 70.0  # coolant inlet [C]
+    flow_lpm: float = 15.0
+    coil_od: float = 0.010156
+    coil_wall: float = 0.002078
+
+    def heat_removed(self, sat, T_top_C: float) -> float:
+        from .correlations import helical_coil_h, nusselt_condensation
+        from .fluids import water_cp, water_rho
+        from .wellbore import STEEL_K
+        vdot = self.flow_lpm / 60000.0
+        D_coil = self.d_out + self.coil_od / 2
+        h4, _, _, _ = helical_coil_h(vdot, self.coil_od - 2 * self.coil_wall, D_coil, self.T_in + 5)
+        mcp = vdot * float(water_rho(self.T_in)) * float(water_cp(self.T_in))
+        A_ci = math.pi * self.d_in * self.length
+        A_co = math.pi * self.d_out * self.length
+        R4 = math.log(self.d_out / self.d_in) / (2 * math.pi * self.length * 16.0)  # stainless
+        R5 = 1.0 / (h4 * A_co)
+        T_K = T_top_C + 273.15
+        lo, hi = 0.0, max(mcp * (T_top_C - self.T_in), 0.0)
+        if hi <= 0:
+            return 0.0
+        for _ in range(50):  # solve Q = (T_top - T_wavg(Q)) / R(Q)
+            Q = 0.5 * (lo + hi)
+            h3 = float(nusselt_condensation(sat, T_K, Q / A_ci, self.length))
+            R = 1.0 / (h3 * A_ci) + R4 + R5
+            resid = Q - (T_top_C - (self.T_in + Q / (2 * mcp))) / R
+            lo, hi = (Q, hi) if resid < 0 else (lo, Q)
+        return 0.5 * (lo + hi)
+
+    def outlet_temperature(self, Q: float) -> float:
+        from .fluids import water_cp, water_rho
+        vdot = self.flow_lpm / 60000.0
+        return self.T_in + Q / (vdot * float(water_rho(self.T_in)) * float(water_cp(self.T_in)))
+
+
+def coupled_capability(ts: "Thermosiphon", resp: StepResponse, cond: CoilCondenser):
+    """Solve for the condenser saturation temperature where pipe heat = condenser heat.
+    Returns (q profile, Q, T_top)."""
+    sat = ts.sat
+    lo = cond.T_in + 0.05
+    hi = min(float(np.max(resp.A)) - 0.05, sat.T_max - 273.15 - 1)
+    if hi <= lo:
+        return np.zeros(len(ts.z)), 0.0, lo
+    for _ in range(30):
+        T = 0.5 * (lo + hi)
+        q, _, _ = ts._profile(resp, T, iters=8)
+        Q_pipe = float(np.sum(q) * ts.dz)
+        Q_cond = cond.heat_removed(sat, T)
+        if Q_pipe > Q_cond:
+            lo = T
+        else:
+            hi = T
+    T = 0.5 * (lo + hi)
+    q, _, _ = ts._profile(resp, T)
+    return q, float(np.sum(q) * ts.dz), T

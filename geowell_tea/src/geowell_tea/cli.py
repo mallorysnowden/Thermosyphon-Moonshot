@@ -23,21 +23,28 @@ def cmd_validate(args):
     out = OUT_ROOT / "validation"
     out.mkdir(parents=True, exist_ok=True)
     rock = v.rock_line_source_check()
-    xa = pd.DataFrame(v.xiongan_d34())
-    ty = pd.DataFrame(v.taiyuan_order_of_magnitude())
-    ps = pd.DataFrame(v.penn_state_sanity(load_case("case_a_pa.yaml")))
-    nr = pd.DataFrame(v.NOT_REPRODUCED)
-    xa.to_csv(out / "xiongan_d34.csv", index=False)
-    ty.to_csv(out / "taiyuan.csv", index=False)
-    ps.to_csv(out / "penn_state_sanity.csv", index=False)
-    nr.to_csv(out / "not_reproduced.csv", index=False)
     with open(out / "rock_line_source.json", "w") as fh:
         json.dump(rock, fh, indent=2, default=float)
     print(json.dumps(rock, indent=1, default=float))
-    print(xa.round(2).to_string())
-    print(ty.round(1).to_string())
-    print(ps.round(1).to_string())
-
+    tables = {
+        "xiongan_d34": v.xiongan_d34,
+        "zolfagharroshan_2024": v.zolfagharroshan_2024,
+        "gruber_2026": v.gruber_2026,
+        "taiyuan_2_via_gruber": v.taiyuan_2_via_gruber,
+        "hdr_4000m_water": v.hdr_4000m_water,
+        "brown_2026_dbhe_trends": v.brown_2026_dbhe_trends,
+        "penn_state_sanity": lambda: v.penn_state_sanity(load_case("case_a_pa.yaml")),
+    }
+    only = set(getattr(args, "only", None) or tables)
+    for name, fn in tables.items():
+        if name not in only:
+            continue
+        t0 = time.time()
+        df = pd.DataFrame(fn())
+        df.to_csv(out / f"{name}.csv", index=False)
+        print(f"\n== {name} ({time.time() - t0:.0f} s)")
+        print(df.drop(columns=[c for c in ("flags",) if c in df]).round(2).to_string())
+    pd.DataFrame(v.NOT_REPRODUCED).to_csv(out / "not_reproduced.csv", index=False)
 
 def cmd_run(args):
     s = run_case(args.config, mc_draws=args.draws, quick=args.quick)
@@ -96,6 +103,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="geowell_tea")
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("validate")
+    p.add_argument("--only", nargs="*", default=None)
     p.set_defaults(func=cmd_validate)
     p = sub.add_parser("run")
     p.add_argument("config")
@@ -103,7 +111,8 @@ def main(argv=None):
     p.add_argument("--draws", type=int, default=500)
     p.set_defaults(func=cmd_run)
     p = sub.add_parser("envelope")
-    p.add_argument("scenario", choices=["greenhouse_45_35", "aquaculture_35_25", "greenhouse_fixed_120kW"])
+    from .envelope import SCENARIOS
+    p.add_argument("scenario", choices=list(SCENARIOS))
     p.add_argument("--k", type=float, nargs="+", default=[2.5])
     p.add_argument("--n-z", dest="n_z", type=int, default=30)
     p.add_argument("--draws", type=int, default=400)

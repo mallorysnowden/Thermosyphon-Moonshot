@@ -56,7 +56,11 @@ def _cell_worker(args):
     geo = Geology.linear(depth, scen["T_surface"], bht, k=k)
     well = Well(casing_id=casing_id)
     surf = SurfaceParams(T_supply=scen["T_supply"], T_return=scen["T_return"])
-    archs = ts_grid(geo, surf, compact=True) + coax_grid(geo, well, surf, compact=True)
+    archs = (ts_grid(geo, surf, compact=True, allow_packer=scen.get("allow_packer", False))
+             + coax_grid(geo, well, surf, compact=True))
+    if scen.get("ts_overrides"):
+        from dataclasses import replace as _replace
+        archs = [_replace(a, ts=_replace(a.ts, **scen["ts_overrides"])) if a.ts else a for a in archs]
     out = []
     if scen.get("fixed_peak_kW"):
         from .loads import load_series
@@ -159,6 +163,14 @@ SCENARIOS = {
                              distance_m=250.0, case_config="case_a_pa.yaml"),
     "greenhouse_fixed_120kW": dict(T_surface=10.0, T_supply=45.0, T_return=35.0, shape="western_pa", flh=5000,
                                    distance_m=250.0, case_config="case_a_pa.yaml", fixed_peak_kW=120.0),
+    # IP-flagged sensitivity: adds the patented packer architecture (SI23618A) to the TS design grid
+    "greenhouse_45_35_packer": dict(T_surface=10.0, T_supply=45.0, T_return=35.0, shape="western_pa", flh=5000,
+                                    distance_m=250.0, case_config="case_a_pa.yaml", allow_packer=True),
+    # TS-favourable bound: drop the ammonia vapour-column head.  This reproduces Gruber 2026's 1,800 m
+    # results to ~0.8x instead of ~0.4-0.75x, so it brackets the main physics disagreement with that paper.
+    "greenhouse_45_35_no_vapour_head": dict(T_surface=10.0, T_supply=45.0, T_return=35.0, shape="western_pa",
+                                            flh=5000, distance_m=250.0, case_config="case_a_pa.yaml",
+                                            allow_packer=True, ts_overrides=dict(vapor_head=False)),
     "aquaculture_35_25": dict(T_surface=7.0, T_supply=35.0, T_return=25.0, shape="western_nd", flh=7000,
                               distance_m=250.0, case_config="case_b_nd.yaml"),
 }

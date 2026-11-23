@@ -52,7 +52,7 @@ class StepResponse:
 
 class RockField:
     def __init__(self, geology: Geology, r_b: float, n_z: int = 60, n_r: int = 40,
-                 r_far: float = 200.0, first_cell: float = 0.01):
+                 r_far: float = 200.0, first_cell: float = 0.01, far_field: str = "adiabatic"):
         self.geo = geology
         self.r_b = r_b
         self.n_z = n_z
@@ -63,6 +63,9 @@ class RockField:
         self.faces = faces
         self.rc = np.sqrt(faces[:-1] * faces[1:])
         self.vol = np.pi * (faces[1:] ** 2 - faces[:-1] ** 2)
+        if far_field not in ("adiabatic", "dirichlet"):
+            raise ValueError("far_field must be 'adiabatic' or 'dirichlet'")
+        self.far_field = far_field  # dirichlet = undisturbed temperature held at r_far (as in both benchmark papers)
         self.k_slice = geology.k_at(self.z)
         self.k_groups = {float(k): np.where(np.isclose(self.k_slice, k))[0] for k in np.unique(self.k_slice)}
         self.R_half = np.log(self.rc[0] / r_b) / (2 * np.pi * self.k_slice)
@@ -71,6 +74,7 @@ class RockField:
         self.T_init = self.T.copy()
         self._cache: dict[tuple, tuple[np.ndarray, np.ndarray]] = {}
         self.cum_extracted_J = 0.0
+        self.far_field_inflow_J = 0.0
 
     def _banded(self, dt: float, k: float):
         key = (dt, k)
@@ -86,6 +90,10 @@ class RockField:
         lo = np.zeros(n)
         up[1:] = -G
         lo[:-1] = -G
+        if self.far_field == "dirichlet":
+            # half-cell conductance from the last cell centre to r_far, held at T0(z)
+            self._G_far = 2 * np.pi * k / np.log(self.faces[-1] / self.rc[-1])
+            d[-1] += self._G_far
         ab = np.vstack([up, d, lo])
         e0 = np.zeros(n)
         e0[0] = 1.0
@@ -93,8 +101,15 @@ class RockField:
         self._cache[key] = (ab, S_vec)
         return ab, S_vec
 
+    def _G_far_k(self, k: float) -> float:
+        return 2 * np.pi * k / np.log(self.faces[-1] / self.rc[-1])
+
     def response(self, dt: float) -> StepResponse:
         rhs = self.C[:, None] / dt * self.T
+        if self.far_field == "dirichlet":
+            for k, idx in self.k_groups.items():
+                self._banded(dt, k)
+                rhs[-1, idx] += self._G_far_k(k) * self.T_init[-1, idx]
         T_free = np.empty_like(self.T)
         S_mat = np.empty_like(self.T)
         for k, idx in self.k_groups.items():
@@ -109,10 +124,15 @@ class RockField:
         dt, T_free, S_mat = self._pending
         self.T = T_free - S_mat * np.asarray(q)[None, :]
         self.cum_extracted_J += float(np.sum(q) * self.dz * dt)
+        if self.far_field == "dirichlet":
+            G = np.array([self._G_far_k(k) for k in self.k_slice])
+            self.far_field_inflow_J += float(np.sum(G * (self.T_init[-1] - self.T[-1])) * self.dz * dt)
 
     def wall_temperature(self, q: np.ndarray) -> np.ndarray:
         return self.T[0] - q * self.R_half
 
     def energy_deficit_J(self) -> float:
-        """Heat removed from the rock since t=0, from the stored-energy change."""
+        """Heat removed from the rock since t=0, from the stored-energy change.
+        With a Dirichlet far field this excludes heat re-supplied across r_far
+        (tracked separately in ``far_field_inflow_J``)."""
         return float(np.sum(self.C[:, None] * (self.T_init - self.T)) * self.dz)

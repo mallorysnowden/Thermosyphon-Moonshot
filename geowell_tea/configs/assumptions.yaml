@@ -65,5 +65,6 @@ ts_capex:
   secondary_loop_cost: {value: 8000, status: assumed, source: "Condenser-to-HP water loop pump/piping"}
   ts_om_per_yr: {value: 6000, low: 3000, high: 12000, status: assumed, source: "Inspection, pressure monitoring"}
   ts_leak_allowance_per_yr: {value: 5000, low: 0, high: 20000, status: assumed, source: "Expected value of leak repair / recharge / NCG venting"}
-  ts_ip_license_per_kw: {value: 0, low: 0, high: 100, status: assumed, source: "Possible licence for patented long-pipe internals (e.g. SI23618A packer design); 0 in base case"}
+  ts_ip_license_per_kw: {value: 0, low: 0, high: 100, status: assumed, source: "Possible licence for the patented packer design (SI23618A); applied only to packer designs; 0 in base case because no licence terms are public"}
+  ts_packer_hardware: {value: 60000, low: 30000, high: 150000, status: assumed, source: "Packer + separate liquid-supply line + adiabatic transport channel (Gruber 2026 / SI23618A). No public price; order-of-magnitude from production-packer and small-bore tubing costs. Only applied to packer designs"}
   ts_capex_mult: {value: 1.0, low: 0.85, high: 1.5, status: assumed, source: "FOAK / novelty uncertainty for km-scale thermosiphon retrofit in a US well"}

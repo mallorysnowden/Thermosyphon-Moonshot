@@ -61,7 +61,9 @@ def capex_breakdown(arch_id: str, q: dict, p: dict) -> dict:
         arch["psm_rmp_program"] = p["psm_rmp_capex"] if q.get("inventory_kg", 0.0) > 4536 else 0.0
         arch["secondary_loop"] = p["secondary_loop_cost"] if hp_modes else 0.0
         arch["preheat_hx"] = p["hx_per_kw"] * peak_geo_kW if mode == "ADAPTIVE" else 0.0 * peak_geo_kW
-        arch["ip_license"] = p["ts_ip_license_per_kw"] * peak_geo_kW
+        packer = bool(q.get("packer", False))
+        arch["packer_hardware"] = p["ts_packer_hardware"] if packer else 0.0
+        arch["ip_license"] = p["ts_ip_license_per_kw"] * peak_geo_kW if packer else 0.0 * peak_geo_kW
         mult = p["ts_capex_mult"]
     arch = {k: v * mult for k, v in arch.items()}
     items.update(arch)

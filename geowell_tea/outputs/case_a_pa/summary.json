@@ -2,17 +2,17 @@
   "case": "Case A - Western PA greenhouse",
   "model_version": "0.1.0",
   "config_hash": "129cfe54fb05",
-  "runtime_s": 43.9,
+  "runtime_s": 147.5,
   "n_designs": 71,
-  "base_lcoh_ratio_ts_over_c": 0.9677820166369125,
+  "base_lcoh_ratio_ts_over_c": 0.9702203696306791,
   "monte_carlo": {
-    "p_ts_cheaper": 0.422,
-    "ratio_p10": 0.8808492928404563,
-    "ratio_p50": 1.0196366007597084,
-    "ratio_p90": 1.1675020191806462,
-    "ts_lcoh_p50": 383.57271746713695,
-    "c_lcoh_p50": 376.89698419263516,
-    "p_ts_cheaper_incl_unvalidated": 0.598
+    "p_ts_cheaper": 0.454,
+    "ratio_p10": 0.8779401335623752,
+    "ratio_p50": 1.0173888624229308,
+    "ratio_p90": 1.1568083842768644,
+    "ts_lcoh_p50": 381.3605461764116,
+    "c_lcoh_p50": 378.90327169159497,
+    "p_ts_cheaper_incl_unvalidated": 0.608
   },
   "best": [
     {
@@ -64,46 +64,46 @@
       "architecture": "T_ADAPTIVE",
       "design": "T_ADAPTIVE ammonia T_top=42C ins=843m film",
       "status": "FEASIBLE",
-      "lcoh": 534.3074766607575,
-      "npv": -1312273.314245528,
-      "geo_capability_kW_y1": 42.0412103635635,
-      "geo_capability_kW_y20": 28.836273520743223,
-      "E_useful_MWh_total": 6047.372957766404,
-      "SPF_system": 7.660134702098664,
-      "unmet_share": 0.4963971869530603,
-      "site_cost_per_MWh": 302.10259307466237,
+      "lcoh": 546.3941663314133,
+      "npv": -1311274.6247051326,
+      "geo_capability_kW_y1": 40.761025120154684,
+      "geo_capability_kW_y20": 27.98478324904538,
+      "E_useful_MWh_total": 5890.064461377448,
+      "SPF_system": 7.637485461346955,
+      "unmet_share": 0.5094972556690011,
+      "site_cost_per_MWh": 301.969172752204,
       "incumbent_only_cost_per_MWh": 47.882352941176485,
-      "capex": 1150811.9278916412
+      "capex": 1148507.7554000868
     },
     {
       "architecture": "T_DIRECT",
       "design": "T_DIRECT ammonia T_top=50C ins=1047m film",
       "status": "FEASIBLE",
-      "lcoh": 1275.973508169303,
-      "npv": -1276958.4158733035,
-      "geo_capability_kW_y1": 18.61122560198043,
-      "geo_capability_kW_y20": 11.680273127069073,
-      "E_useful_MWh_total": 2294.313103115194,
-      "SPF_system": 20.83577378822781,
-      "unmet_share": 0.8089381057182193,
-      "site_cost_per_MWh": 296.7261182589767,
+      "lcoh": 1342.4605076706032,
+      "npv": -1279006.419756885,
+      "geo_capability_kW_y1": 17.75661258897104,
+      "geo_capability_kW_y20": 11.069551717807256,
+      "E_useful_MWh_total": 2178.427849427861,
+      "SPF_system": 19.989248610960704,
+      "unmet_share": 0.8185886002643924,
+      "site_cost_per_MWh": 297.1749421555168,
       "incumbent_only_cost_per_MWh": 47.882352941176485,
-      "capex": 1103261.7850497228
+      "capex": 1103159.22443002
     },
     {
       "architecture": "T_HP",
       "design": "T_HP ammonia T_top=25C ins=0m guided",
       "status": "FEASIBLE",
-      "lcoh": 303.1777369757046,
-      "npv": -1323208.6633238413,
-      "geo_capability_kW_y1": 111.76064422386354,
-      "geo_capability_kW_y20": 86.65882500678478,
-      "E_useful_MWh_total": 11917.45766250202,
-      "SPF_system": 4.1803902612310715,
-      "unmet_share": 0.007558282725704324,
-      "site_cost_per_MWh": 301.97862682175054,
+      "lcoh": 303.94160149259966,
+      "npv": -1323391.1480504693,
+      "geo_capability_kW_y1": 109.2031508185604,
+      "geo_capability_kW_y20": 84.43486818470652,
+      "E_useful_MWh_total": 11871.587175383329,
+      "SPF_system": 4.179893640925088,
+      "unmet_share": 0.01137820693248579,
+      "site_cost_per_MWh": 302.0276273446763,
       "incumbent_only_cost_per_MWh": 47.882352941176485,
-      "capex": 1132918.296852785
+      "capex": 1132916.8651864077
     }
   ],
   "best_incl_unvalidated": {
@@ -125,18 +125,18 @@
     "T_ADAPTIVE": {
       "design": "T_ADAPTIVE ammonia T_top=42C ins=843m film",
       "status": "FEASIBLE",
-      "lcoh": 534.3074766607575
+      "lcoh": 546.3941663314133
     },
     "T_DIRECT": {
       "design": "T_DIRECT ammonia T_top=50C ins=1047m film",
       "status": "FEASIBLE",
-      "lcoh": 1275.973508169303
+      "lcoh": 1342.4605076706032
     },
     "T_HP": {
       "design": "T_HP ammonia T_top=25C ins=0m film",
       "status": "UNVALIDATED",
-      "lcoh": 288.826471757065
+      "lcoh": 289.69096205355856
     }
   },
-  "energy_residual_max": 2.411228093802929e-08
+  "energy_residual_max": 2.4251988154649737e-08
 }

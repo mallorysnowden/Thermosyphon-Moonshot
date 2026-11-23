@@ -1,4 +1,4 @@
 benchmark,status,reason
-"Zolfagharroshan et al. 2024 (10.69/14.04/15.54 kW, 150/200/250 m, pentane)",NOT ATTEMPTED,"The brief says the full PDF was supplied, but only the brief and an unrelated lunar paper were present in this session. The site temperature profile, rock properties and coil boundary conditions needed to reproduce the 20-year means are not available; guessing them would be calibration to a target, which the brief forbids."
-"Gruber et al. 2026 (150 vs 185 kW, 1,800 m ammonia, packer)",NOT ATTEMPTED,Full paper not present in this session; its logistic temperature profile and packer geometry are required. The patented packer (SI23618A) is not implemented as a default product.
+Zolfagharroshan 32 m flexible thermosyphon (Liu et al.) and cold-storage experiment,NOT ATTEMPTED,Time-series data are only in figures; the 24-h start-up transient is outside this model's monthly/quasi-steady scope.
+"Gruber 2026 integrated heating/cooling system (COP 4.22, SPF 6.19, 485 MWh)",NOT ATTEMPTED,"Requires the flash-vessel ammonia heat pump, buffer tank, cooling load and hourly demand model; the TEA uses a separate-circuit heat pump on monthly steps."
 Ma et al. 2024 / Huang et al. 2021 (power-generation SLGHP vs DHE),CONTEXT ONLY,Electricity-generation economics; not transferable to heat LCOH.

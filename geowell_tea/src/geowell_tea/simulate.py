@@ -47,8 +47,8 @@ class Architecture:
     def describe(self) -> str:
         if self.tech == "TS":
             d = self.ts
-            return (f"{self.arch_id} {d.fluid} T_top={d.T_top:.0f}C ins={d.insulated_length:.0f}m "
-                    f"{d.liquid_distribution}")
+            tail = "packer[IP]" if d.architecture == "packer" else d.liquid_distribution
+            return f"{self.arch_id} {d.fluid} T_top={d.T_top:.0f}C ins={d.insulated_length:.0f}m {tail}"
         d = self.coax
         tin = "var" if d.variable_flow_target is not None else f"{d.T_in:.0f}C"
         return f"{self.arch_id} VIT{d.tube_od*1000:.0f}mm m={d.m_dot:.1f}kg/s T_in={tin}"
@@ -60,6 +60,7 @@ class SimSettings:
     n_z: int = 50
     n_r: int = 36
     r_far: float = 200.0
+    far_field: str = "adiabatic"
     distance_m: float = 250.0  # well to customer, one way
     delivery_dp_per_m: float = 250.0  # Pa/m hydronic delivery pipe gradient
     customer_dp: float = 100e3  # Pa customer-side loop
@@ -155,7 +156,7 @@ class SimResult:
 
 def simulate(arch: Architecture, geo: Geology, well: Well, surface: SurfaceParams,
              load: np.ndarray | None, sim: SimSettings) -> SimResult:
-    rock = RockField(geo, well.r_b, n_z=sim.n_z, n_r=sim.n_r, r_far=sim.r_far)
+    rock = RockField(geo, well.r_b, n_z=sim.n_z, n_r=sim.n_r, r_far=sim.r_far, far_field=sim.far_field)
     months = 12 * sim.years
     if arch.tech == "TS":
         ex = Thermosiphon(arch.ts, well, geo.depth, rock.z, rock.dz)
@@ -175,7 +176,7 @@ def simulate(arch: Architecture, geo: Geology, well: Well, surface: SurfaceParam
         resp = rock.response(SEC_PER_MONTH)
         q, Q, aux = ex.capability(resp)
         if arch.tech == "TS":
-            src = {"T_top": arch.ts.T_top}
+            src = {"T_top": aux.get("T_top", arch.ts.T_top) if aux else arch.ts.T_top}
         else:
             src = {"T_out": aux.get("T_out", 0.0), "T_in": arch.coax.T_in, "m": aux.get("m", 0.0),
                    "cp": aux.get("cp", 4180.0)}
@@ -208,7 +209,7 @@ def simulate(arch: Architecture, geo: Geology, well: Well, surface: SurfaceParam
     flags = list(ex.flags)
     # end-to-end energy balance: heat delivered to the surface vs heat lost by the rock
     delivered_J = float(np.sum(rec["Qg"]) * SEC_PER_MONTH)
-    deficit = rock.energy_deficit_J()
+    deficit = rock.energy_deficit_J() + rock.far_field_inflow_J
     resid = (delivered_J - deficit) / max(abs(deficit), 3.6e9)  # floor at 1 MWh for idle designs
     quantities = {"depth_m": geo.depth}
     diagnostics = {}
@@ -217,8 +218,12 @@ def simulate(arch: Architecture, geo: Geology, well: Well, surface: SurfaceParam
             string_od_m=ex.geom.od, string_wall_m=ex.geom.t_wall, string_id_m=ex.geom.d_i,
             steel_kg=ex.steel_mass(), insulated_m=min(arch.ts.insulated_length, geo.depth),
             guided=arch.ts.liquid_distribution == "guided", inventory_kg=max_inventory,
+            packer=arch.ts.architecture == "packer",
             fluid=arch.ts.fluid, p_stag_bar=getattr(ex, "p_stag", 0.0) / 1e5)
+        if ex.throttled_steps:
+            flags.append(f"transport-limited: condenser throttled in {ex.throttled_steps} of {months} steps")
         diagnostics.update(max_flood=ex.max_flood, max_mach=ex.max_mach, max_dp_ratio=ex.max_dp_ratio,
+                           throttled_steps=ex.throttled_steps,
                            min_wet=ex.min_wet,
                            Tsat_bottom=float(aux_last["Tsat"][-1]) if aux_last else float("nan"))
         if max_inventory > 4536:

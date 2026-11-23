@@ -43,11 +43,32 @@ def test_co2_cannot_condense_above_critical():
     assert ts.status == INFEASIBLE
 
 
-def test_small_bore_high_duty_floods():
+def test_small_bore_high_duty_is_throttled_not_failed():
+    """A transport limit is an operating limit: the condenser is throttled (T_top raised) until the
+    flooding / Mach limit is met, rather than the design being declared infeasible."""
     geo = Geology.linear(3000, 7, 110)
-    ts, q, Q, aux, _ = _first_step(ThermosiphonDesign(fluid="ammonia", T_top=10, liquid_distribution="film"),
-                                   geo=geo, well=Well(casing_id=0.10))
-    assert ts.status == INFEASIBLE and any("flooding" in f for f in ts.flags)
+    d = ThermosiphonDesign(fluid="ammonia", T_top=10, liquid_distribution="film", insulated_length=1500)
+    ts, q, Q, aux, r = _first_step(d, geo=geo, well=Well(casing_id=0.127))
+    assert ts.throttled_steps > 0
+    assert aux["T_top"] > d.T_top
+    fmax, mach, _ = ts._limits(aux)
+    assert fmax <= 1.0 + 1e-3 and mach <= 0.7 + 1e-3
+    q_free, _, _ = ts._profile(r, d.T_top)
+    assert Q < np.sum(q_free) * ts.dz  # throttling reduces the delivered heat
+
+
+def test_packer_architecture_is_guided_and_ip_flagged():
+    d = ThermosiphonDesign(T_top=40, insulated_length=900, architecture="packer", liquid_distribution="film")
+    ts, q, Q, aux, _ = _first_step(d)
+    assert ts.d.liquid_distribution == "guided"
+    assert any(f.startswith("IP:") for f in ts.flags)
+    assert Q > 0
+
+
+def test_ammonia_vapour_head_costs_output():
+    on = _first_step(ThermosiphonDesign(T_top=40, insulated_length=900, vapor_head=True))[2]
+    off = _first_step(ThermosiphonDesign(T_top=40, insulated_length=900, vapor_head=False))[2]
+    assert off > on > 0
 
 
 def test_stagnation_transfer_is_zero_sum():

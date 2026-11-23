@@ -73,5 +73,6 @@ assumptions.ts_capex.psm_rmp_per_yr,30000,,,assumed,Ongoing PSM/RMP compliance
 assumptions.ts_capex.secondary_loop_cost,8000,,,assumed,Condenser-to-HP water loop pump/piping
 assumptions.ts_capex.ts_om_per_yr,6000,3000.0,12000.0,assumed,"Inspection, pressure monitoring"
 assumptions.ts_capex.ts_leak_allowance_per_yr,5000,0.0,20000.0,assumed,Expected value of leak repair / recharge / NCG venting
-assumptions.ts_capex.ts_ip_license_per_kw,0,0.0,100.0,assumed,Possible licence for patented long-pipe internals (e.g. SI23618A packer design); 0 in base case
+assumptions.ts_capex.ts_ip_license_per_kw,0,0.0,100.0,assumed,Possible licence for the patented packer design (SI23618A); applied only to packer designs; 0 in base case because no licence terms are public
+assumptions.ts_capex.ts_packer_hardware,60000,30000.0,150000.0,assumed,Packer + separate liquid-supply line + adiabatic transport channel (Gruber 2026 / SI23618A). No public price; order-of-magnitude from production-packer and small-bore tubing costs. Only applied to packer designs
 assumptions.ts_capex.ts_capex_mult,1.0,0.85,1.5,assumed,FOAK / novelty uncertainty for km-scale thermosiphon retrofit in a US well

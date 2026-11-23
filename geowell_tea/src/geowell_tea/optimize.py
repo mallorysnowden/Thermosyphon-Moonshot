@@ -33,7 +33,10 @@ CENTRE_TUBES = [
 ARCHS = ("T_DIRECT", "T_HP", "T_ADAPTIVE", "C_DIRECT", "C_HP", "C_ADAPTIVE")
 
 
-def ts_grid(geo: Geology, surf: SurfaceParams, fluids=("ammonia",), compact=False):
+def ts_grid(geo: Geology, surf: SurfaceParams, fluids=("ammonia",), compact=False, allow_packer=False):
+    """Thermosiphon design grid.  ``allow_packer`` adds the patented packer architecture
+    (SI23618A, Gruber 2026) with the packer at the depth where the rock reaches T_top + 3 C;
+    it is IP-flagged and excluded unless explicitly requested."""
     T_dir = surf.T_supply + surf.approach
     out = []
     setpoints = {
@@ -53,11 +56,15 @@ def ts_grid(geo: Geology, surf: SurfaceParams, fluids=("ammonia",), compact=Fals
                     L_ins = 0.0 if ins == "none" else max(0.0, geo.depth_at_temperature(T_top + 3.0))
                     if ins == "auto" and L_ins < 0.05 * geo.depth:
                         continue
+                    from .thermosiphon import ThermosiphonDesign
                     for liq in ("film", "guided"):
-                        from .thermosiphon import ThermosiphonDesign
                         out.append(Architecture(arch, ts=ThermosiphonDesign(
                             fluid=fluid, T_top=float(T_top), insulated_length=float(L_ins),
                             liquid_distribution=liq)))
+                    if allow_packer and ins == "auto":
+                        out.append(Architecture(arch, ts=ThermosiphonDesign(
+                            fluid=fluid, T_top=float(T_top), insulated_length=float(L_ins),
+                            liquid_distribution="guided", architecture="packer")))
     return out
 
 
