@@ -30,6 +30,7 @@ prices:
   electricity_price: {value: 0.13, low: 0.08, high: 0.45, status: published, source: "EIA Electric Power Monthly Table 5.6.A: PA commercial 13.02 c/kWh (Nov 2025). Range = brief sweep"}
   incumbent_fuel_price_per_MWh: {value: 40.7, status: derived, source: "PA commercial natural gas $12.38/Mcf (EIA, Jan 2026) / 0.3039 MWh per Mcf"}
   incumbent_efficiency: {value: 0.85, status: assumed, source: "Gas boiler seasonal efficiency"}
+  incumbent_emission_factor_t_per_MWh: {value: 0.181, status: published, source: "EPA emission factor for natural gas, 53.06 kg CO2/MMBtu (HHV)"}
   plugging_eol: {value: 110000, low: 60000, high: 400000, status: published, source: "PA DEP: average plugging cost about $110,000 in 2024 (orphan-well program); range from public reporting"}
 
 simulation:

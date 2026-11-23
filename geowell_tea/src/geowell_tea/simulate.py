@@ -219,7 +219,13 @@ def simulate(arch: Architecture, geo: Geology, well: Well, surface: SurfaceParam
             steel_kg=ex.steel_mass(), insulated_m=min(arch.ts.insulated_length, geo.depth),
             guided=arch.ts.liquid_distribution == "guided", inventory_kg=max_inventory,
             packer=arch.ts.architecture == "packer",
+            insulation=arch.ts.insulation, ins_t_m=ex.ins_t,
+            ins_od_m=ex.geom.d_i_ins + 2 * ex.geom.t_wall,
+            direct_coupled=surface.ts_hp_coupling == "direct_coupled",
             fluid=arch.ts.fluid, p_stag_bar=getattr(ex, "p_stag", 0.0) / 1e5)
+        if surface.ts_hp_coupling == "direct_coupled" and arch.arch_id in ("T_HP", "T_ADAPTIVE") and arch.ts.fluid == "ammonia":
+            flags.append("direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; "
+                         "HP charge counts toward the PSM/RMP threshold)")
         if ex.throttled_steps:
             flags.append(f"transport-limited: condenser throttled in {ex.throttled_steps} of {months} steps")
         diagnostics.update(max_flood=ex.max_flood, max_mach=ex.max_mach, max_dp_ratio=ex.max_dp_ratio,

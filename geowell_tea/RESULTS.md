@@ -1,7 +1,66 @@
-# Results (model v0.1.0, 20 Nov 2026)
+# Results
 
 All numbers below were computed by the code in this folder from the configs as committed. Most cost inputs
 are **assumed** (see `configs/assumptions.yaml`). Read `MODEL_LIMITATIONS.md` before quoting anything.
+
+## 0. NOAK update (22 Nov 2026): what would need to be true
+
+This update reframes the question for a NOAK programme: the thermosiphon (TS) is shown at three cost
+levels and with scale levers applied **to the thermosiphon only**; coaxial and the incumbent stay at today's
+assumptions. Changes in this version:
+
+* **Cost levels.** FOAK = today's base x 1.5. NOAK = raw materials x 2.5 (range 2-3.5; anchor: US OCTG sells
+  at ~2.0x hot-rolled coil) plus automated installation from the modular plan: 12 m container-sized
+  segments, single-station orbital weld + phased-array UT (~25 min/segment, ~700 m/day at $8k/day spread,
+  $150/weld), built-in stepped reflux, dry-N2 strength/decay test + vacuum hold ($17.5k). NOAK is reached
+  after roughly 150-250 wells at 13-15 % learning.
+* **Insulation.** Default is factory-applied aerogel (5 mm; 10 mm in casings >= 178 mm) with a low-e film,
+  0.3 m bare bands at each weld, in a N2-capped upper annulus. Options: N2 cap only, pipe-in-pipe, VIT liner.
+* **Direct coupling.** The TS condenser is the heat-pump evaporator in every heat-pump/hybrid design (+15 %
+  heat-pump capex, no secondary loop); flagged because ammonia then enters the machinery room.
+* **Leaks** are treated as a risk, not a cost (allowance set to $0).
+* **Case B** rebased on 7-in casing (152 mm). Steel updated to current US prices.
+* **Guided-return validity** reported at Ku <= 3.2 (strict), 4.4 (Xiong'an field estimate) and 6 (optimistic).
+* **Netherlands** variants of both cases (same wells and loads; Dutch gas EUR 0.08/kWh, EU electricity
+  EUR 0.18/kWh, USD/EUR 1.10; no subsidy).
+
+Levers, cumulative: (1) NOAK manufacturing + install; (2) standardised well-reuse programme (common costs
+-40 %, contingency 10 %); (3) heat pump $500/kW; (4) 6 % real financing.
+
+**Full-coverage results** (best design with < 2 % unmet load in every year; $/MWh of useful heat).
+Case A rows use Ku <= 3.2 (validity does not bind there); Case B rows use Ku <= 4.4, because no thermosiphon
+gives full coverage at Ku <= 3.2.
+
+| Case | TS FOAK | TS today | TS NOAK | TS NOAK + all levers | Coaxial today | Incumbent | CO2 price for TS NOAK = incumbent |
+|---|---|---|---|---|---|---|---|
+| A: PA, 1.7 km, 80 C, 150 mm | 348 | 299 | 257 | 169 | 313 | 48 (gas) | ~$980/t |
+| A-NL (Dutch prices) | 364 | 315 | 272 | 185 | 328 | 98 (gas incl. taxes) | ~$870/t extra |
+| B: ND, 3 km, 110 C, 7 in | 148 | 125 | 107 | **69** | 134 | 76 (propane) | ~$130/t |
+| B-NL (Dutch prices) | 169 | 146 | 128 | **90** | 154 | 98 (gas incl. taxes) | ~$150/t extra |
+
+All rows are in `outputs/what_must_be_true_summary.csv`; per-case tables, break-evens and the
+"any coverage" view are in `outputs/<case>/what_must_be_true.csv`, `breakevens.csv` and
+`validity_ku*/`.
+
+**What would need to be true:**
+
+* **(a) vs coaxial.** At full coverage the thermosiphon already beats coaxial at *today's* costs in Case A
+  (and A-NL), and in Cases B and B-NL once guided return is accepted to Ku ~4.4. At NOAK it is 17-20 %
+  cheaper than coaxial in every case. If partial coverage is acceptable, a direct coaxial loop in Case B ($117, 17 % unmet)
+  stays cheaper than the TS until NOAK ($107-109). The VIT price at which coaxial equals the NOAK TS is
+  ~$110/m in Case A and ~$220/m in Case B (base assumption $250/m).
+* **(b) vs the incumbent.** Only the hotter, deeper Case B wells get there: NOAK plus all four levers gives
+  $69/MWh vs $76 propane in North Dakota and $90 vs $98 gas in the Netherlands, or NOAK alone plus a
+  ~$130-150/t carbon price. Case A (1.7 km, 80 C, ~100 kW) never approaches pipeline gas: even with every
+  lever it is ~$170/MWh. The limit there is the well, not the technology.
+* **Guided-return validity** only matters in Case B, where it decides whether any thermosiphon can serve
+  the full load. Ku 4.4 and 6 give identical rankings, so the Ku 3-4.5 rig test is the decisive one.
+* **Europe** raises the incumbent price (~$98 vs $48/MWh) but also electricity (~$0.20 vs $0.075-0.13/kWh),
+  which penalises the heat-pump designs that win. The net effect is that the TS needs most of the levers in
+  the Netherlands too.
+
+The envelope tables below (sections 1 onwards) are from the previous cost model (VIT-lined insulation,
+secondary-loop coupling, base costs only) and were **not** rerun for this update.
 
 ## 1. Headline answer
 

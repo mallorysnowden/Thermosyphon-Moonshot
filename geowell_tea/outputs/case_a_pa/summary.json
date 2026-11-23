@@ -1,18 +1,18 @@
 {
   "case": "Case A - Western PA greenhouse",
   "model_version": "0.1.0",
-  "config_hash": "129cfe54fb05",
-  "runtime_s": 147.5,
+  "config_hash": "4542c438cc1f",
+  "runtime_s": 131.1,
   "n_designs": 71,
-  "base_lcoh_ratio_ts_over_c": 0.9702203696306791,
+  "base_lcoh_ratio_ts_over_c": 0.9541999016852131,
   "monte_carlo": {
-    "p_ts_cheaper": 0.454,
-    "ratio_p10": 0.8779401335623752,
-    "ratio_p50": 1.0173888624229308,
-    "ratio_p90": 1.1568083842768644,
-    "ts_lcoh_p50": 381.3605461764116,
-    "c_lcoh_p50": 378.90327169159497,
-    "p_ts_cheaper_incl_unvalidated": 0.608
+    "p_ts_cheaper": 0.632,
+    "ratio_p10": 0.841808742071953,
+    "ratio_p50": 0.9688501651416384,
+    "ratio_p90": 1.093422998225213,
+    "ts_lcoh_p50": 360.67541138624495,
+    "c_lcoh_p50": 377.483140659171,
+    "p_ts_cheaper_incl_unvalidated": 0.792
   },
   "best": [
     {
@@ -64,46 +64,46 @@
       "architecture": "T_ADAPTIVE",
       "design": "T_ADAPTIVE ammonia T_top=42C ins=843m film",
       "status": "FEASIBLE",
-      "lcoh": 546.3941663314133,
-      "npv": -1311274.6247051326,
-      "geo_capability_kW_y1": 40.761025120154684,
-      "geo_capability_kW_y20": 27.98478324904538,
-      "E_useful_MWh_total": 5890.064461377448,
-      "SPF_system": 7.637485461346955,
-      "unmet_share": 0.5094972556690011,
-      "site_cost_per_MWh": 301.969172752204,
+      "lcoh": 526.8667222263384,
+      "npv": -1157699.836132436,
+      "geo_capability_kW_y1": 37.457811804659684,
+      "geo_capability_kW_y20": 25.253793565517086,
+      "E_useful_MWh_total": 5374.677808866125,
+      "SPF_system": 7.9304229912475295,
+      "unmet_share": 0.5524167464667726,
+      "site_cost_per_MWh": 272.1238791154533,
       "incumbent_only_cost_per_MWh": 47.882352941176485,
-      "capex": 1148507.7554000868
+      "capex": 1034692.4465609955
     },
     {
       "architecture": "T_DIRECT",
       "design": "T_DIRECT ammonia T_top=50C ins=1047m film",
       "status": "FEASIBLE",
-      "lcoh": 1342.4605076706032,
-      "npv": -1279006.419756885,
-      "geo_capability_kW_y1": 17.75661258897104,
-      "geo_capability_kW_y20": 11.069551717807256,
-      "E_useful_MWh_total": 2178.427849427861,
-      "SPF_system": 19.989248610960704,
-      "unmet_share": 0.8185886002643924,
-      "site_cost_per_MWh": 297.1749421555168,
+      "lcoh": 1765.6373859369319,
+      "npv": -1105813.0847052687,
+      "geo_capability_kW_y1": 12.803469343771484,
+      "geo_capability_kW_y20": 6.686098814055834,
+      "E_useful_MWh_total": 1386.429985484885,
+      "SPF_system": 13.696003161081457,
+      "unmet_share": 0.8845432478434905,
+      "site_cost_per_MWh": 263.61348035235915,
       "incumbent_only_cost_per_MWh": 47.882352941176485,
-      "capex": 1103159.22443002
+      "capex": 958215.357761028
     },
     {
       "architecture": "T_HP",
-      "design": "T_HP ammonia T_top=25C ins=0m guided",
+      "design": "T_HP ammonia T_top=20C ins=0m guided",
       "status": "FEASIBLE",
-      "lcoh": 303.94160149259966,
-      "npv": -1323391.1480504693,
-      "geo_capability_kW_y1": 109.2031508185604,
-      "geo_capability_kW_y20": 84.43486818470652,
-      "E_useful_MWh_total": 11871.587175383329,
-      "SPF_system": 4.179893640925088,
-      "unmet_share": 0.01137820693248579,
-      "site_cost_per_MWh": 302.0276273446763,
+      "lcoh": 298.92285849727443,
+      "npv": -1307703.6463086908,
+      "geo_capability_kW_y1": 142.00616159137866,
+      "geo_capability_kW_y20": 116.41840814492484,
+      "E_useful_MWh_total": 12008.219178082189,
+      "SPF_system": 4.278907149599671,
+      "unmet_share": 7.081932077805204e-18,
+      "site_cost_per_MWh": 298.92285849727443,
       "incumbent_only_cost_per_MWh": 47.882352941176485,
-      "capex": 1132916.8651864077
+      "capex": 1163914.9978887925
     }
   ],
   "best_incl_unvalidated": {
@@ -125,18 +125,174 @@
     "T_ADAPTIVE": {
       "design": "T_ADAPTIVE ammonia T_top=42C ins=843m film",
       "status": "FEASIBLE",
-      "lcoh": 546.3941663314133
+      "lcoh": 526.8667222263384
     },
     "T_DIRECT": {
       "design": "T_DIRECT ammonia T_top=50C ins=1047m film",
       "status": "FEASIBLE",
-      "lcoh": 1342.4605076706032
+      "lcoh": 1765.6373859369319
     },
     "T_HP": {
-      "design": "T_HP ammonia T_top=25C ins=0m film",
+      "design": "T_HP ammonia T_top=20C ins=0m film",
       "status": "UNVALIDATED",
-      "lcoh": 289.69096205355856
+      "lcoh": 284.6118014450497
     }
   },
-  "energy_residual_max": 2.4251988154649737e-08
+  "energy_residual_max": 2.425187656879425e-08,
+  "what_must_be_true": [
+    {
+      "coverage": "any",
+      "ts_case": "FOAK (1.5x base)",
+      "ts_lcoh": 347.66871057098047,
+      "ts_design": "T_HP ammonia T_top=20C ins=0m guided",
+      "ts_unmet_max": 3.5409660389026014e-17,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 1.1098028806280775,
+      "carbon_price_for_parity": 1407.8364861068144
+    },
+    {
+      "coverage": "any",
+      "ts_case": "today's base costs",
+      "ts_lcoh": 298.92285849727443,
+      "ts_design": "T_HP ammonia T_top=20C ins=0m guided",
+      "ts_unmet_max": 3.5409660389026014e-17,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.9541999016852131,
+      "carbon_price_for_parity": 1178.9195012302944
+    },
+    {
+      "coverage": "any",
+      "ts_case": "1. NOAK manufacturing + automated install (raw x 2.5)",
+      "ts_lcoh": 256.21628738644057,
+      "ts_design": "T_HP ammonia T_top=25C ins=0m guided",
+      "ts_unmet_max": 0.041036936544218014,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.8178750780831339,
+      "carbon_price_for_parity": 978.3637805440579
+    },
+    {
+      "coverage": "any",
+      "ts_case": "2. standardised well-reuse programme (common -40%, contingency 10%)",
+      "ts_lcoh": 213.85861722025817,
+      "ts_design": "T_HP ammonia T_top=25C ins=0m guided",
+      "ts_unmet_max": 0.041036936544218014,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.6826639908100792,
+      "carbon_price_for_parity": 779.4465449570135
+    },
+    {
+      "coverage": "any",
+      "ts_case": "3. heat pump $500/kW",
+      "ts_lcoh": 199.17033235430395,
+      "ts_design": "T_HP ammonia T_top=25C ins=0m guided",
+      "ts_unmet_max": 0.041036936544218014,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.6357771115480648,
+      "carbon_price_for_parity": 710.4684116086096
+    },
+    {
+      "coverage": "any",
+      "ts_case": "4. infrastructure financing 6% real",
+      "ts_lcoh": 167.41338545001673,
+      "ts_design": "T_HP ammonia T_top=25C ins=0m guided",
+      "ts_unmet_max": 0.041036936544218014,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.5344048853950432,
+      "carbon_price_for_parity": 561.333578080189
+    },
+    {
+      "coverage": "full (<2% unmet every year)",
+      "ts_case": "FOAK (1.5x base)",
+      "ts_lcoh": 347.66871057098047,
+      "ts_design": "T_HP ammonia T_top=20C ins=0m guided",
+      "ts_unmet_max": 3.5409660389026014e-17,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 1.1098028806280775,
+      "carbon_price_for_parity": 1407.8364861068144
+    },
+    {
+      "coverage": "full (<2% unmet every year)",
+      "ts_case": "today's base costs",
+      "ts_lcoh": 298.92285849727443,
+      "ts_design": "T_HP ammonia T_top=20C ins=0m guided",
+      "ts_unmet_max": 3.5409660389026014e-17,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.9541999016852131,
+      "carbon_price_for_parity": 1178.9195012302944
+    },
+    {
+      "coverage": "full (<2% unmet every year)",
+      "ts_case": "1. NOAK manufacturing + automated install (raw x 2.5)",
+      "ts_lcoh": 256.5426254345071,
+      "ts_design": "T_HP ammonia T_top=20C ins=0m guided",
+      "ts_unmet_max": 3.5409660389026014e-17,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.8189167907676259,
+      "carbon_price_for_parity": 979.8963072891218
+    },
+    {
+      "coverage": "full (<2% unmet every year)",
+      "ts_case": "2. standardised well-reuse programme (common -40%, contingency 10%)",
+      "ts_lcoh": 214.85899626303873,
+      "ts_design": "T_HP ammonia T_top=20C ins=0m guided",
+      "ts_unmet_max": 3.5409660389026014e-17,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.6858573283456155,
+      "carbon_price_for_parity": 784.1444575888557
+    },
+    {
+      "coverage": "full (<2% unmet every year)",
+      "ts_case": "3. heat pump $500/kW",
+      "ts_lcoh": 200.40319178898696,
+      "ts_design": "T_HP ammonia T_top=20C ins=0m guided",
+      "ts_unmet_max": 3.5409660389026014e-17,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.6397125561550115,
+      "carbon_price_for_parity": 716.2580829869552
+    },
+    {
+      "coverage": "full (<2% unmet every year)",
+      "ts_case": "4. infrastructure financing 6% real",
+      "ts_lcoh": 168.79213256306485,
+      "ts_design": "T_HP ammonia T_top=20C ins=0m guided",
+      "ts_unmet_max": 3.5409660389026014e-17,
+      "coax_lcoh_today": 313.2706867495444,
+      "coax_design": "C_ADAPTIVE VIT114mm m=1.5kg/s T_in=22C",
+      "incumbent": 47.88235294117648,
+      "ts_over_coax": 0.5388060220840638,
+      "carbon_price_for_parity": 567.8083573403597
+    }
+  ],
+  "breakevens": {
+    "noak_index_for_coax_parity_any": 6.294267056370154,
+    "noak_index_for_incumbent_parity_any": NaN,
+    "vit_price_for_parity_ts_base_any": 214.81438865885139,
+    "vit_price_for_parity_ts_noak_any": 110.08377699181437,
+    "noak_index_for_coax_parity_full": 6.294267056370154,
+    "noak_index_for_incumbent_parity_full": NaN,
+    "vit_price_for_parity_ts_base_full": 214.81438865885139,
+    "vit_price_for_parity_ts_noak_full": 110.8840643428266
+  }
 }

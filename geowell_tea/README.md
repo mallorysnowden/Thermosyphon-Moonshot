@@ -14,7 +14,7 @@ customer temperatures, and each is optimised independently. Nothing forces them 
 ```bash
 cd geowell_tea
 pip install -e .[test]          # numpy, scipy, pandas, pyyaml, matplotlib (pinned)
-python -m pytest                 # 70 tests, ~3 s
+python -m pytest                 # 72 tests, ~3 s
 python -m geowell_tea.cli validate                       # rock check + published benchmarks (~1 min)
 python -m geowell_tea.cli run configs/case_a_pa.yaml     # Case A, ~2 min
 python -m geowell_tea.cli run configs/case_b_nd.yaml     # Case B, ~1 min
@@ -45,6 +45,17 @@ Without installing: `PYTHONPATH=src python -m geowell_tea.cli ...`.
 
 Architectures: `T_DIRECT`, `T_HP`, `T_ADAPTIVE` (thermosiphon) and `C_DIRECT`, `C_HP`, `C_ADAPTIVE`
 (coaxial), plus the customer's backup boiler.
+
+### What would need to be true (NOAK update)
+
+Every `run` now writes `what_must_be_true.csv` and `breakevens.csv`: the thermosiphon at FOAK / base / NOAK
+cost levels and with cumulative scale levers (thermosiphon only) against coaxial and the incumbent at
+today's costs, for any coverage and for full coverage (< 2 % unmet every year). Validity regimes:
+
+```bash
+python -m geowell_tea.cli run configs/case_b_nd.yaml --ku 4.4   # guided return validated to Ku 4.4
+python -m geowell_tea.cli run configs/case_b_nl.yaml             # Dutch-price variant (also case_a_nl)
+```
 
 ## Configuration and provenance
 

@@ -59,8 +59,18 @@ class ThermosiphonDesign:
     insulated_length: float = 0.0  # m of vacuum-insulated string from the surface
     liquid_distribution: str = "film"  # "film" | "guided"
     gap: float = 0.008  # radial gap between inserted string and casing [m]
-    t_ins: float = 0.012  # radial thickness taken by the insulation (VIT) [m]
+    t_ins: float = 0.012  # radial thickness taken by the insulation (VIT liner option) [m]
     k_ins: float = 0.015  # VIT apparent conductivity [W/(m K)] (assumed)
+    # --- insulated-section construction (factory-insulated segments, see MODEL_LIMITATIONS) ---
+    insulation: str = "aerogel_n2"  # "aerogel_n2" | "n2_only" | "pip" | "vit_liner"
+    ins_thickness: float | None = None  # external aerogel [m]; None -> 10 mm if casing >= 178 mm else 5 mm
+    k_aerogel: float = 0.016  # aerogel blanket, lightly loaded (Spaceloft-class ~14-16 mW/m K)
+    k_n2: float = 0.026  # nitrogen near 1 bar
+    eps_film: float = 0.10  # low-emissivity metallised film overwrap
+    eps_steel: float = 0.80  # bare steel / casing
+    bare_band_frac: float = 0.025  # uninsulated weld bands: 0.3 m per 12 m segment
+    sleeve_t: float = 0.004  # pipe-in-pipe outer steel sleeve wall [m]
+    guided_ku_validated: float = 3.2  # guided return: Ku_g above this is UNVALIDATED (3.2 strict, 4.4 field, 6 optimistic)
     h_evap: float = 2500.0  # wetted-wall evaporation coefficient [W/(m2 K)] (assumed)
     h_cond: float = 3000.0  # wall condensation coefficient [W/(m2 K)] (assumed)
     h_dry: float = 25.0  # dry wall to vapour [W/(m2 K)] (assumed)
@@ -111,6 +121,8 @@ class Thermosiphon:
             self.d = design
         self.sat = saturation_table(design.fluid)
         self.fc = self.sat.fc
+        self.ins_t = design.ins_thickness if design.ins_thickness is not None else (
+            0.010 if well.casing_id >= 0.178 else 0.005)
         self.geom = self._geometry()
         self.status = self.geom.status
         self.flags: list[str] = list(self.geom.flags)
@@ -124,13 +136,8 @@ class Thermosiphon:
         r_si = self.geom.d_i / 2
         R_gap = math.log(r_ci / r_so) / (2 * math.pi * well.annulus_fluid_k)
         R_wall = math.log(r_so / r_si) / (2 * math.pi * STEEL_K)
-        if design.adiabatic_insulation:
-            R_ins = 1e6
-        elif design.architecture == "packer":
-            R_ins = math.log(r_si / (0.8 * r_si)) / (2 * math.pi * design.k_ins)  # vacuum annulus inside the string
-        else:
-            R_ins = math.log(r_si / (self.geom.d_i_ins / 2)) / (2 * math.pi * design.k_ins)
-        self.R_static = well.R_casing_cement + R_gap + R_wall + np.where(self.ins_mask, R_ins, 0.0)
+        R_section = self._insulated_section_R(r_ci, r_so, R_gap)  # tube outer wall -> casing, insulated part
+        self.R_static = well.R_casing_cement + R_wall + np.where(self.ins_mask, R_section, R_gap)
         self.D_wet = np.where(self.ins_mask, self.geom.d_i_ins, self.geom.d_i)
         self.A_vap = np.where(self.ins_mask, self.geom.a_vap_ins, self.geom.a_vap)
         self.max_mach = 0.0
@@ -139,6 +146,46 @@ class Thermosiphon:
         self.min_wet = 1.0
         self.throttled_steps = 0
         self._check_static()
+
+    def _insulated_section_R(self, r_ci: float, r_so: float, R_gap_water: float) -> float:
+        """Thermal resistance [m K/W] from the string's outer wall to the casing over the insulated
+        interval.  External options keep the 8 mm running gap and shrink the tube instead; the
+        uninsulated weld bands are combined in parallel (conductance-weighted by length)."""
+        d = self.d
+        two_pi = 2 * math.pi
+        if d.adiabatic_insulation:
+            return 1e6
+        if d.architecture == "packer":
+            r_si = self.geom.d_i / 2
+            return R_gap_water + math.log(r_si / (0.8 * r_si)) / (two_pi * d.k_ins)
+        if d.insulation == "vit_liner":
+            r_si = self.geom.d_i / 2
+            return R_gap_water + math.log(r_si / (self.geom.d_i_ins / 2)) / (two_pi * d.k_ins)
+
+        def k_rad(r1, e1, T=300.0):  # radiation across the gas gap as an equivalent conductivity
+            hr = 4 * 5.67e-8 * T ** 3 / (1 / e1 + (r1 / r_ci) * (1 / d.eps_steel - 1))
+            return hr * r1 * math.log(r_ci / r1)
+
+        def R_n2(r1, e1):
+            return math.log(r_ci / r1) / (two_pi * (d.k_n2 + k_rad(r1, e1)))
+
+        t = self.ins_t
+        r_o = (self.geom.d_i_ins / 2) + self.geom.t_wall  # tube OD in the insulated section
+        if d.insulation == "n2_only":
+            R_main, R_band = R_n2(r_so, d.eps_film), R_n2(r_so, d.eps_steel)
+        elif d.insulation == "aerogel_n2":
+            r_o = self.geom.d_i_ins / 2 + self.geom.t_wall
+            R_main = math.log((r_o + t) / r_o) / (two_pi * d.k_aerogel) + R_n2(r_o + t + 0.0005, d.eps_film)
+            R_band = R_n2(r_o, d.eps_steel)
+        elif d.insulation == "pip":
+            r_sl = r_o + t + d.sleeve_t
+            R_main = (math.log((r_o + t) / r_o) / (two_pi * d.k_aerogel)
+                      + math.log(r_ci / r_sl) / (two_pi * self.well.annulus_fluid_k))
+            R_band = math.log(r_ci / r_o) / (two_pi * self.well.annulus_fluid_k)
+        else:
+            raise ValueError(f"unknown insulation {d.insulation!r}")
+        f = d.bare_band_frac
+        return 1.0 / ((1 - f) / R_main + f / R_band)
 
     # ------------------------------------------------------------------ geometry
     def _geometry(self) -> TSGeometry:
@@ -159,7 +206,13 @@ class Thermosiphon:
             flags.append(f"collapse: no wall <= 0.2*OD resists {dp_ext/1e5:.0f} bar external pressure")
             t = 0.2 * od
         d_i = od - 2 * t
-        d_i_ins = d_i - 2 * d.t_ins
+        if d.insulation == "vit_liner":
+            d_i_ins = d_i - 2 * d.t_ins
+        elif d.insulation == "n2_only":
+            d_i_ins = d_i
+        else:  # external insulation shrinks the tube OD over the insulated section (running gap kept)
+            jacket = 0.0005 if d.insulation == "aerogel_n2" else d.sleeve_t
+            d_i_ins = d_i - 2 * (self.ins_t + jacket)
         guided = d.liquid_distribution == "guided" or d.architecture == "packer"
         guide_area = math.pi / 4 * d.guide_od ** 2 if guided else 0.0
         a_vap = math.pi / 4 * d_i ** 2 - guide_area
@@ -382,8 +435,10 @@ class Thermosiphon:
             # conservative.  The Xiong'an ladder-design SLGHP carried ~1 MW through a 177.8 mm
             # section (Ku_g ~ 4.4 by our property estimates).  Between Ku_g = 3.2 and 6 the
             # design is UNVALIDATED; above 6 the pipe is throttled (see capability()).
-            if fmax > 1.0:
-                self._flag(UNVALIDATED, "vapour Kutateladze number above 3.2 (guided return; field-demonstrated only)")
+            ku_max = d.flooding_C * fmax ** 2
+            if ku_max > d.guided_ku_validated + 1e-9:
+                self._flag(UNVALIDATED, f"vapour Kutateladze number above {d.guided_ku_validated:g} "
+                                        "(guided return; outside the validated range for this run)")
         elif fmax > 0.7:
             self._flag(UNVALIDATED, "within 30 % of flooding limit")
         if mach > 0.2:

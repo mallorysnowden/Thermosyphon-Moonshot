@@ -34,6 +34,27 @@ evidence of consistent physics, not proof of accuracy.
   the UK DBHE candidate outputs in Brown 2026 (82-198 kW at 4 L/s over 25 yr; well geometry not given),
   which are only used as a plausibility range.
 
+## 1b. NOAK update (22 Nov 2026): what is and is not covered
+
+* **NOAK cost level** is an estimate built from raw-material content x 2.5 plus a bottom-up automated
+  installation cost; it is not a quote and assumes the modular manufacturing plan works as described
+  (single-station weld + PAUT cycle ~25 min per 12 m segment). FOAK = base x 1.5 is a judgement.
+* **Leaks are excluded from cost** by choice (all-welded, PAUT-inspected string; annulus NH3 monitoring).
+  A downhole leak would mean pulling and re-running the string: a real risk, not modelled.
+* **Factory insulation in a N2-capped annulus** is modelled as conduction + gap radiation with bare weld
+  bands in parallel. Not modelled: loss of the N2 cap (aerogel compaction under liquid head), moisture
+  migration, liquid-level control, casing collapse with gas inside an old well (must be checked per well),
+  and the smaller tube OD's transition piece. The tube wall is still sized for a liquid-filled annulus
+  (conservative).
+* **Stepped reflux built into each module** (Xiong'an-style ladder) is costed but its flooding benefit is the
+  generic "guided return" model; its freedom to operate has not been checked.
+* **Direct coupling** adds 15 % (range 0-40 %) to heat-pump capex; ammonia then enters the machinery room
+  (IIAR scope, heat-pump charge counts toward the PSM/RMP threshold), which is flagged but not costed.
+* **Netherlands cases** reuse the US wells, loads and non-energy costs; only energy prices change. No Dutch
+  subsidy (SDE++), permitting, labour or abandonment costs were modelled.
+* **Not rerun:** the depth-temperature-diameter envelopes, tornado drivers and fluid screening in
+  `RESULTS.md` sections 1+ predate this update.
+
 ## 2. Physics simplifications
 
 | Area | Simplification | Effect |

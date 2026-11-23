@@ -80,7 +80,8 @@ def load_case(path, assumptions_path=None) -> Case:
     s = av["surface"]
     ld = cv["load"]
     surface = SurfaceParams(T_supply=ld["T_supply"], T_return=ld["T_return"], approach=s["approach"],
-                            eta_carnot=s["eta_carnot"], cop_max=s["cop_max"], min_lift=s["min_lift"])
+                            eta_carnot=s["eta_carnot"], cop_max=s["cop_max"], min_lift=s["min_lift"],
+                            ts_hp_coupling=str(cv.get("surface", {}).get("ts_hp_coupling", s.get("ts_hp_coupling", "direct_coupled"))))
     pr = cv["prices"]
     params = {}
     ranges = {}

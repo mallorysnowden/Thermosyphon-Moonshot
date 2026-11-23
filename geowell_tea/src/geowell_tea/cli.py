@@ -47,8 +47,14 @@ def cmd_validate(args):
     pd.DataFrame(v.NOT_REPRODUCED).to_csv(out / "not_reproduced.csv", index=False)
 
 def cmd_run(args):
+    if args.ku is not None and abs(args.ku - 3.2) > 1e-9:
+        from .pipeline import run_variant
+        w = run_variant(args.config, args.ku)
+        print(w["table"].round(2).to_string())
+        print(json.dumps(w["breakevens"], indent=1, default=float))
+        return
     s = run_case(args.config, mc_draws=args.draws, quick=args.quick)
-    print(json.dumps(s, indent=1, default=float))
+    print(json.dumps({k: v for k, v in s.items() if k != "what_must_be_true"}, indent=1, default=float))
 
 
 def cmd_envelope(args):
@@ -109,6 +115,7 @@ def main(argv=None):
     p.add_argument("config")
     p.add_argument("--quick", action="store_true")
     p.add_argument("--draws", type=int, default=500)
+    p.add_argument("--ku", type=float, default=None, help="guided-return validated Ku limit (3.2 strict, 4.4 field, 6 optimistic)")
     p.set_defaults(func=cmd_run)
     p = sub.add_parser("envelope")
     from .envelope import SCENARIOS

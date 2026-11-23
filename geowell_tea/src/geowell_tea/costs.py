@@ -12,6 +12,8 @@ NPV                    = -CAPEX + PV(heat_price * useful heat - OPEX - replaceme
 """
 from __future__ import annotations
 
+import math
+
 import numpy as np
 
 SAFETY_SYSTEM_KEY = {"ammonia": "ts_safety_ammonia", "propane": "ts_safety_hydrocarbon",
@@ -48,28 +50,81 @@ def capex_breakdown(arch_id: str, q: dict, p: dict) -> dict:
         arch["surface_hx"] = p["hx_per_kw"] * peak_geo_kW if mode in ("DIRECT", "ADAPTIVE") else 0.0 * peak_geo_kW
         mult = p["coax_capex_mult"]
     else:
-        ins = q["insulated_m"]
-        bare = depth - ins
-        arch["pressure_string"] = (p["ts_string_per_m_base"] + p["steel_per_kg"] * q["steel_kg"] / depth) * bare
-        arch["insulated_string"] = p["vit_per_m"] * ins
-        arch["condensate_guide"] = p["guide_line_per_m"] * depth if q.get("guided") else 0.0
-        arch["internals"] = p["ts_internals_per_m"] * depth
-        arch["string_running"] = p["rig_spread_per_day"] * depth / p["ts_run_m_per_day"]
-        arch["pressure_test_charge"] = p["ts_pressure_test_charge"] + p["ts_fluid_per_kg"] * q.get("inventory_kg", 0.0)
-        arch["condenser"] = p["condenser_base"] + p["condenser_per_kw"] * peak_geo_kW
-        arch["safety_system"] = p[SAFETY_SYSTEM_KEY.get(q.get("fluid", "ammonia"), "ts_safety_ammonia")]
-        arch["psm_rmp_program"] = p["psm_rmp_capex"] if q.get("inventory_kg", 0.0) > 4536 else 0.0
-        arch["secondary_loop"] = p["secondary_loop_cost"] if hp_modes else 0.0
-        arch["preheat_hx"] = p["hx_per_kw"] * peak_geo_kW if mode == "ADAPTIVE" else 0.0 * peak_geo_kW
-        packer = bool(q.get("packer", False))
-        arch["packer_hardware"] = p["ts_packer_hardware"] if packer else 0.0
-        arch["ip_license"] = p["ts_ip_license_per_kw"] * peak_geo_kW if packer else 0.0 * peak_geo_kW
-        mult = p["ts_capex_mult"]
+        arch, mult = _ts_items(mode, q, p, items, peak_geo_kW, hp_modes, depth)
     arch = {k: v * mult for k, v in arch.items()}
     items.update(arch)
     subtotal = common + sum(arch.values())
     items["contingency"] = p["contingency"] * subtotal
     return items
+
+
+def _insulation_cost(q: dict, p: dict) -> float:
+    """Insulated-interval cost [$] at today's prices (excludes the pressure string)."""
+    ins = q["insulated_m"]
+    if ins <= 0:
+        return 0.0
+    kind = q.get("insulation", "vit_liner")
+    t = q.get("ins_t_m", 0.005)
+    od = q.get("ins_od_m", q.get("string_od_m", 0.12))
+    if kind == "vit_liner":
+        return p["vit_per_m"] * ins
+    aerogel = p["aerogel_per_m2_10mm"] * (t / 0.010) * math.pi * (od + t)  # $/m
+    if kind == "aerogel_n2":
+        return (aerogel + p["ins_wrap_collars_per_m"]) * ins + p["annulus_n2_system"]
+    if kind == "n2_only":
+        return p["ins_foil_per_m"] * ins + p["annulus_n2_system"]
+    if kind == "pip":
+        sleeve_kg = math.pi * (od + 2 * t + 0.004) * 0.004 * 7850
+        return (aerogel + sleeve_kg * p["steel_per_kg"] + p["pip_bulkhead_per_m"]) * ins
+    raise ValueError(kind)
+
+
+def _ts_items(mode, q, p, items, peak_geo_kW, hp_modes, depth):
+    """Thermosiphon-specific capex at the requested cost level (base / foak / noak)."""
+    level = p.get("ts_cost_level", "base")
+    ins = q["insulated_m"]
+    kind = q.get("insulation", "vit_liner")
+    string_len = depth - ins if kind == "vit_liner" else depth  # VIT replaces the string; others wrap it
+    steel_kg = q["steel_kg"] * string_len / depth
+    guided = bool(q.get("guided"))
+    direct = bool(q.get("direct_coupled", False)) and hp_modes
+    arch = {}
+    if level == "noak":
+        idx = p["ts_noak_index"]
+        arch["pressure_string"] = idx * p["steel_raw_per_kg"] * steel_kg
+        ins_cost = _insulation_cost(q, p)
+        if kind in ("aerogel_n2", "n2_only"):
+            ins_cost = (ins_cost - p["annulus_n2_system"]) * p["ts_noak_insulation_factor"] + 0.6 * p["annulus_n2_system"]
+        elif ins > 0:
+            ins_cost = ins_cost * p["ts_noak_insulation_factor"]
+        arch["insulated_string"] = ins_cost
+        arch["condensate_guide"] = idx * p["ss_raw_per_kg"] * p["reflux_kg_per_m"] * depth if guided else 0.0
+        arch["internals"] = idx * p["steel_raw_per_kg"] * p["internals_kg_per_m"] * depth
+        arch["string_running"] = (depth / p["ts_noak_run_m_per_day"] * p["ts_noak_spread_per_day"]
+                                  + p["ts_noak_weld_per_joint"] * depth / p["ts_segment_m"])
+        arch["pressure_test_charge"] = p["ts_noak_test_charge"] + p["ts_fluid_per_kg"] * q.get("inventory_kg", 0.0)
+        arch["condenser"] = idx * p["condenser_raw_share"] * (p["condenser_base"] + p["condenser_per_kw"] * peak_geo_kW)
+        arch["safety_system"] = idx * p["safety_raw_share"] * p[SAFETY_SYSTEM_KEY.get(q.get("fluid", "ammonia"), "ts_safety_ammonia")]
+        coupling_mult = idx * p["coupling_raw_share"]
+    else:
+        arch["pressure_string"] = (p["ts_string_per_m_base"] * string_len + p["steel_per_kg"] * steel_kg)
+        arch["insulated_string"] = _insulation_cost(q, p)
+        arch["condensate_guide"] = p["guide_line_per_m"] * depth if guided else 0.0
+        arch["internals"] = p["ts_internals_per_m"] * depth
+        arch["string_running"] = p["rig_spread_per_day"] * depth / p["ts_run_m_per_day"]
+        arch["pressure_test_charge"] = p["ts_pressure_test_charge"] + p["ts_fluid_per_kg"] * q.get("inventory_kg", 0.0)
+        arch["condenser"] = p["condenser_base"] + p["condenser_per_kw"] * peak_geo_kW
+        arch["safety_system"] = p[SAFETY_SYSTEM_KEY.get(q.get("fluid", "ammonia"), "ts_safety_ammonia")]
+        coupling_mult = 1.0
+    arch["psm_rmp_program"] = p["psm_rmp_capex"] if q.get("inventory_kg", 0.0) > 4536 else 0.0
+    arch["secondary_loop"] = coupling_mult * p["secondary_loop_cost"] if (hp_modes and not direct) else 0.0
+    arch["hp_direct_coupling"] = p["ts_direct_hp_premium"] * items["heat_pump"] if direct else 0.0 * peak_geo_kW
+    arch["preheat_hx"] = coupling_mult * p["hx_per_kw"] * peak_geo_kW if mode == "ADAPTIVE" else 0.0 * peak_geo_kW
+    packer = bool(q.get("packer", False))
+    arch["packer_hardware"] = p["ts_packer_hardware"] if packer else 0.0
+    arch["ip_license"] = p["ts_ip_license_per_kw"] * peak_geo_kW if packer else 0.0 * peak_geo_kW
+    mult = p["ts_capex_mult"] * (p["ts_foak_mult"] if level == "foak" else 1.0)
+    return arch, mult
 
 
 def annual_opex(arch_id: str, q: dict, p: dict, E_elec_MWh, capex_items: dict):

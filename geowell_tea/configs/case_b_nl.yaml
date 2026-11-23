@@ -1,0 +1,41 @@
+# Case B - Williston Basin, North Dakota: synthetic deep well + year-round low-temperature load (RAS).
+# Every geology value is SYNTHETIC - not a located well.
+case:
+  name: "Case B-NL - Case B well geometry with Dutch economics"
+  description: "Same geology, well and load as the US case; prices replaced by Dutch / EU non-household values (EUR converted at 1.10 USD/EUR). No subsidy in the base case."
+
+geology:
+  depth: {value: 3000, low: 2000, high: 4000, status: assumed, source: "Synthetic case (not a located well)"}
+  T_bottom: {value: 110.0, low: 80.0, high: 140.0, status: assumed, source: "Synthetic case (not a well log)"}
+  T_surface: {value: 7.0, status: assumed, source: "Synthetic case"}
+  k: {value: 2.5, low: 1.5, high: 4.0, status: assumed, source: "Scenario assumption"}
+  rho: {value: 2400, status: assumed, source: "Scenario assumption"}
+  cp: {value: 900, status: assumed, source: "Scenario assumption"}
+  groundwater_advection: {value: false, status: assumed, source: "Off in baseline"}
+
+well:
+  casing_id: {value: 0.152, low: 0.121, high: 0.160, status: assumed, source: "Typical Bakken 7-in 32 lb/ft intermediate casing (ID 6.094 in, drift ~152 mm) set through the vertical section; range 5-1/2-in 20# to 7-in 26#. The string must sit in the vertical section above the kickoff point"}
+  casing_wall: {value: 0.0095, status: assumed, source: "Typical"}
+  cement_thickness: {value: 0.025, status: assumed, source: "Typical"}
+
+load:
+  peak_month_kW: {value: 300, low: 150, high: 500, status: assumed, source: "Brief's aspirational 150-500 kW commercial scale (mid-point); NOT a proven well output"}
+  shape: {value: western_nd, status: assumed, source: "Approximate HDD shape blended to high load factor"}
+  flh: {value: 7000, low: 5000, high: 8000, status: assumed, source: "Brief: ~7,000 equivalent h/yr"}
+  T_supply: {value: 35.0, status: assumed, source: "Brief: 35/25 C distribution for 26 C tanks"}
+  T_return: {value: 25.0, status: assumed, source: "Brief"}
+  distance_m: {value: 250, low: 0, high: 1000, status: assumed, source: "Brief"}
+  b2_ramp: {value: [0.5, 0.75], status: assumed, source: "B2 prospective facility: demand ramps 50%, 75%, then 100%"}
+  b2_customer_facility_capex: {value: 3000000, status: assumed, source: "Incremental RAS facility capex - reported separately, never inside geothermal LCOH"}
+
+prices:
+  electricity_price: {value: 0.198, low: 0.154, high: 0.286, status: published, source: "EU average non-household electricity EUR 0.18/kWh, H1 2026 (Eurostat); NL-specific value not retrieved. EUR/USD 1.10 (mid-Nov 2026)"}
+  incumbent_fuel_price_per_MWh: {value: 88.0, status: published, source: "Netherlands non-household gas EUR 0.08/kWh incl. taxes and levies, H1 2026 (Eurostat, 10,000-100,000 GJ/yr band)"}
+  incumbent_efficiency: {value: 0.90, status: assumed, source: "Condensing gas boiler"}
+  incumbent_emission_factor_t_per_MWh: {value: 0.181, status: published, source: "Natural gas CO2 per MWh fuel (EPA factor); carbon price result = price ON TOP of today's Dutch taxes (ETS2 starts 2028)"}
+  plugging_eol: {value: 110000, low: 60000, high: 400000, status: assumed, source: "US value retained; no Dutch abandonment cost retrieved"}
+
+simulation:
+  n_z: 50
+  n_r: 36
+  years: 20

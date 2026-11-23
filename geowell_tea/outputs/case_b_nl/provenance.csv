@@ -1,0 +1,102 @@
+parameter,value,low,high,status,source
+geology.depth,3000,2000.0,4000.0,assumed,Synthetic case (not a located well)
+geology.T_bottom,110.0,80.0,140.0,assumed,Synthetic case (not a well log)
+geology.T_surface,7.0,,,assumed,Synthetic case
+geology.k,2.5,1.5,4.0,assumed,Scenario assumption
+geology.rho,2400,,,assumed,Scenario assumption
+geology.cp,900,,,assumed,Scenario assumption
+geology.groundwater_advection,False,,,assumed,Off in baseline
+well.casing_id,0.152,0.121,0.16,assumed,"Typical Bakken 7-in 32 lb/ft intermediate casing (ID 6.094 in, drift ~152 mm) set through the vertical section; range 5-1/2-in 20# to 7-in 26#. The string must sit in the vertical section above the kickoff point"
+well.casing_wall,0.0095,,,assumed,Typical
+well.cement_thickness,0.025,,,assumed,Typical
+load.peak_month_kW,300,150.0,500.0,assumed,Brief's aspirational 150-500 kW commercial scale (mid-point); NOT a proven well output
+load.shape,western_nd,,,assumed,Approximate HDD shape blended to high load factor
+load.flh,7000,5000.0,8000.0,assumed,"Brief: ~7,000 equivalent h/yr"
+load.T_supply,35.0,,,assumed,Brief: 35/25 C distribution for 26 C tanks
+load.T_return,25.0,,,assumed,Brief
+load.distance_m,250,0.0,1000.0,assumed,Brief
+load.b2_ramp,"[0.5, 0.75]",,,assumed,"B2 prospective facility: demand ramps 50%, 75%, then 100%"
+load.b2_customer_facility_capex,3000000,,,assumed,"Incremental RAS facility capex - reported separately, never inside geothermal LCOH"
+prices.electricity_price,0.198,0.154,0.286,published,"EU average non-household electricity EUR 0.18/kWh, H1 2026 (Eurostat); NL-specific value not retrieved. EUR/USD 1.10 (mid-Nov 2026)"
+prices.incumbent_fuel_price_per_MWh,88.0,,,published,"Netherlands non-household gas EUR 0.08/kWh incl. taxes and levies, H1 2026 (Eurostat, 10,000-100,000 GJ/yr band)"
+prices.incumbent_efficiency,0.9,,,assumed,Condensing gas boiler
+prices.incumbent_emission_factor_t_per_MWh,0.181,,,published,Natural gas CO2 per MWh fuel (EPA factor); carbon price result = price ON TOP of today's Dutch taxes (ETS2 starts 2028)
+prices.plugging_eol,110000,60000.0,400000.0,assumed,US value retained; no Dutch abandonment cost retrieved
+assumptions.finance.discount_rate,0.1,0.06,0.15,assumed,Brief planning assumption (real); matches repo conventions.toml company rate
+assumptions.finance.years,20,,,assumed,Brief evaluation horizon
+assumptions.finance.heat_price_share_of_incumbent,0.9,0.75,1.0,assumed,Heat sold at a 10% discount to the customer's incumbent useful-heat cost (explicit offtake assumption; avoided bill != contract revenue)
+assumptions.surface.approach,5.0,3.0,10.0,assumed,"HX / evaporator / condenser approach temperature, K"
+assumptions.surface.eta_carnot,0.5,0.4,0.6,assumed,Carnot fraction for water-to-water heat pumps (screening; replace with manufacturer maps)
+assumptions.surface.cop_max,8.0,,,assumed,Cap to avoid unrealistic small-lift COPs
+assumptions.surface.ts_hp_coupling,direct_coupled,,,assumed,"TS condenser is the HP evaporator (one approach, no secondary pump) for all TS heat-pump/hybrid designs"
+assumptions.surface.min_lift,8.0,,,assumed,"Minimum compressor lift, K"
+assumptions.surface.controls_W,500,,,assumed,"Controls/standby electricity, both technologies"
+assumptions.surface.delivery_dp_per_m,250,,,assumed,"Hydronic distribution design pressure gradient, Pa/m"
+assumptions.surface.customer_dp,100000,,,assumed,"Customer-side hydronic loop pressure drop, Pa"
+assumptions.surface.equipment_size_factor,1.3,1.15,1.5,assumed,"Hourly peak / monthly-average peak sizing factor for HX, condenser, heat pump"
+assumptions.common_capex.well_acquisition_legal,50000,20000.0,150000.0,assumed,"Title, transfer of plugging liability, legal"
+assumptions.common_capex.permits_engineering,80000,40000.0,200000.0,assumed,"State oil & gas / UIC-equivalent permitting, design engineering"
+assumptions.common_capex.mit_logging,40000,20000.0,80000.0,assumed,"Mechanical integrity test, cement bond / caliper / temperature logs"
+assumptions.common_capex.rig_spread_per_day,12000,8000.0,20000.0,assumed,"All-in workover spread (rig, crew, support). Bare 500-HP well-service rigs were ~$235-344/h in 2015-16 Hart Energy surveys; uplifted for crew, equipment, 2026 prices"
+assumptions.common_capex.cleanout_days_base,2.0,,,assumed,Rig days for cleanout/re-entry
+assumptions.common_capex.cleanout_days_per_km,1.0,,,assumed,Additional rig days per km of depth
+assumptions.common_capex.surface_plant_base,60000,30000.0,120000.0,assumed,"Wellhead skid, valves, enclosure, electrical"
+assumptions.common_capex.distribution_trench_per_m,500,300.0,900.0,assumed,"Pre-insulated twin pipe in trench, $/m of route"
+assumptions.common_capex.instrumentation_controls,30000,15000.0,60000.0,assumed,"PLC, sensors, metering"
+assumptions.common_capex.hx_per_kw,30,15.0,60.0,assumed,"Plate heat exchanger installed, $/kW"
+assumptions.common_capex.hp_per_kw,800,500.0,1300.0,assumed,Installed water-to-water HP $/kW heat output. Equipment ~EUR400-600/kW excl. install (vendor rule of thumb); installed uplift assumed
+assumptions.common_capex.hp_replacement_year,15,,,assumed,Compressor/HP major overhaul year
+assumptions.common_capex.hp_replacement_fraction,0.6,,,assumed,Share of HP capex at overhaul
+assumptions.common_capex.hp_om_frac,0.02,,,assumed,"HP maintenance, fraction of HP capex per year"
+assumptions.common_capex.contingency,0.2,0.1,0.35,assumed,Contingency on subtotal
+assumptions.common_capex.om_common_per_yr,12000,6000.0,25000.0,assumed,"Well integrity monitoring, insurance, admin"
+assumptions.coax_capex.vit_per_m,250,120.0,500.0,assumed,"Vacuum-insulated tubing, $/m installed hardware. No public price found; Vallourec markets VIT for geothermal closed loops (sizes 3.5in x 2-3/8in up to 16in x 14in)"
+assumptions.coax_capex.composite_tube_factor,0.35,,,assumed,Pre-insulated composite/HDPE centre tube relative to VIT cost (used only when VIT does not fit)
+assumptions.coax_capex.coax_run_m_per_day,600,400.0,900.0,assumed,Running speed for VIT centre string
+assumptions.coax_capex.circ_pump_base,15000,8000.0,30000.0,assumed,Circulation pump skid
+assumptions.coax_capex.circ_pump_per_kw,400,200.0,800.0,assumed,$/kW electric pump capacity
+assumptions.coax_capex.coax_om_per_yr,5000,2000.0,10000.0,assumed,"Pump/seal maintenance, water treatment"
+assumptions.coax_capex.coax_capex_mult,1.0,0.85,1.25,assumed,"Overall coax installation uncertainty (mature-ish, DBHE retrofits exist)"
+assumptions.ts_capex.ts_string_per_m_base,40,25.0,80.0,assumed,"Gas-tight premium connections, handling, per m of pressure string"
+assumptions.ts_capex.steel_per_kg,3.0,2.2,4.0,published,"US OCTG average $3,031/t, Sep 2026 (GMK Center); finished tubing, $/kg"
+assumptions.ts_capex.guide_line_per_m,35,15.0,70.0,assumed,"Stepped reflux internals built into each module (collector rings + guide pipes, Xiong'an-style ladder; IP check pending), $/m at today's prices"
+assumptions.ts_capex.ts_internals_per_m,15,0.0,60.0,assumed,"Centralisers, liquid distributors"
+assumptions.ts_capex.ts_run_m_per_day,450,300.0,700.0,assumed,Running speed incl. torque/leak testing of gas-tight connections
+assumptions.ts_capex.ts_pressure_test_charge,40000,20000.0,80000.0,assumed,"Dry-N2 strength/decay test, evacuation + vacuum hold, charging (today's service pricing)"
+assumptions.ts_capex.ts_fluid_per_kg,2.0,,,assumed,"Working fluid, $/kg"
+assumptions.ts_capex.condenser_base,15000,,,assumed,Pressure-rated condenser skid
+assumptions.ts_capex.condenser_per_kw,60,30.0,120.0,assumed,"Ammonia-rated condenser, $/kW"
+assumptions.ts_capex.ts_safety_ammonia,40000,20000.0,100000.0,assumed,"Leak detection, relief/vent, emergency procedures"
+assumptions.ts_capex.ts_safety_hydrocarbon,50000,25000.0,120000.0,assumed,"Hazardous-area classification, detection"
+assumptions.ts_capex.ts_safety_water,5000,,,assumed,Vacuum system protection only
+assumptions.ts_capex.ts_safety_co2,15000,,,assumed,Asphyxiation detection
+assumptions.ts_capex.psm_rmp_capex,150000,,,assumed,"Program set-up if ammonia inventory > 10,000 lb (OSHA PSM / EPA RMP threshold)"
+assumptions.ts_capex.psm_rmp_per_yr,30000,,,assumed,Ongoing PSM/RMP compliance
+assumptions.ts_capex.secondary_loop_cost,8000,,,assumed,Condenser-to-HP water loop pump/piping (secondary-loop coupling only)
+assumptions.ts_capex.ts_direct_hp_premium,0.15,0.0,0.4,assumed,Extra heat-pump cost when the TS condenser is the HP evaporator (ammonia/cascade unit vs water-to-water HP); fraction of HP capex
+assumptions.ts_capex.ts_om_per_yr,6000,3000.0,12000.0,assumed,"Inspection, pressure monitoring"
+assumptions.ts_capex.ts_leak_allowance_per_yr,0,,,assumed,"Leaks treated as a risk, not a cost (all-welded, PAUT-inspected string with annulus NH3 monitoring); see MODEL_LIMITATIONS"
+assumptions.ts_capex.ts_ip_license_per_kw,0,0.0,100.0,assumed,Possible licence for the patented packer design (SI23618A); applied only to packer designs; 0 in base case because no licence terms are public
+assumptions.ts_capex.ts_packer_hardware,60000,30000.0,150000.0,assumed,Packer + separate liquid-supply line + adiabatic transport channel (Gruber 2026 / SI23618A). No public price; order-of-magnitude from production-packer and small-bore tubing costs. Only applied to packer designs
+assumptions.ts_capex.ts_capex_mult,1.0,0.85,1.25,assumed,Residual installation uncertainty at the chosen cost level
+assumptions.ts_capex.ts_cost_level,base,,,assumed,foak | base | noak; pipelines report all three
+assumptions.ts_capex.ts_foak_mult,1.5,1.3,2.0,assumed,"First US unit: new factory, welding-system development, qualification, one-well engineering"
+assumptions.ts_capex.ts_noak_index,2.5,2.0,3.5,derived,"Finished/raw ratio at mass production. Anchor: US OCTG $3,031/t vs HRC ~$1,520/t = 2.0 (pipe-like items); skids/electronics 3-4"
+assumptions.ts_capex.steel_raw_per_kg,1.52,0.6,1.6,published,"US hot-rolled coil $1,350-1,400/short ton, mid-Nov 2026 (Kallanish via GMK Center); low = world price ~$600/t"
+assumptions.ts_capex.ss_raw_per_kg,3.0,,,assumed,304 stainless strip; MBM Tubes quotes ~$4/kg for 304 tube
+assumptions.ts_capex.reflux_kg_per_m,1.4,,,assumed,Stainless collector rings + guide pipes per m of string
+assumptions.ts_capex.internals_kg_per_m,0.25,,,assumed,"Centralisers / end collars, steel per m"
+assumptions.ts_capex.ts_segment_m,12.0,,,assumed,Segment length fitting a 40 ft container
+assumptions.ts_capex.ts_noak_run_m_per_day,700,430.0,900.0,derived,"Single automated weld station, 24 h: ~25 min weld + PAUT + lower per 12 m segment (low = 40 min cycle)"
+assumptions.ts_capex.ts_noak_spread_per_day,8000,6000.0,10000.0,assumed,Hoist unit + automated welding/PAUT system + 2-3 person crew
+assumptions.ts_capex.ts_noak_weld_per_joint,150,80.0,250.0,assumed,"Orbital weld consumables, PAUT, equipment amortisation per girth weld"
+assumptions.ts_capex.ts_noak_test_charge,17500,15000.0,20000.0,assumed,Automated dry-N2 strength/decay test + vacuum hold + charge
+assumptions.ts_capex.condenser_raw_share,0.22,,,assumed,Metal content share of condenser price
+assumptions.ts_capex.safety_raw_share,0.12,,,assumed,"Material content share of safety system (sensors, relief)"
+assumptions.ts_capex.coupling_raw_share,0.25,,,assumed,Material share of coupling/preheat HX
+assumptions.ts_capex.ts_noak_insulation_factor,0.8,,,assumed,Volume pricing on bought-in aerogel/film; N2 system x0.6
+assumptions.ts_capex.aerogel_per_m2_10mm,53,35.0,80.0,published,"Aspen Aerogels 2025 ASP $4.95/ft2 energy-industrial (secondary source, approximate); scaled by thickness"
+assumptions.ts_capex.ins_wrap_collars_per_m,12,6.0,25.0,assumed,"Low-e film overwrap, automated winding, steel end collars per m"
+assumptions.ts_capex.ins_foil_per_m,3,,,assumed,Low-e foil wrap only (N2-cap option)
+assumptions.ts_capex.annulus_n2_system,15000,8000.0,30000.0,assumed,"N2 supply/regulation, liquid-level control, annulus NH3 analyser"
+assumptions.ts_capex.pip_bulkhead_per_m,20,,,assumed,Pipe-in-pipe bulkheads and factory sleeve welds per m

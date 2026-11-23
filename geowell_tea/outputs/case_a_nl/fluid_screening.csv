@@ -1,0 +1,157 @@
+fluid,architecture,T_top,insulated_m,liquid,status,flags,geo_kW_y1,geo_kW_y20,Tsat_bottom,inventory_kg,p_stag_bar
+ammonia,T_DIRECT,50.0,0.0,film,FEASIBLE,,0.0,0.0,54.890214269520925,0.0,41.623820811078225
+ammonia,T_DIRECT,50.0,0.0,guided,FEASIBLE,,0.0,0.0,54.89022600734677,0.0,41.623820811078225
+ammonia,T_DIRECT,50.0,1047.411,film,FEASIBLE,,12.803469343771484,6.686098814055834,54.8907065467879,397.0515073138474,41.623820811078225
+ammonia,T_DIRECT,50.0,1047.411,guided,FEASIBLE,,13.151736611381644,6.967567343012869,54.890802491062686,465.0125995735794,41.623820811078225
+ammonia,T_DIRECT,56.0,0.0,film,FEASIBLE,,0.0,0.0,61.10249268280927,0.0,41.623820811078225
+ammonia,T_DIRECT,56.0,0.0,guided,FEASIBLE,,0.0,0.0,61.10249295340452,0.0,41.623820811078225
+ammonia,T_DIRECT,56.0,1200.70125,film,FEASIBLE,,0.023078481375416814,0.0,61.102602232403,425.5814297587561,41.623820811078225
+ammonia,T_DIRECT,56.0,1200.70125,guided,FEASIBLE,,0.05553282832878454,0.0,61.10261543982426,489.85847659874634,41.623820811078225
+water,T_DIRECT,50.0,0.0,film,FEASIBLE,,0.0,0.0,52.88862062224132,0.0,0.474111651969613
+water,T_DIRECT,50.0,0.0,guided,FEASIBLE,,0.0,0.0,52.944052946360785,0.0,0.474111651969613
+water,T_DIRECT,50.0,1047.411,film,FEASIBLE,,8.87240947855,5.545595673810388,54.160946779355754,162.13886408340792,0.474111651969613
+water,T_DIRECT,50.0,1047.411,guided,FEASIBLE,,9.244748456178261,5.938725838198477,54.46735468265598,306.3983811673396,0.474111651969613
+water,T_DIRECT,56.0,0.0,film,FEASIBLE,,0.0,0.0,58.3668103103015,0.0,0.474111651969613
+water,T_DIRECT,56.0,0.0,guided,FEASIBLE,,0.0,0.0,58.369018493907674,0.0,0.474111651969613
+water,T_DIRECT,56.0,1200.70125,film,FEASIBLE,,0.02781386168650441,0.0,58.781756454128754,144.1523142958543,0.474111651969613
+water,T_DIRECT,56.0,1200.70125,guided,FEASIBLE,,0.10793837013399826,0.0,58.86392168349494,289.763461162776,0.474111651969613
+propane,T_DIRECT,50.0,0.0,film,FEASIBLE,,0.0,0.0,69.2298979863615,0.0,31.502638916690294
+propane,T_DIRECT,50.0,0.0,guided,FEASIBLE,,0.0,0.0,69.22989813537549,0.0,31.502638916690294
+propane,T_DIRECT,50.0,1047.411,film,FEASIBLE,,0.0,0.0,69.22992697205302,0.0,31.502638916690294
+propane,T_DIRECT,50.0,1047.411,guided,FEASIBLE,,0.0,0.0,69.22993047139573,0.0,31.502638916690294
+propane,T_DIRECT,56.0,0.0,film,FEASIBLE,,0.0,0.0,76.72744911611983,0.0,31.502638916690294
+propane,T_DIRECT,56.0,0.0,guided,FEASIBLE,,0.0,0.0,76.72744912461877,0.0,31.502638916690294
+propane,T_DIRECT,56.0,1200.70125,film,FEASIBLE,,0.0,0.0,76.72745116465603,0.0,31.502638916690294
+propane,T_DIRECT,56.0,1200.70125,guided,FEASIBLE,,0.0,0.0,76.72745144362324,0.0,31.502638916690294
+isobutane,T_DIRECT,50.0,0.0,film,FEASIBLE,,0.0,0.0,68.62605989974071,0.0,13.447684900771096
+isobutane,T_DIRECT,50.0,0.0,guided,FEASIBLE,,0.0,0.0,68.62606043601767,0.0,13.447684900771096
+isobutane,T_DIRECT,50.0,1047.411,film,FEASIBLE,,0.0,0.0,68.62617926901908,0.0,13.447684900771096
+isobutane,T_DIRECT,50.0,1047.411,guided,FEASIBLE,,0.0,0.0,68.62619329690466,0.0,13.447684900771096
+isobutane,T_DIRECT,56.0,0.0,film,FEASIBLE,,0.0,0.0,75.49028616307606,0.0,13.447684900771096
+isobutane,T_DIRECT,56.0,0.0,guided,FEASIBLE,,0.0,0.0,75.49028620949576,0.0,13.447684900771096
+isobutane,T_DIRECT,56.0,1200.70125,film,FEASIBLE,,0.0,0.0,75.49029621085748,0.0,13.447684900771096
+isobutane,T_DIRECT,56.0,1200.70125,guided,FEASIBLE,,0.0,0.0,75.49029758810025,0.0,13.447684900771096
+pentane,T_DIRECT,50.0,0.0,film,FEASIBLE,,0.0,0.0,66.2135435820789,0.0,3.6713239764275465
+pentane,T_DIRECT,50.0,0.0,guided,FEASIBLE,,0.0,0.0,66.21355468233969,0.0,3.6713239764275465
+pentane,T_DIRECT,50.0,1047.411,film,FEASIBLE,,0.0,0.0,66.21675353237629,0.0,3.6713239764275465
+pentane,T_DIRECT,50.0,1047.411,guided,FEASIBLE,,0.0,0.0,66.21710701803283,0.0,3.6713239764275465
+pentane,T_DIRECT,56.0,0.0,film,FEASIBLE,,0.0,0.0,72.75560436756962,0.0,3.6713239764275465
+pentane,T_DIRECT,56.0,0.0,guided,FEASIBLE,,0.0,0.0,72.75560470798177,0.0,3.6713239764275465
+pentane,T_DIRECT,56.0,1200.70125,film,FEASIBLE,,0.0,0.0,72.75568833114869,0.0,3.6713239764275465
+pentane,T_DIRECT,56.0,1200.70125,guided,FEASIBLE,,0.0,0.0,72.75569953408387,0.0,3.6713239764275465
+co2,T_DIRECT,50.0,0.0,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_DIRECT,50.0,0.0,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_DIRECT,50.0,1047.411,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_DIRECT,50.0,1047.411,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_DIRECT,56.0,0.0,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_DIRECT,56.0,0.0,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_DIRECT,56.0,1200.70125,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_DIRECT,56.0,1200.70125,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+ammonia,T_HP,12.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),165.14019190871736,119.4786331596076,15.89481271801344,277.0592664653059,41.623820811078225
+ammonia,T_HP,12.0,0.0,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),165.39951449372796,119.73610170392193,15.90206233480194,362.9857780106828,41.623820811078225
+ammonia,T_HP,20.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),123.4378874707269,89.25786438271682,24.051528645144685,295.86048290527793,41.623820811078225
+ammonia,T_HP,20.0,0.0,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),123.73792162355275,89.53116862678614,24.05475960869728,378.74719839940065,41.623820811078225
+ammonia,T_HP,20.0,281.394,film,UNVALIDATED,within 30 % of flooding limit; direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),125.3580520690442,90.54593987509533,24.05604356272221,290.8880154454866,41.623820811078225
+ammonia,T_HP,20.0,281.394,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),125.652845308643,90.81720472593064,24.06008459347038,373.77396388693927,41.623820811078225
+ammonia,T_HP,28.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),81.45229810948585,58.87901786212426,32.24134375942276,321.02871508858914,41.623820811078225
+ammonia,T_HP,28.0,0.0,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),81.77711549281034,59.16399183846777,32.242688566788274,400.5302134401946,41.623820811078225
+ammonia,T_HP,28.0,485.49150000000003,film,UNVALIDATED,within 30 % of flooding limit; direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),89.72055439585911,64.40657186394155,32.24449951482427,311.04820615781136,41.623820811078225
+ammonia,T_HP,28.0,485.49150000000003,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),90.04455996664066,64.69166197299704,32.24640352412587,390.5492959864342,41.623820811078225
+water,T_HP,12.0,0.0,film,UNVALIDATED,saturation-pressure / flow iteration did not converge; within 30 % of flooding limit; compressible vapour flow (Mach > 0.2) not modelled; vapour frictional pressure drop > 30 % of absolute pressure; transport-limited: condenser throttled in 240 of 240 steps,53.200882426283826,50.401618401146614,51.453916637291854,204.5272122948062,0.474111651969613
+water,T_HP,12.0,0.0,guided,UNVALIDATED,saturation-pressure / flow iteration did not converge; vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run); compressible vapour flow (Mach > 0.2) not modelled; vapour frictional pressure drop > 30 % of absolute pressure,60.42408093278061,53.58004497646938,53.45961071998852,350.24423433698445,0.474111651969613
+water,T_HP,20.0,0.0,film,UNVALIDATED,saturation-pressure / flow iteration did not converge; within 30 % of flooding limit; compressible vapour flow (Mach > 0.2) not modelled; vapour frictional pressure drop > 30 % of absolute pressure,47.8002890595844,43.097375770484064,49.78867540270835,202.83736870826297,0.474111651969613
+water,T_HP,20.0,0.0,guided,UNVALIDATED,saturation-pressure / flow iteration did not converge; compressible vapour flow (Mach > 0.2) not modelled; vapour frictional pressure drop > 30 % of absolute pressure,47.59271942227931,42.74152932813067,50.716201195293536,346.7538841733027,0.474111651969613
+water,T_HP,20.0,281.394,film,UNVALIDATED,saturation-pressure / flow iteration did not converge; within 30 % of flooding limit; compressible vapour flow (Mach > 0.2) not modelled; vapour frictional pressure drop > 30 % of absolute pressure; transport-limited: condenser throttled in 42 of 240 steps,48.87256853035346,44.577113730069335,50.708023130221704,198.3054653664006,0.474111651969613
+water,T_HP,20.0,281.394,guided,UNVALIDATED,saturation-pressure / flow iteration did not converge; vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run); compressible vapour flow (Mach > 0.2) not modelled; vapour frictional pressure drop > 30 % of absolute pressure,50.52869949885193,43.978621690666834,51.637891958116256,344.1671140293283,0.474111651969613
+water,T_HP,28.0,0.0,film,UNVALIDATED,vapour frictional pressure drop > 30 % of absolute pressure,19.037624194840014,19.423835734162186,46.139204992464556,187.8921540516881,0.474111651969613
+water,T_HP,28.0,0.0,guided,UNVALIDATED,vapour frictional pressure drop > 30 % of absolute pressure,18.14308147882252,18.694862962518577,46.854113867213755,331.70250865847805,0.474111651969613
+water,T_HP,28.0,485.49150000000003,film,UNVALIDATED,within 30 % of flooding limit; vapour frictional pressure drop > 30 % of absolute pressure,26.5840853170532,23.943176406947412,46.96679808663504,183.67925186641136,0.474111651969613
+water,T_HP,28.0,485.49150000000003,guided,UNVALIDATED,saturation-pressure / flow iteration did not converge; vapour frictional pressure drop > 30 % of absolute pressure,32.96849221129355,30.211838532887302,49.07140559676327,332.11117047839605,0.474111651969613
+propane,T_HP,12.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,49.19573320967398,60.45283138814799,37.22473911521098,762.6713435209451,31.502638916690294
+propane,T_HP,12.0,0.0,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run),138.79030718734643,100.88547389908997,25.864677870617697,605.0318744482572,31.502638916690294
+propane,T_HP,20.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,49.1960770983188,60.454635648436,37.22416179233255,762.6693259499953,31.502638916690294
+propane,T_HP,20.0,0.0,guided,FEASIBLE,,96.20970558274973,69.79767432661389,34.60860961569324,671.2802820910028,31.502638916690294
+propane,T_HP,20.0,281.394,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,48.695900757475705,50.875122558859694,41.07645029216252,753.6126185433199,31.502638916690294
+propane,T_HP,20.0,281.394,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run),98.51271904128849,71.37861358498526,34.62770296887834,659.6623095143107,31.502638916690294
+propane,T_HP,28.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 6 of 240 steps,47.54138143035234,37.67948223146112,43.52809343801954,762.6600743918157,31.502638916690294
+propane,T_HP,28.0,0.0,guided,FEASIBLE,,52.874416473845834,38.292617984941295,43.53241926335022,755.5686016529561,31.502638916690294
+propane,T_HP,28.0,485.49150000000003,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 58 of 240 steps,47.39450820526932,44.30467659237734,43.538664001024586,762.3913802241042,31.502638916690294
+propane,T_HP,28.0,485.49150000000003,guided,FEASIBLE,,62.65508016294613,44.882897259148564,43.54491085998177,730.9570273612234,31.502638916690294
+isobutane,T_HP,12.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,39.064654177229,48.313163801612255,40.75611305571243,444.10350631986705,13.447684900771096
+isobutane,T_HP,12.0,0.0,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run); transport-limited: condenser throttled in 1 of 240 steps,128.67944682130042,95.59698573695765,27.624062820742665,451.90168534843446,13.447684900771096
+isobutane,T_HP,20.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,39.064583583328314,48.3123503259574,40.755881706329035,444.1039401337937,13.447684900771096
+isobutane,T_HP,20.0,0.0,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run),90.43040632029175,66.51897859191072,35.678953006457846,468.9414198667786,13.447684900771096
+isobutane,T_HP,20.0,281.394,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,42.44680317951961,43.01818711774953,43.60911525004724,437.45148255268197,13.447684900771096
+isobutane,T_HP,20.0,281.394,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run),92.30942762825033,67.92455953958547,35.771179616106,463.0579065373137,13.447684900771096
+isobutane,T_HP,28.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 19 of 240 steps,39.06401353371111,35.88628964065298,44.13979199407589,444.1043689875841,13.447684900771096
+isobutane,T_HP,28.0,0.0,guided,FEASIBLE,,49.6194554253094,36.26741093654431,44.15830524899485,492.346625421194,13.447684900771096
+isobutane,T_HP,28.0,485.49150000000003,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 230 of 240 steps,41.64023023016722,42.760718509857135,44.19018744741538,438.4940091463325,13.447684900771096
+isobutane,T_HP,28.0,485.49150000000003,guided,FEASIBLE,,59.226158969994394,42.81279654768288,44.215230016503256,480.57777381766493,13.447684900771096
+pentane,T_HP,12.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,23.73931790054648,33.47617337916468,44.27225890736577,242.85012383241906,3.6713239764275465
+pentane,T_HP,12.0,0.0,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run); vapour frictional pressure drop > 30 % of absolute pressure; transport-limited: condenser throttled in 4 of 240 steps,88.1968891312942,73.55895280589571,34.71816502323588,346.9859051685232,3.6713239764275465
+pentane,T_HP,20.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,23.738938124697448,33.47653355027228,44.27213768576172,242.8493611027394,3.6713239764275465
+pentane,T_HP,20.0,0.0,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run); vapour frictional pressure drop > 30 % of absolute pressure,69.93514078202205,56.577199734962875,38.54682425754322,344.71181598404905,3.6713239764275465
+pentane,T_HP,20.0,281.394,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,32.80261353009839,33.16973439530528,45.965273705016784,241.80937056893973,3.6713239764275465
+pentane,T_HP,20.0,281.394,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run); vapour frictional pressure drop > 30 % of absolute pressure,69.78101876737131,56.586507028431924,39.12597970936508,340.59746006157724,3.6713239764275465
+pentane,T_HP,28.0,0.0,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,23.738179110156615,33.476385826739545,44.27249256184956,242.84902619639118,3.6713239764275465
+pentane,T_HP,28.0,0.0,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run),43.122992727924526,34.005713870446414,44.19446611442845,339.0726324722824,3.6713239764275465
+pentane,T_HP,28.0,485.49150000000003,film,UNVALIDATED,within 30 % of flooding limit; transport-limited: condenser throttled in 240 of 240 steps,32.69935868595204,33.02870865950117,46.79822638042356,239.96937152795763,3.6713239764275465
+pentane,T_HP,28.0,485.49150000000003,guided,UNVALIDATED,vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run),50.77949927576731,39.447245780870176,44.68802624821001,333.3092714386315,3.6713239764275465
+co2,T_HP,12.0,0.0,film,UNVALIDATED,shut-in stagnation would be supercritical at depth (pressure estimate uncertain); transport-limited: condenser throttled in 240 of 240 steps,0.0,0.0,26.417169992065396,0.0,81.15030000000002
+co2,T_HP,12.0,0.0,guided,UNVALIDATED,shut-in stagnation would be supercritical at depth (pressure estimate uncertain); vapour Kutateladze number above 3.2 (guided return; outside the validated range for this run); large flammable inventory,126.0745894628521,91.04207225220843,26.417169992065396,4731.570296282607,81.15030000000002
+co2,T_HP,20.0,0.0,film,UNVALIDATED,shut-in stagnation would be supercritical at depth (pressure estimate uncertain); transport-limited: condenser throttled in 240 of 240 steps,0.0,0.0,26.414916186523442,0.0,81.15030000000002
+co2,T_HP,20.0,0.0,guided,UNVALIDATED,shut-in stagnation would be supercritical at depth (pressure estimate uncertain); transport-limited: condenser throttled in 240 of 240 steps,0.0,0.0,26.414916186523442,0.0,81.15030000000002
+co2,T_HP,20.0,281.394,film,UNVALIDATED,shut-in stagnation would be supercritical at depth (pressure estimate uncertain); transport-limited: condenser throttled in 240 of 240 steps,0.0,0.0,26.414916186523442,0.0,81.15030000000002
+co2,T_HP,20.0,281.394,guided,UNVALIDATED,shut-in stagnation would be supercritical at depth (pressure estimate uncertain); transport-limited: condenser throttled in 240 of 240 steps,0.0,0.0,26.414916186523442,0.0,81.15030000000002
+co2,T_HP,28.0,0.0,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_HP,28.0,0.0,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_HP,28.0,485.49150000000003,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_HP,28.0,485.49150000000003,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+ammonia,T_ADAPTIVE,42.0,0.0,film,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),7.546620331345672,5.460052656141047,46.63273083051445,380.41493087220647,41.623820811078225
+ammonia,T_ADAPTIVE,42.0,0.0,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),7.874394924337964,5.737009809501897,46.63292189782442,453.00648218057796,41.623820811078225
+ammonia,T_ADAPTIVE,42.0,843.3135000000001,film,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),37.14543389137394,25.249023133173484,46.63374568138477,360.72071913226443,41.623820811078225
+ammonia,T_ADAPTIVE,42.0,843.3135000000001,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),37.495917989867124,25.538626071450196,46.63410574244119,433.3022314084598,41.623820811078225
+ammonia,T_ADAPTIVE,48.0,0.0,film,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),0.0,0.0,52.82372885915868,0.0,41.623820811078225
+ammonia,T_ADAPTIVE,48.0,0.0,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),0.0,0.0,52.82375565820246,0.0,41.623820811078225
+ammonia,T_ADAPTIVE,48.0,996.6037500000001,film,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),18.48000220916521,11.053385707766537,52.824389528189045,386.8646931347846,41.623820811078225
+ammonia,T_ADAPTIVE,48.0,996.6037500000001,guided,FEASIBLE,direct coupling: ammonia enters the heat-pump machinery room (IIAR 2/9 scope; HP charge counts toward the PSM/RMP threshold),18.82975840627264,11.337700550470405,52.82452977968296,456.029203679738,41.623820811078225
+water,T_ADAPTIVE,42.0,0.0,film,FEASIBLE,,0.0,0.0,48.72393878708061,0.0,0.474111651969613
+water,T_ADAPTIVE,42.0,0.0,guided,FEASIBLE,,0.0,0.0,49.14240315145514,0.0,0.474111651969613
+water,T_ADAPTIVE,42.0,843.3135000000001,film,UNVALIDATED,vapour frictional pressure drop > 30 % of absolute pressure,18.90208919518268,15.357995494801273,50.13482088101432,174.08932400607432,0.474111651969613
+water,T_ADAPTIVE,42.0,843.3135000000001,guided,UNVALIDATED,vapour frictional pressure drop > 30 % of absolute pressure,18.607825679806748,15.233564226370566,50.69396367215472,317.80462595011954,0.474111651969613
+water,T_ADAPTIVE,48.0,0.0,film,FEASIBLE,,0.0,0.0,51.460717406891945,0.0,0.474111651969613
+water,T_ADAPTIVE,48.0,0.0,guided,FEASIBLE,,0.0,0.0,51.55799613092995,0.0,0.474111651969613
+water,T_ADAPTIVE,48.0,996.6037500000001,film,FEASIBLE,,11.862560726064823,8.352331434857375,52.94212290734879,165.8699226868024,0.474111651969613
+water,T_ADAPTIVE,48.0,996.6037500000001,guided,UNVALIDATED,vapour frictional pressure drop > 30 % of absolute pressure,12.060498962557313,8.625482366617668,53.31943939008738,309.9206927530756,0.474111651969613
+propane,T_ADAPTIVE,42.0,0.0,film,FEASIBLE,,0.0,0.0,59.63905208509425,0.0,31.502638916690294
+propane,T_ADAPTIVE,42.0,0.0,guided,FEASIBLE,,0.0,0.0,59.639114594815226,0.0,31.502638916690294
+propane,T_ADAPTIVE,42.0,843.3135000000001,film,UNVALIDATED,within 30 % of flooding limit,9.726392338556385,5.272134384516279,59.64156528927742,867.5265196952456,31.502638916690294
+propane,T_ADAPTIVE,42.0,843.3135000000001,guided,FEASIBLE,,10.370612070027871,5.620118013158251,59.64212550839022,900.2693486352753,31.502638916690294
+propane,T_ADAPTIVE,48.0,0.0,film,FEASIBLE,,0.0,0.0,66.7967071014175,0.0,31.502638916690294
+propane,T_ADAPTIVE,48.0,0.0,guided,FEASIBLE,,0.0,0.0,66.79670748326896,0.0,31.502638916690294
+propane,T_ADAPTIVE,48.0,996.6037500000001,film,FEASIBLE,,0.0,0.0,66.79681708553892,0.0,31.502638916690294
+propane,T_ADAPTIVE,48.0,996.6037500000001,guided,FEASIBLE,,0.0,0.0,66.79682821394715,0.0,31.502638916690294
+isobutane,T_ADAPTIVE,42.0,0.0,film,FEASIBLE,,0.0,0.0,59.588422061342726,0.0,13.447684900771096
+isobutane,T_ADAPTIVE,42.0,0.0,guided,FEASIBLE,,0.0,0.0,59.588651846245625,0.0,13.447684900771096
+isobutane,T_ADAPTIVE,42.0,843.3135000000001,film,UNVALIDATED,within 30 % of flooding limit,9.280538407051,4.946748064888333,59.59787495119076,462.701907425294,13.447684900771096
+isobutane,T_ADAPTIVE,42.0,843.3135000000001,guided,FEASIBLE,,9.732190320271236,5.207377217960608,59.599827057851826,523.1769809515424,13.447684900771096
+isobutane,T_ADAPTIVE,48.0,0.0,film,FEASIBLE,,0.0,0.0,66.35539976122203,0.0,13.447684900771096
+isobutane,T_ADAPTIVE,48.0,0.0,guided,FEASIBLE,,0.0,0.0,66.35540142351783,0.0,13.447684900771096
+isobutane,T_ADAPTIVE,48.0,996.6037500000001,film,FEASIBLE,,0.0,0.0,66.35583286319627,0.0,13.447684900771096
+isobutane,T_ADAPTIVE,48.0,996.6037500000001,guided,FEASIBLE,,0.0,0.0,66.35587712597737,0.0,13.447684900771096
+pentane,T_ADAPTIVE,42.0,0.0,film,FEASIBLE,,0.0,0.0,57.568924146490815,0.0,3.6713239764275465
+pentane,T_ADAPTIVE,42.0,0.0,guided,FEASIBLE,,0.0,0.0,57.572882627454874,0.0,3.6713239764275465
+pentane,T_ADAPTIVE,42.0,843.3135000000001,film,UNVALIDATED,within 30 % of flooding limit,12.065267918482,7.267916226304391,57.67996101077301,229.3960161197694,3.6713239764275465
+pentane,T_ADAPTIVE,42.0,843.3135000000001,guided,FEASIBLE,,12.243751000422256,7.413924881016869,57.70240895738982,312.66812958242303,3.6713239764275465
+pentane,T_ADAPTIVE,48.0,0.0,film,FEASIBLE,,0.0,0.0,64.04014909230455,0.0,3.6713239764275465
+pentane,T_ADAPTIVE,48.0,0.0,guided,FEASIBLE,,0.0,0.0,64.0402134200342,0.0,3.6713239764275465
+pentane,T_ADAPTIVE,48.0,996.6037500000001,film,FEASIBLE,,0.0,0.0,64.05168401803274,0.0,3.6713239764275465
+pentane,T_ADAPTIVE,48.0,996.6037500000001,guided,FEASIBLE,,0.0,0.0,64.05298526427941,0.0,3.6713239764275465
+co2,T_ADAPTIVE,42.0,0.0,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_ADAPTIVE,42.0,0.0,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_ADAPTIVE,42.0,843.3135000000001,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_ADAPTIVE,42.0,843.3135000000001,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_ADAPTIVE,48.0,0.0,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_ADAPTIVE,48.0,0.0,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_ADAPTIVE,48.0,996.6037500000001,film,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002
+co2,T_ADAPTIVE,48.0,996.6037500000001,guided,INFEASIBLE,condenser temperature above critical point (31.0 C); shut-in stagnation would be supercritical at depth (pressure estimate uncertain),0.0,0.0,,0.0,81.15030000000002

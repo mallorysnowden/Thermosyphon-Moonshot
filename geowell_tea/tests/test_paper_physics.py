@@ -61,3 +61,34 @@ def test_dirichlet_far_field_energy_balance():
     bal = rf.energy_deficit_J() + rf.far_field_inflow_J
     assert rf.far_field_inflow_J > 0
     assert abs(bal - extracted) / extracted < 0.02
+
+
+def test_insulation_options_order_and_bore():
+    """Factory aerogel in a N2-capped annulus insulates far better than water; N2 alone keeps full bore."""
+    from geowell_tea.geology import Geology
+    from geowell_tea.wellbore import Well
+    geo = Geology.linear(1700, 12, 80)
+    well = Well(casing_id=0.150)
+    rf = RockField(geo, well.r_b, n_z=34)
+    R = {}
+    for ins in ("aerogel_n2", "n2_only", "pip", "vit_liner"):
+        ts = Thermosiphon(ThermosiphonDesign(T_top=42, insulated_length=850, insulation=ins), well, geo.depth, rf.z, rf.dz)
+        R[ins] = float(ts.R_static[0])
+        if ins == "n2_only":
+            assert ts.geom.d_i_ins == ts.geom.d_i
+        if ins == "aerogel_n2":
+            assert ts.ins_t == 0.005 and ts.geom.d_i_ins < ts.geom.d_i
+    R_water = float(ts.R_static[-1])
+    assert R["aerogel_n2"] > R["n2_only"] > R_water
+
+
+def test_cost_levels_ordered():
+    from geowell_tea.costs import capex_breakdown
+    from geowell_tea.schema import load_case
+    p = load_case("case_a_pa.yaml").params
+    q = dict(depth_m=1700, steel_kg=30000, insulated_m=0, guided=True, inventory_kg=400, fluid="ammonia",
+             peak_geo_W=1.2e5, peak_useful_W=1.5e5, peak_pump_W=1e3, distance_m=250, direct_coupled=True)
+    tot = {lvl: sum(capex_breakdown("T_HP", q, dict(p, ts_cost_level=lvl)).values()) for lvl in ("foak", "base", "noak")}
+    assert tot["foak"] > tot["base"] > tot["noak"]
+    items = capex_breakdown("T_HP", q, p)
+    assert items["secondary_loop"] == 0 and items["hp_direct_coupling"] > 0

@@ -18,6 +18,7 @@ from .loads import load_series
 from .optimize import (ARCHS, annual_block, best_by_arch, coax_grid, evaluate, run_designs, ts_grid)
 from .schema import Case, load_case, sample_params
 from .simulate import SimSettings
+from .levers import what_must_be_true
 
 OUT_ROOT = Path(__file__).resolve().parents[2] / "outputs"
 SCREEN_FLUIDS = ("ammonia", "water", "propane", "isobutane", "pentane", "co2")
@@ -59,6 +60,49 @@ def ts_vs_c(rows, params, distance_m, allow_unvalidated=False, mask_rows=None):
     ts_min = M[is_ts].min(axis=0) if is_ts.any() else np.full(M.shape[1], np.inf)
     c_min = M[~is_ts].min(axis=0) if (~is_ts).any() else np.full(M.shape[1], np.inf)
     return ts_min, c_min
+
+
+def _wmbt_outputs(results, case, sim, out: Path, tag: str = "") -> dict:
+    w = what_must_be_true(results, case, sim.distance_m)
+    w["table"].to_csv(out / f"what_must_be_true{tag}.csv", index=False)
+    pd.Series(w["breakevens"]).to_csv(out / f"breakevens{tag}.csv", header=["value"])
+    return w
+
+
+def _wmbt_markdown(w, title: str) -> str:
+    t = w["table"]
+    lines = [f"\n## {title}\n",
+             "Thermosiphon at FOAK / today's base / NOAK and with cumulative scale levers (thermosiphon only); "
+             "coaxial and the incumbent stay at today's assumptions. Best FEASIBLE design re-picked at each step.\n"]
+    for cov, g in t.groupby("coverage", sort=False):
+        lines.append(f"\n**Coverage: {cov}** (coaxial today ${g.coax_lcoh_today.iloc[0]:.0f}/MWh; "
+                     f"incumbent ${g.incumbent.iloc[0]:.0f}/MWh)\n")
+        lines.append(_fmt(g.rename(columns={"ts_case": "thermosiphon case"}),
+                          ["thermosiphon case", "ts_lcoh", "ts_over_coax", "carbon_price_for_parity", "ts_unmet_max",
+                           "ts_design"], "{:.2f}"))
+    be = w["breakevens"]
+    lines.append("\n**Break-evens** (nan = no parity inside the search range)\n\n")
+    for k, v in be.items():
+        lines.append(f"* `{k}` = {v:.2f}\n" if np.isfinite(v) else f"* `{k}` = n/a\n")
+    return "".join(lines)
+
+
+def run_variant(config: str, ku_validated: float, out_dir: Path | None = None) -> dict:
+    """Lean rerun for a guided-return validity regime: design search + 'what would need to be true'."""
+    case = load_case(config)
+    tag = Path(config).stem
+    out = Path(out_dir) if out_dir else OUT_ROOT / tag / f"validity_ku{ku_validated:g}"
+    out.mkdir(parents=True, exist_ok=True)
+    sim = _sim_settings(case)
+    geo, well, surf = case.geology, case.well, case.surface
+    L = load_series(case.load["peak_month_kW"] * 1e3, case.load["shape"], case.load["flh"], sim.years)
+    archs = ts_grid(geo, surf, ku_validated=ku_validated) + coax_grid(geo, well, surf)
+    res = run_designs(archs, geo, well, surf, ("fixed", L), sim)
+    w = _wmbt_outputs(res, case, sim, out)
+    with open(out / "report.md", "w") as fh:
+        fh.write(f"# {case.name}: guided-return validity Ku <= {ku_validated:g}\n")
+        fh.write(_wmbt_markdown(w, "What would need to be true"))
+    return w
 
 
 def run_case(config: str, out_dir: Path | None = None, mc_draws: int = 500, quick: bool = False) -> dict:
@@ -206,6 +250,13 @@ def run_case(config: str, out_dir: Path | None = None, mc_draws: int = 500, quic
     with open(out / "summary.json", "w") as fh:
         json.dump(summary, fh, indent=2, default=float)
     _write_report(case, out, summary, best_df, resmax_df, scr_df, torn_df, mc_summary, sweep_df, b2)
+    w = _wmbt_outputs(res_cust, case, sim, out)
+    with open(out / "report.md", "a") as fh:
+        fh.write(_wmbt_markdown(w, "What would need to be true (guided-return validity Ku <= 3.2)"))
+    summary["what_must_be_true"] = w["table"].to_dict(orient="records")
+    summary["breakevens"] = w["breakevens"]
+    with open(out / "summary.json", "w") as fh:
+        json.dump(summary, fh, indent=2, default=float)
     return summary
 
 

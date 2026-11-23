@@ -14,7 +14,7 @@ geology:
   groundwater_advection: {value: false, status: assumed, source: "Off in baseline"}
 
 well:
-  casing_id: {value: 0.127, low: 0.10, high: 0.18, status: assumed, source: "Scenario assumption; potentially binding"}
+  casing_id: {value: 0.152, low: 0.121, high: 0.160, status: assumed, source: "Typical Bakken 7-in 32 lb/ft intermediate casing (ID 6.094 in, drift ~152 mm) set through the vertical section; range 5-1/2-in 20# to 7-in 26#. The string must sit in the vertical section above the kickoff point"}
   casing_wall: {value: 0.0095, status: assumed, source: "Typical"}
   cement_thickness: {value: 0.025, status: assumed, source: "Typical"}
 
@@ -32,6 +32,7 @@ prices:
   electricity_price: {value: 0.075, low: 0.06, high: 0.45, status: published, source: "EIA Table 5.6.A: ND commercial 7.40 c/kWh (Nov 2025)"}
   incumbent_fuel_price_per_MWh: {value: 68.6, status: derived, source: "ND residential propane $1.838/gal (EIA heating-season survey, Nov 2026) / 0.02681 MWh per gal. Pipeline gas alternative would be far cheaper - sensitivity"}
   incumbent_efficiency: {value: 0.90, status: assumed, source: "Condensing propane boiler"}
+  incumbent_emission_factor_t_per_MWh: {value: 0.2145, status: published, source: "EPA emission factor for propane, 62.87 kg CO2/MMBtu (HHV)"}
   plugging_eol: {value: 150000, low: 80000, high: 400000, status: assumed, source: "Deeper well than PA average; no ND-specific figure retrieved"}
 
 simulation:
