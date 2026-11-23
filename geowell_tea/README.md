@@ -14,7 +14,7 @@ customer temperatures, and each is optimised independently. Nothing forces them 
 ```bash
 cd geowell_tea
 pip install -e .[test]          # numpy, scipy, pandas, pyyaml, matplotlib (pinned)
-python -m pytest                 # 72 tests, ~3 s
+python -m pytest                 # 76 tests, ~30 s
 python -m geowell_tea.cli validate                       # rock check + published benchmarks (~1 min)
 python -m geowell_tea.cli run configs/case_a_pa.yaml     # Case A, ~2 min
 python -m geowell_tea.cli run configs/case_b_nd.yaml     # Case B, ~1 min
@@ -56,6 +56,27 @@ today's costs, for any coverage and for full coverage (< 2 % unmet every year). 
 python -m geowell_tea.cli run configs/case_b_nd.yaml --ku 4.4   # guided return validated to Ku 4.4
 python -m geowell_tea.cli run configs/case_b_nl.yaml             # Dutch-price variant (also case_a_nl)
 ```
+
+## Web calculator (Streamlit)
+
+`app.py` is a fast, thermosiphon-only calculator built on `geowell_tea.fast`. The user picks the
+configuration (**hybrid**: condenser = heat-pump evaporator, or **direct** heat), the condensate-return method
+(guided stepped reflux or falling film), the well, the heat demand and prices; the tool searches only the
+condenser setpoint and insulated length (3-10 simulations, a few seconds) and compares the best design with
+the incumbent boiler, including the "what would need to be true" waterfall. Invalid inputs return an error
+with a one-line reason (well too cold for direct heat, no operable point because of vapour-flow limits,
+ammonia past its critical point, string fails collapse/burst, no design covers the full load); questionable
+results are shown with warnings (unvalidated Ku, near-flooding film, unmet load, PSM threshold, ammonia in
+the machinery room). On the four presets it reproduces the full model's best design and cost within 0.1 %.
+
+```bash
+pip install streamlit && streamlit run app.py          # local
+bash scripts/build_hf_space.sh                          # Hugging Face Space bundle in dist/hf_space/
+huggingface-cli upload <hf-user>/<space-name> dist/hf_space . --repo-type=space
+```
+
+To deploy: create a new Space on huggingface.co with the **Streamlit** SDK, then run the two commands above
+(`pip install huggingface_hub` and `huggingface-cli login` first).
 
 ## Configuration and provenance
 
