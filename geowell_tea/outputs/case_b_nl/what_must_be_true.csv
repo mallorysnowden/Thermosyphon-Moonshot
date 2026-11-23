@@ -1,0 +1,13 @@
+coverage,ts_case,ts_lcoh,ts_design,ts_unmet_max,coax_lcoh_today,coax_design,incumbent,ts_over_coax,carbon_price_for_parity
+any,FOAK (1.5x base),169.1228001823392,T_HP ammonia T_top=25C ins=0m guided,0.09738865166425258,122.64345610719538,C_DIRECT VIT114mm m=8.0kg/s T_in=var,97.77777777777777,1.3789794054280318,354.75425505030546
+any,today's base costs,144.95625193586432,T_HP ammonia T_top=25C ins=0m guided,0.09738865166425258,122.64345610719538,C_DIRECT VIT114mm m=8.0kg/s T_in=var,97.77777777777777,1.1819322166619852,234.58909802363476
+any,1. NOAK manufacturing + automated install (raw x 2.5),118.5626080561303,T_DIRECT ammonia T_top=40C ins=1049m guided,0.49390136418524483,122.64345610719538,C_DIRECT VIT114mm m=8.0kg/s T_in=var,97.77777777777777,0.9667259209696581,103.34998480948772
+any,"2. standardised well-reuse programme (common -40%, contingency 10%)",96.52886728078514,T_DIRECT ammonia T_top=40C ins=1049m guided,0.49390136418524483,122.64345610719538,C_DIRECT VIT114mm m=8.0kg/s T_in=var,97.77777777777777,0.7870690401648089,0.0
+any,3. heat pump $500/kW,96.52886728078514,T_DIRECT ammonia T_top=40C ins=1049m guided,0.49390136418524483,122.64345610719538,C_DIRECT VIT114mm m=8.0kg/s T_in=var,97.77777777777777,0.7870690401648089,0.0
+any,4. infrastructure financing 6% real,78.75975992475672,T_DIRECT ammonia T_top=40C ins=1049m guided,0.49390136418524483,122.64345610719538,C_DIRECT VIT114mm m=8.0kg/s T_in=var,97.77777777777777,0.6421847722223147,0.0
+full (<2% unmet every year),FOAK (1.5x base),,,,153.9296599984123,C_ADAPTIVE VIT114mm m=3.0kg/s T_in=12C,97.77777777777777,,0.0
+full (<2% unmet every year),today's base costs,,,,153.9296599984123,C_ADAPTIVE VIT114mm m=3.0kg/s T_in=12C,97.77777777777777,,0.0
+full (<2% unmet every year),1. NOAK manufacturing + automated install (raw x 2.5),,,,153.9296599984123,C_ADAPTIVE VIT114mm m=3.0kg/s T_in=12C,97.77777777777777,,0.0
+full (<2% unmet every year),"2. standardised well-reuse programme (common -40%, contingency 10%)",,,,153.9296599984123,C_ADAPTIVE VIT114mm m=3.0kg/s T_in=12C,97.77777777777777,,0.0
+full (<2% unmet every year),3. heat pump $500/kW,,,,153.9296599984123,C_ADAPTIVE VIT114mm m=3.0kg/s T_in=12C,97.77777777777777,,0.0
+full (<2% unmet every year),4. infrastructure financing 6% real,,,,153.9296599984123,C_ADAPTIVE VIT114mm m=3.0kg/s T_in=12C,97.77777777777777,,0.0

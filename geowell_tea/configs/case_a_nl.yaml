@@ -1,0 +1,39 @@
+# Case A - Western Pennsylvania greenhouse, reused gas well (hypothetical candidate).
+# status: published | assumed | derived | measured
+case:
+  name: "Case A-NL - Case A well geometry with Dutch greenhouse economics"
+  description: "Same geology, well and load as the US case; prices replaced by Dutch / EU non-household values (EUR converted at 1.10 USD/EUR). No subsidy in the base case."
+
+geology:
+  depth: {value: 1737, status: published, source: "Penn State 2025 'Sustainable Well Upcycling for Greenhouse Heating' - 5,700 ft well (rounded)"}
+  T_bottom: {value: 80.0, status: published, source: "Same study: ~80 C bottom-hole temperature"}
+  T_surface: {value: 12.0, status: assumed, source: "Scenario assumption, not measured at the well"}
+  k: {value: 2.5, low: 1.5, high: 4.0, status: assumed, source: "Scenario assumption"}
+  rho: {value: 2400, status: assumed, source: "Scenario assumption"}
+  cp: {value: 900, status: assumed, source: "Scenario assumption"}
+  groundwater_advection: {value: false, status: assumed, source: "Off in baseline; unknown"}
+
+well:
+  casing_id: {value: 0.150, low: 0.10, high: 0.20, status: assumed, source: "Usable clear ID; clearance budget enforced"}
+  casing_wall: {value: 0.0095, status: assumed, source: "Typical production casing wall"}
+  cement_thickness: {value: 0.025, status: assumed, source: "Casing OD to rock face"}
+
+load:
+  peak_month_kW: {value: 120, low: 60, high: 200, status: assumed, source: "Peak-month average greenhouse demand. Set equal to the Penn State study's modelled 120 kW capacity as a proxy for the greenhouse's design demand - NOT a resource cap"}
+  shape: {value: western_pa, status: assumed, source: "Monthly HDD-shaped profile (approximate)"}
+  flh: {value: 5000, low: 3000, high: 8000, status: assumed, source: "Brief: 5,000 full-load-equivalent h/yr screening value"}
+  T_supply: {value: 45.0, status: assumed, source: "Brief: 45/35 C hydronic"}
+  T_return: {value: 35.0, status: assumed, source: "Brief"}
+  distance_m: {value: 250, low: 0, high: 1000, status: assumed, source: "Brief"}
+
+prices:
+  electricity_price: {value: 0.198, low: 0.154, high: 0.286, status: published, source: "EU average non-household electricity EUR 0.18/kWh, H1 2026 (Eurostat); NL-specific value not retrieved. EUR/USD 1.10 (mid-Nov 2026)"}
+  incumbent_fuel_price_per_MWh: {value: 88.0, status: published, source: "Netherlands non-household gas EUR 0.08/kWh incl. taxes and levies, H1 2026 (Eurostat, 10,000-100,000 GJ/yr band)"}
+  incumbent_efficiency: {value: 0.90, status: assumed, source: "Condensing gas boiler"}
+  incumbent_emission_factor_t_per_MWh: {value: 0.181, status: published, source: "Natural gas CO2 per MWh fuel (EPA factor); carbon price result = price ON TOP of today's Dutch taxes (ETS2 starts 2028)"}
+  plugging_eol: {value: 110000, low: 60000, high: 400000, status: assumed, source: "US value retained; no Dutch abandonment cost retrieved"}
+
+simulation:
+  n_z: 50
+  n_r: 36
+  years: 20
