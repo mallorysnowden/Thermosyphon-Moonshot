@@ -75,8 +75,10 @@ bash scripts/build_hf_space.sh                          # Hugging Face Space bun
 huggingface-cli upload <hf-user>/<space-name> dist/hf_space . --repo-type=space
 ```
 
-To deploy: create a new Space on huggingface.co with the **Streamlit** SDK, then run the two commands above
-(`pip install huggingface_hub` and `huggingface-cli login` first).
+To deploy on **Streamlit Community Cloud** (free): at share.streamlit.io choose this repo, branch `main`,
+main file `geowell_tea/app.py`, and Python 3.12 under Advanced settings. Dependencies come from
+`geowell_tea/requirements.txt` (Streamlit itself is preinstalled). Hugging Face no longer offers a Streamlit
+Space type, so the `build_hf_space.sh` bundle is only useful with a paid Docker Space.
 
 ## Configuration and provenance
 
