@@ -1,0 +1,39 @@
+# Template for the web calculator (app.py). Every well, load and price value below is only a starting
+# value: the user overwrites it in the UI. Only rock rho/cp, casing wall, cement thickness and the
+# simulation settings are used as-is (and are listed in the app's "Baked-in assumptions").
+case:
+  name: "Web calculator"
+  description: "User-specified well and customer"
+
+geology:
+  depth: {value: 2500, status: assumed, source: "UI default"}
+  T_bottom: {value: 95.0, status: assumed, source: "UI default"}
+  T_surface: {value: 12.0, status: assumed, source: "UI default"}
+  k: {value: 2.5, status: assumed, source: "UI default"}
+  rho: {value: 2400, status: assumed, source: "Typical sedimentary rock density, kg/m3"}
+  cp: {value: 900, status: assumed, source: "Typical sedimentary rock specific heat, J/(kg K)"}
+
+well:
+  casing_id: {value: 0.152, status: assumed, source: "UI default"}
+  casing_wall: {value: 0.0095, status: assumed, source: "Typical production casing wall, m"}
+  cement_thickness: {value: 0.025, status: assumed, source: "Casing OD to rock face, m"}
+
+load:
+  peak_month_kW: {value: 200, status: assumed, source: "UI default"}
+  shape: {value: western_pa, status: assumed, source: "UI default"}
+  flh: {value: 5000, status: assumed, source: "UI default"}
+  T_supply: {value: 45.0, status: assumed, source: "UI default"}
+  T_return: {value: 35.0, status: assumed, source: "UI default"}
+  distance_m: {value: 250, status: assumed, source: "UI default"}
+
+prices:
+  electricity_price: {value: 0.13, status: assumed, source: "UI default (US commercial ~13 c/kWh, EIA Nov 2025)"}
+  incumbent_fuel_price_per_MWh: {value: 40.7, status: assumed, source: "UI default (US commercial gas ~$12/Mcf)"}
+  incumbent_efficiency: {value: 0.85, status: assumed, source: "UI default"}
+  incumbent_emission_factor_t_per_MWh: {value: 0.181, status: published, source: "EPA natural gas 53.06 kg CO2/MMBtu (HHV)"}
+  plugging_eol: {value: 110000, status: assumed, source: "UI default (PA DEP 2024 average plugging cost)"}
+
+simulation:
+  n_z: 40
+  n_r: 32
+  years: 20
