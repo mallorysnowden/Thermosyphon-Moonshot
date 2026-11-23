@@ -13,7 +13,7 @@ import pandas as pd
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
-from geowell_tea.fast import PRESETS, Inputs, preset_inputs, run  # noqa: E402
+from geowell_tea.fast import LOAD_SHAPES, Inputs, baked_in_assumptions, preset_inputs, run  # noqa: E402
 
 st.set_page_config(page_title="Thermosiphon heat from reused wells", layout="wide")
 
@@ -29,9 +29,8 @@ st.caption("Fast calculator built on the geowell_tea TEA model. Thermosiphon onl
            "boiler. Costs are assumptions, not quotes - see the repo's MODEL_LIMITATIONS.md.")
 
 with st.sidebar:
-    preset = st.selectbox("Start from", list(PRESETS), index=0)
-    d = preset_inputs(preset)
-    k = preset  # widget keys follow the preset so switching resets the defaults
+    d = preset_inputs()  # neutral starting values (configs/app_defaults.yaml)
+    k = ""
 
     st.header("Thermosiphon")
     config = st.radio("Configuration", ["hybrid", "direct"], key=f"cfg{k}", horizontal=True,
@@ -64,8 +63,8 @@ with st.sidebar:
     st.header("Heat demand")
     peak = st.number_input("Peak-month demand [kW]", 10.0, 5000.0, d.peak_kW, 10.0, key=f"pk{k}")
     flh = st.number_input("Full-load hours per year", 500.0, 8760.0, d.flh, 100.0, key=f"flh{k}")
-    shape = st.selectbox("Seasonal shape", ["western_pa", "western_nd", "flat"],
-                         index=["western_pa", "western_nd", "flat"].index(d.shape), key=f"sh{k}")
+    shape = st.selectbox("Seasonal load shape", list(LOAD_SHAPES), index=list(LOAD_SHAPES).index(d.shape),
+                         format_func=LOAD_SHAPES.get, key=f"sh{k}")
     T_sup = st.number_input("Supply temperature [C]", 20.0, 90.0, d.T_supply_C, 1.0, key=f"tsu{k}")
     T_ret = st.number_input("Return temperature [C]", 10.0, 80.0, d.T_return_C, 1.0, key=f"tre{k}")
     dist = st.number_input("Distance to customer [m]", 0.0, 5000.0, d.distance_m, 25.0, key=f"dis{k}")
@@ -77,12 +76,13 @@ with st.sidebar:
     ef = st.number_input("Fuel CO2 [t/MWh fuel]", 0.0, 0.5, float(d.emission_factor or 0.181), 0.001,
                          format="%.3f", key=f"co{k}")
     disc = st.number_input("Real discount rate", 0.0, 0.2, d.discount_rate, 0.005, format="%.3f", key=f"dr{k}")
+    plug = st.number_input("End-of-life plugging cost [$]", 0.0, 1_000_000.0, d.plugging_eol, 5000.0, key=f"pl{k}")
 
-kw = dict(preset=preset, depth_m=depth, T_surface_C=T_surf, T_bottom_C=T_bot, casing_id_mm=casing, k_rock=k_rock,
+kw = dict(preset=None, depth_m=depth, T_surface_C=T_surf, T_bottom_C=T_bot, casing_id_mm=casing, k_rock=k_rock,
           config=config, condensate_return=ret, insulation=insulation, ku_validated=float(ku), cost_level=cost_level,
           pinned_T_cond=float(T_pin) if pin else None, full_coverage=full_cov, peak_kW=peak, flh=flh, shape=shape,
           T_supply_C=T_sup, T_return_C=T_ret, distance_m=dist, electricity_price=elec, fuel_price_per_MWh=fuel,
-          boiler_efficiency=eff, discount_rate=disc, emission_factor=ef)
+          boiler_efficiency=eff, discount_rate=disc, emission_factor=ef, plugging_eol=plug)
 
 with st.spinner("Simulating 20 years of operation..."):
     r = cached_run(kw)
@@ -126,3 +126,14 @@ if r["ok"]:
 if r.get("designs") is not None:
     with st.expander("All designs evaluated"):
         st.dataframe(pd.DataFrame(r["designs"]).round(2), hide_index=True, use_container_width=True)
+
+with st.expander("Baked-in assumptions (deep dive)"):
+    st.markdown("Everything the calculator uses that is not an input above. Values come from "
+                "`configs/assumptions.yaml` and `configs/app_defaults.yaml`; *status* says whether a value is "
+                "published, derived or assumed. NOAK costs are built from raw materials x `ts_noak_index` plus the "
+                "automated-installation parameters; FOAK = base x `ts_foak_mult`. Model limitations: "
+                "MODEL_LIMITATIONS.md in the repo.")
+    assumptions = baked_in_assumptions()
+    for group, g in assumptions.groupby("group", sort=False):
+        st.markdown(f"**{group}**")
+        st.dataframe(g.drop(columns="group"), hide_index=True, use_container_width=True)

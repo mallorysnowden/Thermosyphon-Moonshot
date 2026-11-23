@@ -34,12 +34,15 @@ PRESETS = {
     "Case A well, Dutch prices (gas)": "case_a_nl.yaml",
     "Case B well, Dutch prices (gas)": "case_b_nl.yaml",
 }
+APP_TEMPLATE = "app_defaults.yaml"
 PSM_THRESHOLD_KG = 4536.0  # 10,000 lb ammonia
+LOAD_SHAPES = {"western_pa": "Space heating, moderate winter", "western_nd": "Space heating, cold winter",
+               "flat": "Flat (process / aquaculture)"}
 
 
 @dataclass
 class Inputs:
-    preset: str = "Case A - Pennsylvania greenhouse (gas)"
+    preset: str | None = None  # None -> neutral app template (app_defaults.yaml)
     # well and rock
     depth_m: float = 1737.0
     T_surface_C: float = 12.0
@@ -67,6 +70,7 @@ class Inputs:
     boiler_efficiency: float | None = None
     discount_rate: float | None = None
     emission_factor: float | None = None  # t CO2 / MWh fuel
+    plugging_eol: float | None = None  # $ end-of-life plugging & abandonment
     years: int = 20
     n_z: int = 40
 
@@ -84,9 +88,13 @@ class Result:
     incumbent: float = float("nan")
 
 
-def preset_inputs(preset: str, **overrides) -> Inputs:
-    """Inputs pre-filled from a preset case config (well, load and prices)."""
-    c = load_case(CONFIG_DIR / PRESETS[preset])
+def _config_path(preset: str | None) -> Path:
+    return CONFIG_DIR / (PRESETS[preset] if preset else APP_TEMPLATE)
+
+
+def preset_inputs(preset: str | None = None, **overrides) -> Inputs:
+    """Inputs pre-filled from a preset case config, or from the neutral app template (preset=None)."""
+    c = load_case(_config_path(preset))
     g = c.geology
     kw = dict(preset=preset, depth_m=float(g.depth), T_surface_C=float(g.profile_T[0]),
               T_bottom_C=float(g.profile_T[-1]), casing_id_mm=round(c.well.casing_id * 1e3, 1), k_rock=float(g.k),
@@ -96,13 +104,14 @@ def preset_inputs(preset: str, **overrides) -> Inputs:
               fuel_price_per_MWh=float(c.prices["incumbent_fuel_price_per_MWh"]),
               boiler_efficiency=float(c.prices["incumbent_efficiency"]),
               discount_rate=float(c.params["discount_rate"]),
-              emission_factor=c.prices.get("incumbent_emission_factor_t_per_MWh"))
+              emission_factor=c.prices.get("incumbent_emission_factor_t_per_MWh"),
+              plugging_eol=float(c.params["plugging_eol"]))
     kw.update(overrides)
     return Inputs(**kw)
 
 
 def build_case(inp: Inputs):
-    case = load_case(CONFIG_DIR / PRESETS[inp.preset])
+    case = load_case(_config_path(inp.preset))
     geo = Geology.linear(inp.depth_m, inp.T_surface_C, inp.T_bottom_C, k=inp.k_rock,
                          rho=case.geology.rho, cp=case.geology.cp)
     well = replace(case.well, casing_id=inp.casing_id_mm / 1e3)
@@ -118,8 +127,40 @@ def build_case(inp: Inputs):
     if inp.discount_rate is not None:
         p["discount_rate"] = inp.discount_rate
     p["ts_cost_level"] = inp.cost_level
+    if inp.plugging_eol is not None:
+        p["plugging_eol"] = inp.plugging_eol
     ef = inp.emission_factor if inp.emission_factor is not None else prices.get("incumbent_emission_factor_t_per_MWh")
     return case, geo, well, surf, p, (ef / eff if ef else float("nan"))
+
+
+# parameters the UI sets, or that do not apply to an ammonia-only, direct-coupled thermosiphon calculator
+_USER_SET = {"depth", "T_bottom", "T_surface", "k", "casing_id", "peak_month_kW", "shape", "flh", "T_supply",
+             "T_return", "distance_m", "electricity_price", "incumbent_fuel_price_per_MWh", "incumbent_efficiency",
+             "incumbent_emission_factor_t_per_MWh", "plugging_eol", "discount_rate", "ts_cost_level"}
+_NOT_APPLICABLE = {"ts_safety_hydrocarbon", "ts_safety_water", "ts_ip_license_per_kw", "ts_packer_hardware",
+                   "secondary_loop_cost", "ts_leak_allowance_per_yr", "heat_price_share_of_incumbent"}
+_GROUPS = {"finance": "Finance", "surface": "Surface plant & heat pump", "common_capex": "Well reuse & common costs",
+           "ts_capex": "Thermosiphon costs", "geology": "Rock", "well": "Well construction"}
+
+
+def baked_in_assumptions() -> pd.DataFrame:
+    """Every model assumption the web calculator uses but does not expose as an input."""
+    rows = []
+    for rec in load_case(CONFIG_DIR / APP_TEMPLATE).provenance:
+        parts = rec["parameter"].split(".")
+        name, group = parts[-1], parts[-2]
+        if name in _USER_SET or name in _NOT_APPLICABLE or group in ("coax_capex", "simulation", "case"):
+            continue
+        rng = "" if rec["low"] is None else f"{rec['low']:g} - {rec['high']:g}"
+        v = rec["value"]
+        rows.append(dict(group=_GROUPS.get(group, group), parameter=name,
+                         value=f"{v:g}" if isinstance(v, (int, float)) and not isinstance(v, bool) else str(v), range=rng,
+                         status=rec["status"], source=rec["source"]))
+    rows.append(dict(group="Thermosiphon physics", parameter="working fluid", value="ammonia", range="",
+                     status="assumed", source="Best of six fluids screened (see RESULTS.md)"))
+    rows.append(dict(group="Thermosiphon physics", parameter="model", value="1+1D conduction, 20 yr monthly",
+                     range="", status="assumed", source="Finite rock volume, no groundwater flow; see MODEL_LIMITATIONS.md"))
+    return pd.DataFrame(rows)
 
 
 def candidate_designs(inp: Inputs, geo: Geology, surf) -> tuple[list[Architecture], list[str]]:

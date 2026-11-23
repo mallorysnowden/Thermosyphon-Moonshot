@@ -30,3 +30,12 @@ def test_hybrid_warning_and_waterfall():
     assert any("machinery room" in w for w in r.warnings)
     assert not any("Mach >" in w or "compressib" in w for w in r.warnings)
     assert list(r.waterfall.lcoh) == sorted(r.waterfall.lcoh, reverse=True)
+
+
+def test_app_template_and_assumptions_table():
+    from geowell_tea.fast import baked_in_assumptions
+    r = run(preset_inputs(), workers=1)  # neutral template, no case preset
+    assert r.ok
+    a = baked_in_assumptions()
+    assert not a.parameter.isin(["depth", "casing_id", "electricity_price", "discount_rate", "vit_per_m"]).any()
+    assert a.value.map(type).eq(str).all()
