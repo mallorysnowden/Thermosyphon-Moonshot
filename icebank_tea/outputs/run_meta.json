@@ -1,0 +1,38 @@
+{
+ "years": 12,
+ "reliability": 0.001,
+ "costs": {
+  "index": 2.5,
+  "al_price": 5.3,
+  "design_pressure_mpa": 2.6,
+  "allowable_mpa": 43.0,
+  "min_wall_m": 0.0015,
+  "fin_kg_per_m2": 0.474,
+  "misc_al_kg": 1.0,
+  "nh3_kg_per_m_evap": 0.033,
+  "condenser_len_m": 3.0,
+  "rack_steel_kg": 4.0,
+  "install_per_unit": 19.444444444444443,
+  "max_factory_len_m": 12.0,
+  "field_joint_usd": 150.0,
+  "pit_mult": 1.0,
+  "pit_ice_premium": 1.2,
+  "discharge_usd_kw": 40.0,
+  "icebank_om_frac": 0.01,
+  "mech_om_frac": 0.025,
+  "pump_cop": 40.0,
+  "elec_service_usd_kwe": 600.0,
+  "rate": 0.08,
+  "life_icebank": 25.0,
+  "life_mech": 20.0,
+  "construction_lag_years": 1.0
+ },
+ "physics": {
+  "u_cond": 5.0,
+  "h_evap": 2000.0,
+  "head_k_per_m": 0.15,
+  "u_cover": 0.25,
+  "u_ground": 0.15,
+  "t_water_start": 10.0
+ }
+}
