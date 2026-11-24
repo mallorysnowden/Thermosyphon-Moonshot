@@ -10,12 +10,12 @@ Cost of cooling in $ per MWh of cold delivered (median year), and the ratio to B
 
 | Case | Why this case | BAU $/MWh | of which demand charges | Ice + full backup | Ice + 30% backup | Ice only | Ice only at FOAK |
 |---|---|---|---|---|---|---|---|
-| AI data center, 100 MW IT (Fargo / Ellendale, ND) | Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity. | 259 | 37 | 292 (1.13) | 220 (0.85) | 170 (0.65) | 247 (0.95) |
-| Hospital / campus, 3.5 MWth (Minneapolis, MN) | Control case: chillers run all summer on cheap power, so it should lose. | 111 | 13 | 143 (1.29) | 252 (2.26) | 246 (2.21) | 378 (3.39) |
+| AI data center, 100 MW IT (Fargo / Ellendale, ND) | Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity. | 259 | 37 | 292 (1.13) | 190 (0.73) | 170 (0.65) | 247 (0.95) |
+| Hospital / campus, 3.5 MWth (Minneapolis, MN) | Control case: chillers run all summer on cheap power, so it should lose. | 111 | 13 | 143 (1.29) | 214 (1.92) | 246 (2.21) | 378 (3.39) |
 | Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK) | Best seasonal match: long freezing winter, six-week summer burst, diesel power. | 385 | 13 | 417 (1.08) | 344 (0.89) | 292 (0.76) | 424 (1.10) |
-| Year-round process cooling, 1 MWth at 5 degC (Fargo, ND) | Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer. | 25 | 4 | 67 (2.63) | 141 (5.54) | 139 (5.45) | 210 (8.23) |
+| Year-round process cooling, 1 MWth at 5 degC (Fargo, ND) | Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer. | 25 | 4 | 67 (2.63) | 127 (4.99) | 139 (5.45) | 210 (8.23) |
 
-FOAK costs are quoted against the BAU cost above, so the FOAK ratio is FOAK $/MWh / BAU $/MWh.
+Smart charging: the 30% backup also charges the pit in off-peak hours wherever that lowers the annual cost. It is used in case(s) A, B, D; elsewhere the 30% backup only covers what the pit cannot. FOAK costs are quoted against the BAU cost above.
 
 
 ## Best ice-only design per case
@@ -34,16 +34,16 @@ Ice-bank options:
 | Case | Config | Thermosiphons | Pit | Pumps + HX | Dry cooler | Backup chiller | Electrical service | Energy | Demand charges | Water | O&M | Total |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | A | Ice + full backup chiller | 21 | 21 | 22 | 0 | 106 | 58 | 6 | 24 | 0 | 32 | 292 |
-| A | Ice + 30% backup chiller | 46 | 69 | 22 | 0 | 32 | 22 | 2 | 6 | 0 | 21 | 220 |
+| A | Ice + 30% backup chiller (smart charging) | 21 | 47 | 22 | 0 | 36 | 22 | 16 | 8 | 0 | 18 | 190 |
 | A | Ice only (no chiller) | 46 | 69 | 22 | 3 | 0 | 8 | 2 | 6 | 0 | 14 | 170 |
 | B | Ice + full backup chiller | 18 | 31 | 3 | 0 | 25 | 10 | 27 | 11 | 8 | 11 | 143 |
-| B | Ice + 30% backup chiller | 121 | 90 | 3 | 0 | 8 | 4 | 3 | 1 | 0 | 23 | 252 |
+| B | Ice + 30% backup chiller (smart charging) | 81 | 81 | 3 | 0 | 8 | 4 | 15 | 2 | 3 | 18 | 214 |
 | B | Ice only (no chiller) | 115 | 101 | 3 | 0 | 0 | 1 | 3 | 1 | 0 | 22 | 246 |
 | C | Ice + full backup chiller | 16 | 58 | 7 | 0 | 109 | 37 | 142 | 10 | 3 | 35 | 417 |
-| C | Ice + 30% backup chiller | 73 | 173 | 7 | 0 | 33 | 13 | 11 | 1 | 0 | 33 | 344 |
+| C | Ice + 30% backup chiller (smart charging) | 73 | 173 | 7 | 0 | 33 | 13 | 11 | 1 | 0 | 33 | 344 |
 | C | Ice only (no chiller) | 73 | 173 | 7 | 0 | 0 | 2 | 11 | 1 | 0 | 25 | 292 |
 | D | Ice + full backup chiller | 16 | 26 | 1 | 0 | 5 | 2 | 9 | 3 | 0 | 5 | 67 |
-| D | Ice + 30% backup chiller | 61 | 62 | 1 | 0 | 1 | 1 | 2 | 0 | 0 | 13 | 141 |
+| D | Ice + 30% backup chiller (smart charging) | 53 | 54 | 1 | 0 | 2 | 1 | 4 | 2 | 0 | 11 | 127 |
 | D | Ice only (no chiller) | 61 | 62 | 1 | 0 | 0 | 0 | 2 | 0 | 0 | 12 | 139 |
 
 Conventional (BAU):

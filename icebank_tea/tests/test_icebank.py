@@ -119,3 +119,16 @@ def test_dry_cooler_cools_warm_water_toward_air():
     cap_mwh = 100 * 1000 * 4186 * 10.0 * 15.0 / 3.6e9
     assert removed(no_dc) < removed(with_dc) <= cap_mwh * 1.001
 
+
+
+def test_offpeak_charging_reduces_unmet():
+    # Store too small and too warm to cover a constant load; the partial chiller charges it every off-peak hour
+    from icebank_tea.store import Design, ElecInputs, Physics, simulate
+    n = 8760
+    onpk = (np.arange(n) % 24 >= 9) & (np.arange(n) % 24 < 21)
+    el = ElecInputs(month=np.zeros(n, int), onpk=onpk, kwe_per_w=np.full(n, 2e-4), peak_w=1e5, charge_ok=~onpk)
+    sim = simulate([Design(1.0, 12.0, 10.0)], np.array([20.0]), np.full(n, 25.0), np.full(n, 1e5),
+                   t_use_max=10.0, ground_c=8.0, phys=Physics(t_water_start=8.0), partial_backup_w=3e4,
+                   warmup_hours=0, el=el)
+    assert sim.charge_mwh.sum() > 0
+    assert sim.unmet_pcharge_mwh.sum() < sim.unmet_partial_mwh.sum()

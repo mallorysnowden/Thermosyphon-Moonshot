@@ -22,7 +22,10 @@ from .weather import CLIMATES, chained_years, freezing_degree_days
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "outputs"
 BACKUPS = {"full": 1.0, "partial": 0.3, "none": 0.0}
-BACKUP_LABEL = {"full": "Ice + full backup chiller", "partial": "Ice + 30% backup chiller", "none": "Ice only (no chiller)"}
+BACKUP_LABEL = {"full": "Ice + full backup chiller", "partial": "Ice + 30% backup chiller (smart charging)",
+                "none": "Ice only (no chiller)"}
+# The 30% backup is evaluated with and without off-peak charging of the pit ("pcharge"); the cheaper one is
+# reported as "partial" (smart charging: charge only where it lowers the annual cost).
 RELIABILITY = 0.001  # worst-year unmet cooling must be <= 0.1% of a median year's cooling
 
 
@@ -70,11 +73,15 @@ def energy_cost(kwh_on, kwh_off, case: Case):
     return np.median(kwh_on * p_on + kwh_off * p_off, axis=0)
 
 
-def make_elec(case: Case, t, ci: CostInputs) -> ElecInputs:
+def make_elec(case: Case, t, load, ci: CostInputs) -> ElecInputs:
+    """Hourly electricity inputs. The 30% backup may charge the pit in off-peak hours of months with load."""
     n = len(t)
-    return ElecInputs(month=month_of_doy(day_of_year(n)), onpk=on_peak(n),
-                      kwe_per_w=(1.0 / case.cop(t) + case.aux_kw_per_kwth()) / 1e3,
-                      peak_w=case.peak_w, pump_cop=ci.pump_cop, dc_cop=ci.dc_cop)
+    month = month_of_doy(day_of_year(n))
+    onpk = on_peak(n)
+    charge_ok = (~onpk) & np.isin(month, np.unique(month[load > 0])) if ci.chiller_charging else None
+    return ElecInputs(month=month, onpk=onpk, kwe_per_w=(1.0 / case.cop(t) + case.aux_kw_per_kwth()) / 1e3,
+                      peak_w=case.peak_w, pump_cop=ci.pump_cop, dc_cop=ci.dc_cop, charge_ok=charge_ok,
+                      ice_cop_factor=ci.ice_cop_factor)
 
 
 def water_usd_per_mwh_rejected(case: Case, ci: CostInputs) -> float:
@@ -143,7 +150,7 @@ def evaluate(case: Case, designs, n_units, sim, ci: CostInputs, b: dict):
     a_mech = crf(ci.rate, ci.life_mech)
     cold = b["cold_mwh"]
     w_rej = b["rej_per_mwh"] * water_usd_per_mwh_rejected(case, ci)   # $ per MWh the backup chiller delivers
-    keys = list(BACKUPS)
+    keys = [k for k in (*BACKUPS, "pcharge") if k in sim.elec]
     energy = {k: energy_cost(sim.elec[k]["kwh_on"], sim.elec[k]["kwh_off"], case) for k in keys}
     demand = {k: demand_cost_onoff(sim.elec[k]["pk_on"], sim.elec[k]["pk_off"], case) for k in keys}
     rows = []
@@ -160,37 +167,49 @@ def evaluate(case: Case, designs, n_units, sim, ci: CostInputs, b: dict):
             ice_capex = capex_units + capex_pit + capex_dis
             unmet_y = sim.unmet_mwh[:, k]
             for key in keys:
-                f = BACKUPS[key]
+                f = BACKUPS["partial" if key == "pcharge" else key]
                 if key == "full":
                     backup_mwh, left_y = float(np.median(unmet_y)), np.zeros_like(unmet_y)
                 elif key == "partial":
                     backup_mwh, left_y = float(np.median(sim.backup_partial_mwh[:, k])), sim.unmet_partial_mwh[:, k]
+                elif key == "pcharge":
+                    backup_mwh = float(np.median(sim.backup_pcharge_mwh[:, k] + sim.charge_mwh[:, k]))
+                    left_y = sim.unmet_pcharge_mwh[:, k]
                 else:
                     backup_mwh, left_y = 0.0, unmet_y
                 worst = float(left_y.max()) / max(cold, 1e-9)
                 mech = f * peak_kw * case.mech_usd_kw
+                coil = f * peak_kw * ci.charge_coil_usd_kw if key == "pcharge" else 0.0
                 # Electrical service: backup chiller + auxiliaries, discharge pumps, dry-cooler fans
                 svc = (f * b["peak_kwe"] + peak_kw / ci.pump_cop + dc_kw / ci.dc_cop) * ci.elec_service_usd_kwe
                 parts = dict(thermosiphons=capex_units * a_ice, pit=capex_pit * a_ice, discharge=capex_dis * a_ice,
-                             dry_cooler=dc_capex * a_mech, backup_plant=mech * a_mech,
+                             dry_cooler=dc_capex * a_mech, backup_plant=(mech + coil) * a_mech,
                              elec_service=svc * a_mech, energy=float(energy[key][k]), demand=float(demand[key][k]),
                              water=backup_mwh * w_rej,
-                             om=ice_capex * ci.icebank_om_frac + (mech + dc_capex) * ci.mech_om_frac)
+                             om=ice_capex * ci.icebank_om_frac + (mech + coil + dc_capex) * ci.mech_om_frac)
                 total = sum(parts.values())
                 rows.append(dict(case=case.key, backup=key, design=asdict(d), n_units=int(round(n)),
                                  unit_usd=bom["unit_usd"], pit_m3=pit_m3, pit_ha=n * d.pitch_m**2 / 1e4,
-                                 ice_capex=ice_capex, backup_capex=mech + svc, parts=parts, total=total,
+                                 ice_capex=ice_capex, backup_capex=mech + coil + svc, parts=parts, total=total,
                                  lcoc=total / max(cold, 1e-9), ratio=total / b["total"], worst_unmet_frac=worst,
                                  feasible=worst <= RELIABILITY,
                                  kwh_ice_per_unit=float(np.median(sim.frozen_mwh[:, k])) * 1e3 / n,
                                  dc_mwh=float(np.median(sim.dc_mwh[:, k])),
+                                 charges=key == "pcharge",
+                                 charge_mwh=float(np.median(sim.charge_mwh[:, k])) if key == "pcharge" else 0.0,
                                  losses_frac=float(np.median(sim.losses_mwh[:, k])) / max(cold, 1e-9), k=k))
     return rows
 
 
 def best(rows, backup):
-    cands = [r for r in rows if r["backup"] == backup and r["feasible"]]
-    return min(cands, key=lambda r: r["total"]) if cands else None
+    """Cheapest feasible row. For the 30% backup, consider it with and without off-peak charging (smart)."""
+    keys = ("partial", "pcharge") if backup == "partial" else (backup,)
+    cands = [r for r in rows if r["backup"] in keys and r["feasible"]]
+    if not cands:
+        return None
+    r = dict(min(cands, key=lambda r: r["total"]))
+    r["backup"] = backup
+    return r
 
 
 def grid(quick: bool):
@@ -241,8 +260,8 @@ def sensitivities(case, backup, b_fn, rows_fn, ci, base_row, base_bau):
         e = dict(input=label)
         for side, cc, cs in (("low", lo_ci, lo_case or case), ("high", hi_ci, hi_case or case)):
             b = b_fn(cs, cc)
-            rr = [r for r in rows_fn(cs, cc, b) if r["backup"] == backup and r["feasible"]]
-            ice = min(r["total"] for r in rr) if rr else float("nan")
+            r_best = best(rows_fn(cs, cc, b), backup)
+            ice = r_best["total"] if r_best else float("nan")
             e[side] = ice / b["total"]
             e[f"bau_{side}"] = b["lcoc"]
             e[f"ice_{side}"] = ice / base_bau["cold_mwh"]
@@ -283,8 +302,8 @@ def physics_sensitivity(case, backup, designs, n_units, t, load, gc, phys, el, c
     for side, u in (("low", 3.0), ("high", 8.0)):
         sim_u = simulate(designs, n_units, t, load, case.t_use_max, gc, replace(phys, u_cond=u),
                          partial_backup_w=0.3 * case.peak_w, el=el)
-        rr = [r for r in evaluate(case, designs, n_units, sim_u, ci, b) if r["backup"] == backup and r["feasible"]]
-        ice = min(r["total"] for r in rr) if rr else float("nan")
+        r_best = best(evaluate(case, designs, n_units, sim_u, ci, b), backup)
+        ice = r_best["total"] if r_best else float("nan")
         e[side] = ice / b["total"]; e[f"bau_{side}"] = b["lcoc"]; e[f"ice_{side}"] = ice / b["cold_mwh"]
     return e
 
@@ -295,7 +314,7 @@ def run_case(case: Case, years: int, quick: bool, ci: CostInputs, phys: Physics,
     designs = grid(quick)
     n_units = n_grid(b, quick)
     gc = CLIMATES[case.climate].ground_c
-    el = make_elec(case, t, ci)
+    el = make_elec(case, t, load, ci)
     log(f"[{case.key}] simulating {len(designs)} designs x {len(n_units)} sizes over {years} years ...")
     sim = simulate(designs, n_units, t, load, case.t_use_max, gc, phys, partial_backup_w=0.3 * case.peak_w, el=el)
     cache = {"sim": sim}
@@ -405,7 +424,10 @@ def write_results_md(results, ci, years):
         L.append(f"| {c.title} | {c.why} | {bb['lcoc']:.0f} | {bb['parts']['demand'] / bb['cold_mwh']:.0f} | "
                  f"{cell(b['full'])} | {cell(b['partial'])} | {cell(b['none'])} | "
                  f"{cell(fo['none'])} |")
-    L.append("\nFOAK costs are quoted against the BAU cost above, so the FOAK ratio is FOAK $/MWh / BAU $/MWh.\n")
+    used = [res["case"].key for res in results if res["best"]["partial"] and res["best"]["partial"].get("charges")]
+    L.append("\nSmart charging: the 30% backup also charges the pit in off-peak hours wherever that lowers the "
+             f"annual cost. It is used in case(s) {', '.join(used) or 'none'}; elsewhere the 30% backup only covers "
+             "what the pit cannot. FOAK costs are quoted against the BAU cost above.\n")
     L.append("\n## Best ice-only design per case\n")
     L.append("| Case | Thermosiphons | Cost per unit | Ice per unit per winter | Design | Pit | Worst-year unmet | Store 50% / 90% full |")
     L.append("|---|---|---|---|---|---|---|---|")

@@ -49,6 +49,10 @@ class CostInputs:
     # Night / shoulder-season dry-cooler recharge of the store (sensible, liquid water only)
     dc_usd_kw: float = 70.0            # dry cooler + piping per kW at a 10 K ITD (BAU economiser uses $60/kW)
     dc_cop: float = 40.0               # kW heat moved per kW of fans + pumps at full capacity
+    # Smart off-peak charging of the store by the 30% backup chiller (used only where it lowers cost)
+    charge_coil_usd_kw: float = 30.0   # ice-on-coil / brine loop in the pit per kW of charging capacity (assumption)
+    ice_cop_factor: float = 0.7        # chiller COP and capacity when making ice vs chilled water
+    chiller_charging: bool = True
     rate: float = 0.08                 # repo convention: customer discount rate (inputs/conventions.toml)
     life_icebank: float = 25.0
     life_mech: float = 20.0
