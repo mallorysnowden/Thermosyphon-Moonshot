@@ -160,18 +160,24 @@ def fill_dates(case, d, n, t, load, phys, warm=184 * 24):
                 low_ice_frac=float(np.median([o[3] for o in out])))
 
 
-def sensitivities(case, row, b_fn, rows_fn, ci, phys, t, load, designs_best):
-    """One-at-a-time changes for the best configuration of a case (ice ratio vs BAU)."""
-    base_ratio = row["ratio"]
+def sensitivities(case, backup, b_fn, rows_fn, ci, base_row, base_bau):
+    """One-at-a-time changes for one backup configuration of a case.
+
+    Each entry records the ice/BAU ratio and both annualized costs ($/MWh of the base case's cooling)
+    at the low and high input, with the ice bank re-optimized each time.
+    """
     out = []
 
     def cost_only(label, lo_ci, hi_ci, lo_case=None, hi_case=None):
-        vals = []
-        for cc, cs in ((lo_ci, lo_case or case), (hi_ci, hi_case or case)):
+        e = dict(input=label)
+        for side, cc, cs in (("low", lo_ci, lo_case or case), ("high", hi_ci, hi_case or case)):
             b = b_fn(cs, cc)
-            rr = [r for r in rows_fn(cs, cc, b) if r["backup"] == row["backup"] and r["feasible"]]
-            vals.append(min(r["total"] for r in rr) / b["total"] if rr else float("nan"))
-        out.append(dict(input=label, low=vals[0], high=vals[1]))
+            rr = [r for r in rows_fn(cs, cc, b) if r["backup"] == backup and r["feasible"]]
+            ice = min(r["total"] for r in rr) if rr else float("nan")
+            e[side] = ice / b["total"]
+            e[f"bau_{side}"] = b["lcoc"]
+            e[f"ice_{side}"] = ice / base_bau["cold_mwh"]
+        out.append(e)
 
     cost_only("Finished/raw index (2.0 / 3.5)", replace(ci, index=2.0), replace(ci, index=3.5))
     cost_only("Aluminium price (world $2.85 / US $5.3 x1.2)", replace(ci, al_price=AL_WORLD), replace(ci, al_price=ci.al_price * 1.2))
@@ -188,8 +194,23 @@ def sensitivities(case, row, b_fn, rows_fn, ci, phys, t, load, designs_best):
               replace(case, demand_summer=2 * case.demand_summer, demand_winter=2 * case.demand_winter))
     cost_only("FOAK costs (NOAK / FOAK)", ci, with_foak(ci))
     for r in out:
-        r["base"] = base_ratio
+        r["base"] = base_row["ratio"]
+        r["bau_base"] = base_bau["lcoc"]
+        r["ice_base"] = base_row["lcoc"]
     return out
+
+
+def physics_sensitivity(case, backup, designs, n_units, t, load, gc, phys, trk, ci, b, base_row):
+    """Condenser conductance, re-simulated (only the ice bank changes)."""
+    e = dict(input="Condenser conductance (3 / 8 W/m2K)", base=base_row["ratio"], bau_base=b["lcoc"],
+             ice_base=base_row["lcoc"])
+    for side, u in (("low", 3.0), ("high", 8.0)):
+        sim_u = simulate(designs, n_units, t, load, case.t_use_max, gc, replace(phys, u_cond=u),
+                         partial_backup_w=0.3 * case.peak_w, **trk)
+        rr = [r for r in evaluate(case, designs, n_units, sim_u, ci, b) if r["backup"] == backup and r["feasible"]]
+        ice = min(r["total"] for r in rr) if rr else float("nan")
+        e[side] = ice / b["total"]; e[f"bau_{side}"] = b["lcoc"]; e[f"ice_{side}"] = ice / b["cold_mwh"]
+    return e
 
 
 def run_case(case: Case, years: int, quick: bool, ci: CostInputs, phys: Physics, log=print):
@@ -220,15 +241,16 @@ def run_case(case: Case, years: int, quick: bool, ci: CostInputs, phys: Physics,
     feas = [r for r in res["best"].values() if r]
     top = min(feas, key=lambda r: r["total"])
     res["top"] = top
-    res["sens"] = sensitivities(case, top, b_fn, rows_fn, ci, phys, t, load, designs)
-    # Physics sensitivity: condenser conductance, re-simulated
-    phys_rows = []
-    for u in (3.0, 8.0):
-        sim_u = simulate(designs, n_units, t, load, case.t_use_max, gc, replace(phys, u_cond=u),
-                         partial_backup_w=0.3 * case.peak_w, **trk)
-        rr = [r for r in evaluate(case, designs, n_units, sim_u, ci, b) if r["backup"] == top["backup"] and r["feasible"]]
-        phys_rows.append(min(r["total"] for r in rr) / b["total"] if rr else float("nan"))
-    res["sens"].append(dict(input="Condenser conductance (3 / 8 W/m2K)", low=phys_rows[0], high=phys_rows[1], base=top["ratio"]))
+    res["sens"] = sensitivities(case, top["backup"], b_fn, rows_fn, ci, top, b)
+    res["sens"].append(physics_sensitivity(case, top["backup"], designs, n_units, t, load, gc, phys, trk, ci, b, top))
+    # Ice-only sensitivities as well (for the charts), unless that is already the top configuration
+    ice = res["best"]["none"]
+    if ice is not None:
+        if top["backup"] == "none":
+            res["sens_none"] = res["sens"]
+        else:
+            res["sens_none"] = sensitivities(case, "none", b_fn, rows_fn, ci, ice, b)
+            res["sens_none"].append(physics_sensitivity(case, "none", designs, n_units, t, load, gc, phys, trk, ci, b, ice))
     if res["best"]["none"]:
         r = res["best"]["none"]
         res["fill"] = fill_dates(case, Design(**r["design"]), r["n_units"], t, load, phys)
@@ -262,11 +284,19 @@ def write_outputs(results, ci, years, phys):
                             round(r["parts"]["demand"] / res["bau"]["cold_mwh"], 1)])
     with open(OUT / "sensitivity.csv", "w", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["case", "config", "input", "base_ratio", "low_case_ratio", "high_case_ratio"])
+        w.writerow(["case", "config", "input", "base_ratio", "low_case_ratio", "high_case_ratio",
+                    "bau_base_usd_mwh", "bau_low_usd_mwh", "bau_high_usd_mwh",
+                    "ice_base_usd_mwh", "ice_low_usd_mwh", "ice_high_usd_mwh"])
         for res in results:
-            for s in res["sens"]:
-                w.writerow([res["case"].key, BACKUP_LABEL[res["top"]["backup"]], s["input"], round(s["base"], 3),
-                            round(s["low"], 3), round(s["high"], 3)])
+            sets = [(res["top"]["backup"], res["sens"])]
+            if res.get("sens_none") is not None and res["sens_none"] is not res["sens"]:
+                sets.append(("none", res["sens_none"]))
+            for key, sens in sets:
+                for s in sens:
+                    w.writerow([res["case"].key, BACKUP_LABEL[key], s["input"]] +
+                               [round(s[k], 3) for k in ("base", "low", "high")] +
+                               [round(s[k], 1) for k in ("bau_base", "bau_low", "bau_high",
+                                                         "ice_base", "ice_low", "ice_high")])
     bom_rows = []
     for res in results:
         r = res["top"]
@@ -287,14 +317,16 @@ def write_results_md(results, ci, years):
              "(below 1 means the ice bank is cheaper). NOAK costs unless marked FOAK.\n")
     L.append(f"Weather: {years} synthetic years per site. Store must leave no more than {RELIABILITY:.1%} of a "
              "median year's cooling unmet in its worst year (configs without a full backup chiller).\n")
-    L.append("## Headline\n")
-    L.append("| Case | Why this case | BAU $/MWh | Ice + full backup | Ice + 30% backup | Ice only | Ice only at FOAK |")
-    L.append("|---|---|---|---|---|---|---|")
+    L.append("## Headline (demand charges included)\n")
+    L.append("Cost of cooling in $ per MWh of cold delivered (median year), and the ratio to BAU in brackets.\n")
+    L.append("| Case | Why this case | BAU $/MWh | of which demand charges | Ice + full backup | Ice + 30% backup | Ice only | Ice only at FOAK |")
+    L.append("|---|---|---|---|---|---|---|---|")
     for res in results:
-        c = res["case"]; b = res["best"]; fo = res["foak"]
-        cell = lambda r: f"{r['ratio']:.2f}" if r else "not feasible"
-        L.append(f"| {c.title} | {c.why} | {res['bau']['lcoc']:.0f} | {cell(b['full'])} | {cell(b['partial'])} | "
-                 f"{cell(b['none'])} | {cell(fo['none'])} |")
+        c = res["case"]; b = res["best"]; fo = res["foak"]; bb = res["bau"]
+        cell = lambda r: f"{r['lcoc']:.0f} ({r['ratio']:.2f})" if r else "not feasible"
+        L.append(f"| {c.title} | {c.why} | {bb['lcoc']:.0f} | {bb['parts']['demand'] / bb['cold_mwh']:.0f} | "
+                 f"{cell(b['full'])} | {cell(b['partial'])} | {cell(b['none'])} | {cell(fo['none'])} |")
+    L.append("\nFOAK costs are quoted against the BAU cost above, so the FOAK ratio is FOAK $/MWh / BAU $/MWh.\n")
     L.append("\n## Best ice-only design per case\n")
     L.append("| Case | Thermosiphons | Cost per unit | Ice per unit per winter | Design | Pit | Worst-year unmet | Store 50% / 90% full |")
     L.append("|---|---|---|---|---|---|---|---|")
@@ -343,6 +375,12 @@ def main(argv=None):
     years = 4 if a.quick else a.years
     results = [run_case(CASES[k], years, a.quick, ci, phys) for k in a.cases]
     write_outputs(results, ci, years, phys)
+    try:
+        from .charts import make_charts
+        for f in make_charts(results, ci, years):
+            print("wrote", f)
+    except ImportError:
+        print("matplotlib not installed: skipping charts (pip install -e .[charts])")
     for res in results:
         print(res["case"].key, {k: (round(v["ratio"], 2) if v else None) for k, v in res["best"].items()},
               "BAU", round(res["bau"]["lcoc"]), "$/MWh")

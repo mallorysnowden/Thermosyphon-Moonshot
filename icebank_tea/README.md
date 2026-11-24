@@ -6,12 +6,12 @@ business-as-usual (BAU) plant it would replace, for four cases. It supersedes th
 (`tea/cold_bank_cooling.py`), which froze soil and came out at about 3x BAU.
 
 ```bash
-cd icebank_tea && pip install -e .[test] && python -m pytest
-python -m icebank_tea.run            # ~2 min, writes outputs/ and RESULTS.md
+cd icebank_tea && pip install -e .[test,charts] && python -m pytest
+python -m icebank_tea.run            # ~3 min, writes outputs/, outputs/figures/ and RESULTS.md
 python -m icebank_tea.run --quick    # coarse grid
 ```
 
-Start with [`RESULTS.md`](RESULTS.md) and [`MODEL_LIMITATIONS.md`](MODEL_LIMITATIONS.md).
+Start with [`RESULTS.md`](RESULTS.md), the charts in [`outputs/figures/`](outputs/figures/), and [`MODEL_LIMITATIONS.md`](MODEL_LIMITATIONS.md).
 
 ## What changed from the first ice-bank model (Nov 23 doc)
 
@@ -43,4 +43,5 @@ Start with [`RESULTS.md`](RESULTS.md) and [`MODEL_LIMITATIONS.md`](MODEL_LIMITAT
 | `src/icebank_tea/costs.py` | Unit bill of materials, raw-material NOAK costing, pit cost curve, finance |
 | `src/icebank_tea/cases.py` | Cases A-D: loads, usable water temperature, BAU plant |
 | `src/icebank_tea/run.py` | Design search, backup options, sensitivities, outputs |
-| `outputs/` | `summary.csv`, `sensitivity.csv`, `unit_bom.csv`, `run_meta.json` |
+| `src/icebank_tea/charts.py` | Data-center cost-breakdown donuts and sensitivity tornados (needs matplotlib) |
+| `outputs/` | `summary.csv`, `sensitivity.csv` (ratios and $/MWh), `unit_bom.csv`, `run_meta.json`, `figures/` |
