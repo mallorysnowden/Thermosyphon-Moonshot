@@ -46,6 +46,9 @@ class CostInputs:
     cycles_of_conc: float = 4.0        # blowdown = evaporation / (cycles - 1)
     tower_chem_usd_m3: float = 0.15    # water treatment chemicals per m3 of makeup (assumption)
     water_price_mult: float = 1.0      # sensitivity knob on water + sewer prices
+    # Night / shoulder-season dry-cooler recharge of the store (sensible, liquid water only)
+    dc_usd_kw: float = 70.0            # dry cooler + piping per kW at a 10 K ITD (BAU economiser uses $60/kW)
+    dc_cop: float = 40.0               # kW heat moved per kW of fans + pumps at full capacity
     rate: float = 0.08                 # repo convention: customer discount rate (inputs/conventions.toml)
     life_icebank: float = 25.0
     life_mech: float = 20.0

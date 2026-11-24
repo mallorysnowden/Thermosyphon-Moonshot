@@ -20,6 +20,15 @@ def day_of_year(n_hours: int, start_doy: int = 181) -> np.ndarray:
 _MONTH_STARTS = np.cumsum([0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30])
 
 
+def on_peak(n_hours: int, start_weekday: int = 0) -> np.ndarray:
+    """Utility on-peak hours: 9 a.m.-9 p.m., Monday-Friday (Xcel TOD definition; holidays ignored).
+    The series starts on Jul 1 at 00:00, taken as a Monday."""
+    h = np.arange(n_hours)
+    hod = h % 24
+    wd = (h // 24 + start_weekday) % 7
+    return (hod >= 9) & (hod < 21) & (wd < 5)
+
+
 def month_of_doy(doy: np.ndarray) -> np.ndarray:
     """Calendar month (0 = Jan ... 11 = Dec) for a 0-based day of a 365-day year."""
     return np.searchsorted(_MONTH_STARTS, np.asarray(doy), side="right") - 1
@@ -50,6 +59,17 @@ class Case:
     sewer_usd_m3: float = 0.0           # sewer, $/m3 of water billed for sewer
     sewer_on: str = "makeup"            # "makeup" (billed on all water used) or "blowdown" (evaporation deduct meter)
     water_note: str = ""
+    # Time-of-use energy prices as multiples of elec_usd_kwh (1.0 / 1.0 = flat), and demand billing:
+    # TOU tariffs bill on-peak demand at demand_summer/winter plus off-peak demand above on-peak at demand_off_excess
+    tou: bool = False
+    tou_on_mult: float = 1.0
+    tou_off_mult: float = 1.0
+    demand_off_excess: float = 0.0
+    tou_note: str = ""
+
+    def prices(self) -> tuple[float, float]:
+        """($/kWh on-peak, $/kWh off-peak)."""
+        return self.elec_usd_kwh * self.tou_on_mult, self.elec_usd_kwh * self.tou_off_mult
 
     def aux_kw_per_kwth(self) -> float:
         """BAU auxiliary electric draw per kW of cooling, not in the chiller COP: chilled-water pumps (0.015),
@@ -129,6 +149,9 @@ CASES = {
               water_note="Fargo water $5.05 per 1,000 gal above 2 million gal/month, sewer $2.55 per 1,000 gal billed "
                          "on all water used (fargond.gov). Used only in the tower sensitivity.",
               demand_summer=13.28, demand_winter=8.93,
+              tou=True, tou_on_mult=9.21 / 7.5, tou_off_mult=6.56 / 7.5, demand_off_excess=2.10,
+              tou_note="Xcel ND D17 energy 5.674 c on-peak / 3.018 c off-peak plus a flat 3.54 c fuel/rider adder that "
+                       "keeps the 7.5 c all-hours average; off-peak demand above on-peak billed at $2.10/kW.",
               demand_note="Xcel Energy ND General Time of Day (D17) on-peak demand, $15.38 Jun-Sep / $11.03 Oct-May, "
                           "less the $2.10 transmission-voltage discount (NDPSC PU-24-376 tariff sheets)."),
     "B": Case("B", "Hospital / campus, 3.5 MWth (Minneapolis, MN)", "minneapolis", 3.5e6, 4.0, 430.0, 1.5, 0.125,
@@ -139,6 +162,9 @@ CASES = {
               water_note="Minneapolis water $3.82 per 100 ft3 plus 9.025% water tax, sewer $5.63 per 100 ft3; "
                          "commercial sewer is billed on actual water use (minneapolismn.gov).",
               demand_summer=19.86, demand_winter=15.27,
+              tou=True, tou_on_mult=14.86 / 12.5, tou_off_mult=11.19 / 12.5, demand_off_excess=3.00,
+              tou_note="On/off-peak spread from Xcel's General TOD energy charges (8.269 / 4.594 c, SD rate book, used "
+                       "as a proxy for MN) plus a flat adder keeping the 12.5 c average; off-peak excess demand $3/kW.",
               demand_note="Xcel Energy MN General Time of Day demand, $19.86 summer / $15.27 winter "
                           "(2026 rates proposed in the MN electric rate case)."),
     "C": Case("C", "Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK)", "dillingham", 1.5e6, 1.5, 710.0, 1.2, 0.45,

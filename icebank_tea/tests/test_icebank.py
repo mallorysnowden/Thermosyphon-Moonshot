@@ -80,14 +80,16 @@ def test_month_and_demand_charge_by_hand():
 
 def test_backup_peak_tracks_unmet_draw():
     # Warm store, no freezing: every hour is unmet, so the monthly peak backup draw is load / COP
-    from icebank_tea.store import Design, Physics, simulate
+    from icebank_tea.store import Design, ElecInputs, Physics, simulate
     n = 184 * 24 + 8760
     t = np.full(n, 25.0)
     load = np.full(n, 1e5)
     month = np.zeros(n, dtype=int)
     sim = simulate([Design(1.0, 12.0, 10.0)], np.array([10.0]), t, load, t_use_max=0.0, ground_c=8.0,
-                   phys=Physics(t_water_start=20.0), month=month, kwe_per_w=np.full(n, 1 / 5e3))
-    assert sim.peak_kwe_full[0, 0, 0] == pytest.approx(1e5 / 5e3)
+                   phys=Physics(t_water_start=20.0),
+                   el=ElecInputs(month=month, onpk=np.zeros(n, bool), kwe_per_w=np.full(n, 1 / 5e3), peak_w=0.0))
+    e = sim.elec["full"]  # pumps serve nothing (store unusable), so the draw is the backup chiller
+    assert max(e["pk_on"][0, 0, 0], e["pk_off"][0, 0, 0]) == pytest.approx(1e5 / 5e3)
 
 
 def test_tower_water_cost_by_hand():
@@ -99,3 +101,21 @@ def test_tower_water_cost_by_hand():
     makeup = 1.6 * 4 / 3  # evaporation + blowdown at 4 cycles, m3 per MWh rejected
     assert water_usd_per_mwh_rejected(b, ci) == pytest.approx(makeup * (b.water_usd_m3 + 0.15 + b.sewer_usd_m3))
     assert water_usd_per_mwh_rejected(CASES["A"], ci) == 0.0  # air-cooled: no water
+
+
+def test_dry_cooler_cools_warm_water_toward_air():
+    # Warm pit, cool air, no load: a dry cooler adds sensible recharge on top of the thermosiphons
+    from icebank_tea.store import Design, ElecInputs, Physics, simulate
+    n = 8760
+    t = np.where(np.arange(n) < 24 * 30, 10.0, 30.0)  # 30 cool days, then warm (no further cooling possible)
+    el = ElecInputs(month=np.zeros(n, int), onpk=np.zeros(n, bool), kwe_per_w=np.full(n, 2e-4), peak_w=1e6)
+    phys = Physics(t_water_start=25.0, u_cover=0.0, u_ground=0.0)
+    kw = dict(t_use_max=27.0, ground_c=10.0, phys=phys, warmup_hours=0, el=el)
+    with_dc = simulate([Design(1.0, 12.0, 10.0, dc_frac=0.3)], np.array([100.0]), t, np.zeros(n), **kw)
+    no_dc = simulate([Design(1.0, 12.0, 10.0, dc_frac=0.0)], np.array([100.0]), t, np.zeros(n), **kw)
+    assert with_dc.dc_mwh.sum() > 0 and no_dc.dc_mwh.sum() == 0
+    removed = lambda s: s.frozen_mwh.sum() + s.dc_mwh.sum()
+    # either way the water can't be cooled below the air, so total heat removed is capped at (25 - 10) K
+    cap_mwh = 100 * 1000 * 4186 * 10.0 * 15.0 / 3.6e9
+    assert removed(no_dc) < removed(with_dc) <= cap_mwh * 1.001
+

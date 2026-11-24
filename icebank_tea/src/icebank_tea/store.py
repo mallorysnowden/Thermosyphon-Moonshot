@@ -32,6 +32,7 @@ class Design:
     r_out_m: float = 0.04
     r_in_m: float = 0.0377
     max_ice_frac: float = 0.85
+    dc_frac: float = 0.0  # night/shoulder dry-cooler recharge: capacity as a fraction of peak load at a 10 K ITD
 
     @property
     def evap_len_m(self) -> float:
@@ -49,30 +50,47 @@ class Physics:
 
 
 @dataclass
+class ElecInputs:
+    """Hourly inputs for electricity accounting (energy split on/off peak, monthly peak draw on/off peak)."""
+    month: np.ndarray                 # calendar month 0-11
+    onpk: np.ndarray                  # bool, utility on-peak hour
+    kwe_per_w: np.ndarray             # backup chiller + auxiliaries, kWe per W of cooling
+    peak_w: float                     # design peak load, W (sizes the dry cooler)
+    pump_cop: float = 40.0            # store discharge pumps, W cooling per W electric
+    dc_cop: float = 40.0              # dry-cooler fans + pumps at full capacity
+    dc_itd: float = 10.0              # K: dry cooler rated at dc_frac x peak with water 10 K above air
+    dc_min_dt: float = 2.0            # K: run the dry cooler only when water is this much warmer than air
+
+
+CONFIGS = ("none", "full", "partial")
+
+
+@dataclass
 class SimResult:
     years: int
     annual_cold_mwh: np.ndarray      # (Y,) load per year, whole pit
     unmet_mwh: np.ndarray            # (Y, K) whole pit, no backup
     unmet_partial_mwh: np.ndarray    # (Y, K) left over after a partial backup
     backup_partial_mwh: np.ndarray   # (Y, K) energy the partial backup supplies
-    frozen_mwh: np.ndarray           # (Y, K) ice made (cold charged) per year, whole pit
+    frozen_mwh: np.ndarray           # (Y, K) cold put in by thermosiphons per year, whole pit
     losses_mwh: np.ndarray           # (Y, K)
     end_ice_frac: np.ndarray         # (K,) ice fraction at the end of the run
-    peak_kwe_full: np.ndarray | None = None     # (Y, 12, K) monthly peak backup draw, full backup
-    peak_kwe_partial: np.ndarray | None = None  # (Y, 12, K) monthly peak backup draw, partial backup
     trace: np.ndarray | None = None  # daily ice fraction for K=0 when requested
+    dc_mwh: np.ndarray | None = None              # (Y, K) cold put in by the dry cooler
+    # elec[config] = dict(kwh_on, kwh_off: (Y, K); pk_on, pk_off: (Y, 12, K) monthly max kWe)
+    elec: dict | None = None
 
 
 def simulate(designs: list[Design], n_units: np.ndarray, t_air: np.ndarray, load_w: np.ndarray,
              t_use_max: float, ground_c: float, phys: Physics, partial_backup_w: float = 0.0,
-             warmup_hours: int = 184 * 24, trace: bool = False,
-             month: np.ndarray | None = None, kwe_per_w: np.ndarray | None = None) -> SimResult:
+             warmup_hours: int = 184 * 24, trace: bool = False, el: ElecInputs | None = None) -> SimResult:
     """Run every design x unit count over the hourly series.
 
     t_air and load_w start on Jul 1 of a warm-up year; full calendar years follow.
     n_units: (M,) candidate unit counts, used for every design.
-    month, kwe_per_w: optional hourly calendar month (0-11) and backup-chiller kWe per W of cooling
-    (1 / (1000 COP)); when given, the monthly peak backup draw is tracked for demand charges.
+    One store trajectory serves "none", "full" and "partial" (backup only covers what the store can't).
+    Thermosiphons cool the store whenever the air is colder (any season); a dry cooler (dc_frac > 0)
+    adds sensible recharge of liquid water when the air is at least dc_min_dt colder.
     """
     D, M = len(designs), len(n_units)
     K = D * M
@@ -81,8 +99,8 @@ def simulate(designs: list[Design], n_units: np.ndarray, t_air: np.ndarray, load
     L = depth - 1.0
     r_o = rep([d.r_out_m for d in designs]); r_i = rep([d.r_in_m for d in designs])
     ac = rep([d.cond_area_m2 for d in designs]); fmax = rep([d.max_ice_frac for d in designs])
+    dcf = rep([d.dc_frac for d in designs])
     N = np.tile(np.asarray(n_units, float), D)
-
     v_water = p**2 * depth
     a_top = p**2
     a_gnd = p**2 + 4 * depth * p / np.sqrt(N)
@@ -93,35 +111,47 @@ def simulate(designs: list[Design], n_units: np.ndarray, t_air: np.ndarray, load
     dt_head = phys.head_k_per_m * L / 2
     cap_w = RHO_W * CP_W * v_water                 # J/K
     h_min = -v_ice_max * RHO_ICE * L_F            # most negative enthalpy (full of ice)
-
-    H = phys.t_water_start * cap_w  # J per cell (warm water before the first winter)
-    n_hours = len(t_air)
-    Y = (n_hours - warmup_hours) // 8760
-    yr = lambda h: (h - warmup_hours) // 8760
-    unmet = np.zeros((Y, K)); unmet_p = np.zeros((Y, K)); backup_p = np.zeros((Y, K))
-    frozen = np.zeros((Y, K)); losses = np.zeros((Y, K)); annual = np.zeros(Y)
-    part_cell = partial_backup_w / N
-    tr = [] if trace else None
-    track = month is not None and kwe_per_w is not None
-    pk_full = np.zeros((Y, 12, K)) if track else None
-    pk_part = np.zeros((Y, 12, K)) if track else None
     inv_2pikL = 1.0 / (2 * np.pi * K_ICE * L)
+    peak_w = el.peak_w if el is not None else 0.0
+    dc_ua_cell = dcf * peak_w / (el.dc_itd if el is not None else 10.0) / N   # W/K per cell
+    dc_kwe = dcf * peak_w / 1e3 / (el.dc_cop if el is not None else 40.0)    # whole-pit fan+pump kWe when on
+    dc_min_dt = el.dc_min_dt if el is not None else 2.0
 
-    for h in range(n_hours):
-        ta = t_air[h]
+    def step(H, ta, q_load):
         ice = H < 0
         v_ice = np.where(ice, -H / (RHO_ICE * L_F), 0.0)
         t_store = np.where(ice, 0.0, H / cap_w)
         r = np.sqrt(v_ice / (np.pi * L) + r_o**2)
         drive = t_store - dt_head - ta
         q_f = np.where((drive > 0) & (H > h_min + 1.0), drive / (np.log(r / r_o) * inv_2pikL + r_ev + r_c), 0.0)
+        # dry cooler: sensible only, liquid water above 1 degC, never below 1 degC in the hour
+        dt_dc = t_store - ta
+        dc_on = (~ice) & (dt_dc >= dc_min_dt) & (t_store > 1.0) & (dc_ua_cell > 0)
+        q_dc = np.where(dc_on, np.minimum(dc_ua_cell * dt_dc, (t_store - 1.0) * cap_w / 3600.0), 0.0)
         gain = ta - t_store
         q_loss = phys.u_cover * a_top * np.where(gain > 0, gain, 0.0) + phys.u_ground * a_gnd * (ground_c - t_store)
-        q_load = load_w[h] / N
         usable = ice | (t_store < t_use_max)
         served = np.where(usable, q_load, 0.0)
-        short = q_load - served
-        H = np.maximum(H + (served + q_loss - q_f) * 3600.0, h_min)
+        return v_ice, t_store, q_f, q_dc, dc_on, q_loss, served, q_load - served
+
+    H = phys.t_water_start * cap_w  # J per cell (warm water before the first winter)
+    n_hours = len(t_air)
+    Y = (n_hours - warmup_hours) // 8760
+    yr = lambda h: (h - warmup_hours) // 8760
+    Z = lambda: np.zeros((Y, K))
+    unmet, unmet_p, backup_p, frozen, losses, dcm = Z(), Z(), Z(), Z(), Z(), Z()
+    annual = np.zeros(Y)
+    part_cell = partial_backup_w / N
+    tr = [] if trace else None
+    elec = None
+    if el is not None:
+        elec = {c: dict(kwh_on=Z(), kwh_off=Z(), pk_on=np.zeros((Y, 12, K)), pk_off=np.zeros((Y, 12, K)))
+                for c in CONFIGS}
+    for h in range(n_hours):
+        ta = t_air[h]
+        q_load = load_w[h] / N
+        v_ice, t_store, q_f, q_dc, dc_on, q_loss, served, short = step(H, ta, q_load)
+        H = np.maximum(H + (served + q_loss - q_f - q_dc) * 3600.0, h_min)
         if h >= warmup_hours:
             y = yr(h)
             if y < Y:
@@ -129,18 +159,24 @@ def simulate(designs: list[Design], n_units: np.ndarray, t_air: np.ndarray, load
                 bp = np.minimum(short, part_cell)
                 backup_p[y] += bp * N
                 unmet_p[y] += (short - bp) * N
-                if track:
-                    m, f = month[h], kwe_per_w[h] * N
-                    np.maximum(pk_full[y, m], short * f, out=pk_full[y, m])
-                    np.maximum(pk_part[y, m], bp * f, out=pk_part[y, m])
                 frozen[y] += q_f * N
+                dcm[y] += q_dc * N
                 losses[y] += q_loss * N
                 annual[y] += load_w[h]
+                if el is not None:
+                    kpw = el.kwe_per_w[h] * N
+                    base = served * N / el.pump_cop / 1e3 + np.where(dc_on, dc_kwe, 0.0)
+                    kw = {"none": base, "full": base + short * kpw, "partial": base + bp * kpw}
+                    tag = "on" if el.onpk[h] else "off"
+                    m = el.month[h]
+                    for c, v in kw.items():
+                        e = elec[c]
+                        e["kwh_" + tag][y] += v
+                        np.maximum(e["pk_" + tag][y, m], v, out=e["pk_" + tag][y, m])
         if trace and h % 24 == 0:
             tr.append(float(v_ice[0] / (p[0] ** 2 * L[0])))
     to_mwh = 1.0 / 1e6  # W*h -> MWh
     return SimResult(Y, annual * to_mwh, unmet * to_mwh, unmet_p * to_mwh, backup_p * to_mwh,
                      frozen * to_mwh, losses * to_mwh,
                      np.where(H < 0, -H / (RHO_ICE * L_F), 0) / (p**2 * L),
-                     trace=np.array(tr) if trace else None,
-                     peak_kwe_full=pk_full, peak_kwe_partial=pk_part)
+                     trace=np.array(tr) if trace else None, dc_mwh=dcm * to_mwh, elec=elec)

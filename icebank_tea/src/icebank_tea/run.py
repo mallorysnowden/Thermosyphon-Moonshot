@@ -14,9 +14,9 @@ from pathlib import Path
 
 import numpy as np
 
-from .cases import CASES, Case, day_of_year, month_of_doy
+from .cases import CASES, Case, day_of_year, month_of_doy, on_peak
 from .costs import AL_WORLD, CostInputs, crf, pit_usd_per_m3, unit_bom, with_foak
-from .store import KWH_PER_M3_ICE, Design, Physics, simulate
+from .store import KWH_PER_M3_ICE, Design, ElecInputs, Physics, simulate
 from .weather import CLIMATES, chained_years, freezing_degree_days
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -50,6 +50,33 @@ def demand_cost(peaks_kw, case: Case):
     return np.median(per_year, axis=0)
 
 
+def demand_cost_onoff(pk_on, pk_off, case: Case):
+    """Median-year demand charges from (Y, 12[, K]) monthly on- and off-peak maxima (kW).
+
+    TOU tariffs bill on-peak demand at the seasonal rate plus off-peak demand in excess of on-peak at
+    demand_off_excess; other tariffs bill the monthly maximum at any hour.
+    """
+    r = case.demand_rates()
+    if case.tou:
+        billed = np.einsum("ym...,m->y...", pk_on, r) + case.demand_off_excess * np.maximum(pk_off - pk_on, 0).sum(axis=1)
+    else:
+        billed = np.einsum("ym...,m->y...", np.maximum(pk_on, pk_off), r)
+    return np.median(billed, axis=0)
+
+
+def energy_cost(kwh_on, kwh_off, case: Case):
+    """Median-year energy cost for (Y[, K]) on- and off-peak kWh."""
+    p_on, p_off = case.prices()
+    return np.median(kwh_on * p_on + kwh_off * p_off, axis=0)
+
+
+def make_elec(case: Case, t, ci: CostInputs) -> ElecInputs:
+    n = len(t)
+    return ElecInputs(month=month_of_doy(day_of_year(n)), onpk=on_peak(n),
+                      kwe_per_w=(1.0 / case.cop(t) + case.aux_kw_per_kwth()) / 1e3,
+                      peak_w=case.peak_w, pump_cop=ci.pump_cop, dc_cop=ci.dc_cop)
+
+
 def water_usd_per_mwh_rejected(case: Case, ci: CostInputs) -> float:
     """Tower / evaporative-condenser water cost per MWh of heat rejected (0 for air-cooled plants)."""
     if case.heat_rejection != "tower":
@@ -79,25 +106,30 @@ def bau(case: Case, t, load, ci: CostInputs, warm=184 * 24):
     kwe = load * (1.0 / cop + aux) / 1e3                               # hourly BAU electric draw, kW
     rej_mwh = load * (1.0 + 1.0 / cop) / 1e6                           # heat rejected each hour, MWh
     month = month_of_doy(day_of_year(len(t)))
+    onpk = on_peak(len(t))
+    Y = (len(t) - warm) // 8760
     per_year_mwh, per_year_kwh_e, per_year_rej = [], [], []
-    for y in range((len(t) - warm) // 8760):
+    kwh_on, kwh_off = np.zeros(Y), np.zeros(Y)
+    for y in range(Y):
         sl = slice(warm + y * 8760, warm + (y + 1) * 8760)
         per_year_mwh.append(load[sl].sum() / 1e6)
         per_year_kwh_e.append(kwe[sl].sum())
         per_year_rej.append(rej_mwh[sl].sum())
+        kwh_on[y] = kwe[sl][onpk[sl]].sum(); kwh_off[y] = kwe[sl][~onpk[sl]].sum()
     cold = float(np.median(per_year_mwh)); kwh_e = float(np.median(per_year_kwh_e))
     rej = float(np.median(per_year_rej))
-    chiller_pk = monthly_peaks(kwe, month, warm)                       # kWe, assumed to set the site's monthly peak
-    pump_pk = monthly_peaks(load / ci.pump_cop / 1e3, month, warm)     # ice-bank discharge pumps
+    # monthly peak draw, on- and off-peak (assumed to add fully to the site's billed peaks)
+    pk_on = monthly_peaks(np.where(onpk, kwe, 0.0), month, warm)
+    pk_off = monthly_peaks(np.where(onpk, 0.0, kwe), month, warm)
     mech = peak_kw * case.redundancy * case.mech_usd_kw + peak_kw * case.extra_bau_capex_usd_kw
     peak_kwe = peak_kw * (1.0 / case.peak_cop() + aux)
     svc = peak_kwe * ci.elec_service_usd_kwe
     a = crf(ci.rate, ci.life_mech)
-    parts = dict(plant=mech * a, elec_service=svc * a, energy=kwh_e * case.elec_usd_kwh,
-                 demand=float(demand_cost(chiller_pk, case)), water=rej * water_usd_per_mwh_rejected(case, ci),
+    parts = dict(plant=mech * a, elec_service=svc * a, energy=float(energy_cost(kwh_on, kwh_off, case)),
+                 demand=float(demand_cost_onoff(pk_on, pk_off, case)), water=rej * water_usd_per_mwh_rejected(case, ci),
                  om=mech * ci.mech_om_frac)
     total = sum(parts.values())
-    return dict(pump_peak_kw=pump_pk, cold_mwh=cold, cold_p90_mwh=float(np.percentile(per_year_mwh, 90)), kwh_e=kwh_e,
+    return dict(cold_mwh=cold, cold_p90_mwh=float(np.percentile(per_year_mwh, 90)), kwh_e=kwh_e,
                 mean_cop=cold * 1e3 / max(kwh_e, 1e-9), rej_per_mwh=rej / max(cold, 1e-9),
                 water_m3=rej * water_m3_per_mwh_rejected(case, ci), capex=mech + svc, parts=parts, total=total,
                 lcoc=total / max(cold, 1e-9), peak_kwe=peak_kwe)
@@ -110,13 +142,15 @@ def evaluate(case: Case, designs, n_units, sim, ci: CostInputs, b: dict):
     a_ice = crf(ci.rate, ci.life_icebank) * (1 + ci.rate) ** ci.construction_lag_years
     a_mech = crf(ci.rate, ci.life_mech)
     cold = b["cold_mwh"]
-    pump_pk = b["pump_peak_kw"][:, :, None]
-    dem = {"full": demand_cost(sim.peak_kwe_full + pump_pk, case),
-           "partial": demand_cost(sim.peak_kwe_partial + pump_pk, case),
-           "none": demand_cost(np.broadcast_to(pump_pk, sim.peak_kwe_full.shape), case)}
+    w_rej = b["rej_per_mwh"] * water_usd_per_mwh_rejected(case, ci)   # $ per MWh the backup chiller delivers
+    keys = list(BACKUPS)
+    energy = {k: energy_cost(sim.elec[k]["kwh_on"], sim.elec[k]["kwh_off"], case) for k in keys}
+    demand = {k: demand_cost_onoff(sim.elec[k]["pk_on"], sim.elec[k]["pk_off"], case) for k in keys}
     rows = []
     for i, d in enumerate(designs):
         bom = unit_bom(d, ci)
+        dc_kw = d.dc_frac * peak_kw
+        dc_capex = dc_kw * ci.dc_usd_kw
         for j, n in enumerate(n_units):
             k = i * M + j
             pit_m3 = n * d.pitch_m**2 * d.depth_m
@@ -125,8 +159,8 @@ def evaluate(case: Case, designs, n_units, sim, ci: CostInputs, b: dict):
             capex_dis = peak_kw * ci.discharge_usd_kw * 1.2
             ice_capex = capex_units + capex_pit + capex_dis
             unmet_y = sim.unmet_mwh[:, k]
-            served = cold - float(np.median(unmet_y))
-            for key, f in BACKUPS.items():
+            for key in keys:
+                f = BACKUPS[key]
                 if key == "full":
                     backup_mwh, left_y = float(np.median(unmet_y)), np.zeros_like(unmet_y)
                 elif key == "partial":
@@ -135,20 +169,21 @@ def evaluate(case: Case, designs, n_units, sim, ci: CostInputs, b: dict):
                     backup_mwh, left_y = 0.0, unmet_y
                 worst = float(left_y.max()) / max(cold, 1e-9)
                 mech = f * peak_kw * case.mech_usd_kw
-                # Electrical service: backup chiller + its auxiliaries, plus the ice bank's discharge pumps
-                svc = (f * b["peak_kwe"] + peak_kw / ci.pump_cop) * ci.elec_service_usd_kwe
-                energy = (backup_mwh * 1e3 / b["mean_cop"] + served * 1e3 / ci.pump_cop) * case.elec_usd_kwh
-                water = backup_mwh * b["rej_per_mwh"] * water_usd_per_mwh_rejected(case, ci)
+                # Electrical service: backup chiller + auxiliaries, discharge pumps, dry-cooler fans
+                svc = (f * b["peak_kwe"] + peak_kw / ci.pump_cop + dc_kw / ci.dc_cop) * ci.elec_service_usd_kwe
                 parts = dict(thermosiphons=capex_units * a_ice, pit=capex_pit * a_ice, discharge=capex_dis * a_ice,
-                             backup_plant=mech * a_mech, elec_service=svc * a_mech, energy=energy,
-                             demand=float(dem[key][k]), water=water,
-                             om=ice_capex * ci.icebank_om_frac + mech * ci.mech_om_frac)
+                             dry_cooler=dc_capex * a_mech, backup_plant=mech * a_mech,
+                             elec_service=svc * a_mech, energy=float(energy[key][k]), demand=float(demand[key][k]),
+                             water=backup_mwh * w_rej,
+                             om=ice_capex * ci.icebank_om_frac + (mech + dc_capex) * ci.mech_om_frac)
                 total = sum(parts.values())
                 rows.append(dict(case=case.key, backup=key, design=asdict(d), n_units=int(round(n)),
                                  unit_usd=bom["unit_usd"], pit_m3=pit_m3, pit_ha=n * d.pitch_m**2 / 1e4,
                                  ice_capex=ice_capex, backup_capex=mech + svc, parts=parts, total=total,
                                  lcoc=total / max(cold, 1e-9), ratio=total / b["total"], worst_unmet_frac=worst,
-                                 feasible=worst <= RELIABILITY, kwh_ice_per_unit=float(np.median(sim.frozen_mwh[:, k])) * 1e3 / n,
+                                 feasible=worst <= RELIABILITY,
+                                 kwh_ice_per_unit=float(np.median(sim.frozen_mwh[:, k])) * 1e3 / n,
+                                 dc_mwh=float(np.median(sim.dc_mwh[:, k])),
                                  losses_frac=float(np.median(sim.losses_mwh[:, k])) / max(cold, 1e-9), k=k))
     return rows
 
@@ -162,7 +197,8 @@ def grid(quick: bool):
     pitches = [1.0, 1.5] if quick else [0.8, 1.0, 1.25, 1.5, 2.0]
     conds = [25.0] if quick else [12.0, 25.0, 40.0]
     depths = [10.0] if quick else [10.0, 15.0]
-    return [Design(p, a, z) for p in pitches for a in conds for z in depths]
+    dcs = [0.0, 0.3] if quick else [0.0, 0.1, 0.3]   # dry-cooler recharge, fraction of peak load
+    return [Design(p, a, z, dc_frac=c) for p in pitches for a in conds for z in depths for c in dcs]
 
 
 def n_grid(b: dict, quick: bool) -> np.ndarray:
@@ -171,9 +207,10 @@ def n_grid(b: dict, quick: bool) -> np.ndarray:
     return np.unique(np.round(n0 * np.geomspace(0.25, 6.0, 10 if quick else 28)))
 
 
-def fill_dates(case, d, n, t, load, phys, warm=184 * 24):
+def fill_dates(case, d, n, t, load, phys, el=None, warm=184 * 24):
     """Median date each winter when the store reaches 50% and 90% of its peak ice."""
-    sim = simulate([d], np.array([n]), t, load, case.t_use_max, CLIMATES[case.climate].ground_c, phys, trace=True)
+    sim = simulate([d], np.array([n]), t, load, case.t_use_max, CLIMATES[case.climate].ground_c, phys, trace=True,
+                   el=el)
     tr = sim.trace
     out = []
     for w in range(len(tr) // 365):
@@ -222,8 +259,9 @@ def sensitivities(case, backup, b_fn, rows_fn, ci, base_row, base_bau):
     cost_only("Electrical service cost ($0 / $1,500 per kWe)", replace(ci, elec_service_usd_kwe=0),
               replace(ci, elec_service_usd_kwe=1500))
     cost_only("Demand charge (none / x2, e.g. 12-month ratchet)", ci, ci,
-              replace(case, demand_summer=0.0, demand_winter=0.0),
-              replace(case, demand_summer=2 * case.demand_summer, demand_winter=2 * case.demand_winter))
+              replace(case, demand_summer=0.0, demand_winter=0.0, demand_off_excess=0.0),
+              replace(case, demand_summer=2 * case.demand_summer, demand_winter=2 * case.demand_winter,
+                      demand_off_excess=2 * case.demand_off_excess))
     if case.heat_rejection == "tower":
         cost_only("Water + sewer price (x0.5 / x2)", replace(ci, water_price_mult=0.5), replace(ci, water_price_mult=2.0))
     elif case.key == "A":
@@ -238,13 +276,13 @@ def sensitivities(case, backup, b_fn, rows_fn, ci, base_row, base_bau):
     return out
 
 
-def physics_sensitivity(case, backup, designs, n_units, t, load, gc, phys, trk, ci, b, base_row):
+def physics_sensitivity(case, backup, designs, n_units, t, load, gc, phys, el, ci, b, base_row):
     """Condenser conductance, re-simulated (only the ice bank changes)."""
     e = dict(input="Condenser conductance (3 / 8 W/m2K)", base=base_row["ratio"], bau_base=b["lcoc"],
              ice_base=base_row["lcoc"])
     for side, u in (("low", 3.0), ("high", 8.0)):
         sim_u = simulate(designs, n_units, t, load, case.t_use_max, gc, replace(phys, u_cond=u),
-                         partial_backup_w=0.3 * case.peak_w, **trk)
+                         partial_backup_w=0.3 * case.peak_w, el=el)
         rr = [r for r in evaluate(case, designs, n_units, sim_u, ci, b) if r["backup"] == backup and r["feasible"]]
         ice = min(r["total"] for r in rr) if rr else float("nan")
         e[side] = ice / b["total"]; e[f"bau_{side}"] = b["lcoc"]; e[f"ice_{side}"] = ice / b["cold_mwh"]
@@ -257,10 +295,9 @@ def run_case(case: Case, years: int, quick: bool, ci: CostInputs, phys: Physics,
     designs = grid(quick)
     n_units = n_grid(b, quick)
     gc = CLIMATES[case.climate].ground_c
-    trk = dict(month=month_of_doy(day_of_year(len(t))),
-               kwe_per_w=(1.0 / case.cop(t) + case.aux_kw_per_kwth()) / 1e3)
+    el = make_elec(case, t, ci)
     log(f"[{case.key}] simulating {len(designs)} designs x {len(n_units)} sizes over {years} years ...")
-    sim = simulate(designs, n_units, t, load, case.t_use_max, gc, phys, partial_backup_w=0.3 * case.peak_w, **trk)
+    sim = simulate(designs, n_units, t, load, case.t_use_max, gc, phys, partial_backup_w=0.3 * case.peak_w, el=el)
     cache = {"sim": sim}
 
     def rows_fn(cs, cc, bb):
@@ -272,16 +309,16 @@ def run_case(case: Case, years: int, quick: bool, ci: CostInputs, phys: Physics,
     rows = rows_fn(case, ci, b)
     res = dict(case=case, bau=b, fdd=freezing_degree_days(t[184 * 24:]) / years, best={}, sens=None, fill=None,
                foak={})
+    fr = rows_fn(case, with_foak(ci), bau(case, t, load, with_foak(ci)))
     for key in BACKUPS:
         res["best"][key] = best(rows, key)
-        fr = rows_fn(case, with_foak(ci), bau(case, t, load, with_foak(ci)))
         res["foak"][key] = best(fr, key)
     # The configuration to stress-test: cheapest feasible one
     feas = [r for r in res["best"].values() if r]
     top = min(feas, key=lambda r: r["total"])
     res["top"] = top
     res["sens"] = sensitivities(case, top["backup"], b_fn, rows_fn, ci, top, b)
-    res["sens"].append(physics_sensitivity(case, top["backup"], designs, n_units, t, load, gc, phys, trk, ci, b, top))
+    res["sens"].append(physics_sensitivity(case, top["backup"], designs, n_units, t, load, gc, phys, el, ci, b, top))
     # Ice-only sensitivities as well (for the charts), unless that is already the top configuration
     ice = res["best"]["none"]
     if ice is not None:
@@ -289,15 +326,16 @@ def run_case(case: Case, years: int, quick: bool, ci: CostInputs, phys: Physics,
             res["sens_none"] = res["sens"]
         else:
             res["sens_none"] = sensitivities(case, "none", b_fn, rows_fn, ci, ice, b)
-            res["sens_none"].append(physics_sensitivity(case, "none", designs, n_units, t, load, gc, phys, trk, ci, b, ice))
+            res["sens_none"].append(physics_sensitivity(case, "none", designs, n_units, t, load, gc, phys, el, ci, b, ice))
     if res["best"]["none"]:
         r = res["best"]["none"]
-        res["fill"] = fill_dates(case, Design(**r["design"]), r["n_units"], t, load, phys)
+        res["fill"] = fill_dates(case, Design(**r["design"]), r["n_units"], t, load, phys, el)
     return res
 
 
 def fmt_design(d):
-    return f"{d['pitch_m']:.2g} m pitch, {d['cond_area_m2']:.0f} m2 fins, {d['depth_m']:.0f} m deep"
+    dc = f", dry cooler {100 * d['dc_frac']:.0f}% of peak" if d.get("dc_frac", 0) > 0 else ""
+    return f"{d['pitch_m']:.2g} m pitch, {d['cond_area_m2']:.0f} m2 fins, {d['depth_m']:.0f} m deep{dc}"
 
 
 def write_outputs(results, ci, years, phys):
@@ -358,13 +396,15 @@ def write_results_md(results, ci, years):
              "median year's cooling unmet in its worst year (configs without a full backup chiller).\n")
     L.append("## Headline (demand charges included)\n")
     L.append("Cost of cooling in $ per MWh of cold delivered (median year), and the ratio to BAU in brackets.\n")
-    L.append("| Case | Why this case | BAU $/MWh | of which demand charges | Ice + full backup | Ice + 30% backup | Ice only | Ice only at FOAK |")
+    L.append("| Case | Why this case | BAU $/MWh | of which demand charges | Ice + full backup | Ice + 30% backup | "
+             "Ice only | Ice only at FOAK |")
     L.append("|---|---|---|---|---|---|---|---|")
     for res in results:
         c = res["case"]; b = res["best"]; fo = res["foak"]; bb = res["bau"]
         cell = lambda r: f"{r['lcoc']:.0f} ({r['ratio']:.2f})" if r else "not feasible"
         L.append(f"| {c.title} | {c.why} | {bb['lcoc']:.0f} | {bb['parts']['demand'] / bb['cold_mwh']:.0f} | "
-                 f"{cell(b['full'])} | {cell(b['partial'])} | {cell(b['none'])} | {cell(fo['none'])} |")
+                 f"{cell(b['full'])} | {cell(b['partial'])} | {cell(b['none'])} | "
+                 f"{cell(fo['none'])} |")
     L.append("\nFOAK costs are quoted against the BAU cost above, so the FOAK ratio is FOAK $/MWh / BAU $/MWh.\n")
     L.append("\n## Best ice-only design per case\n")
     L.append("| Case | Thermosiphons | Cost per unit | Ice per unit per winter | Design | Pit | Worst-year unmet | Store 50% / 90% full |")
@@ -380,9 +420,9 @@ def write_results_md(results, ci, years):
                  f"{100 * r['worst_unmet_frac']:.2f}% | {fd.get('half', '-')} / {fd.get('ninety', '-')} |")
     L.append("\n## Where the money goes ($ per MWh of cold)\n")
     L.append("Ice-bank options:\n")
-    L.append("| Case | Config | Thermosiphons | Pit | Pumps + HX | Backup chiller | Electrical service | Energy | "
-             "Demand charges | Water | O&M | Total |")
-    L.append("|---|---|---|---|---|---|---|---|---|---|---|---|")
+    L.append("| Case | Config | Thermosiphons | Pit | Pumps + HX | Dry cooler | Backup chiller | Electrical service | "
+             "Energy | Demand charges | Water | O&M | Total |")
+    L.append("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
     for res in results:
         cold = res["bau"]["cold_mwh"]
         for key in BACKUPS:
@@ -391,7 +431,8 @@ def write_results_md(results, ci, years):
                 continue
             p = r["parts"]
             L.append(f"| {res['case'].key} | {BACKUP_LABEL[key]} | " + " | ".join(
-                f"{p[k] / cold:.0f}" for k in ("thermosiphons", "pit", "discharge", "backup_plant", "elec_service",
+                f"{p[k] / cold:.0f}" for k in ("thermosiphons", "pit", "discharge", "dry_cooler", "backup_plant",
+                                               "elec_service",
                                                "energy", "demand", "water", "om")) + f" | {r['lcoc']:.0f} |")
     L.append("\nConventional (BAU):\n")
     L.append("| Case | Heat rejection | Chiller plant | Electrical service | Energy (chiller + pumps/fans) | "
