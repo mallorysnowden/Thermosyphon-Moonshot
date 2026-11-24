@@ -58,16 +58,21 @@ class SimResult:
     frozen_mwh: np.ndarray           # (Y, K) ice made (cold charged) per year, whole pit
     losses_mwh: np.ndarray           # (Y, K)
     end_ice_frac: np.ndarray         # (K,) ice fraction at the end of the run
+    peak_kwe_full: np.ndarray | None = None     # (Y, 12, K) monthly peak backup draw, full backup
+    peak_kwe_partial: np.ndarray | None = None  # (Y, 12, K) monthly peak backup draw, partial backup
     trace: np.ndarray | None = None  # daily ice fraction for K=0 when requested
 
 
 def simulate(designs: list[Design], n_units: np.ndarray, t_air: np.ndarray, load_w: np.ndarray,
              t_use_max: float, ground_c: float, phys: Physics, partial_backup_w: float = 0.0,
-             warmup_hours: int = 184 * 24, trace: bool = False) -> SimResult:
+             warmup_hours: int = 184 * 24, trace: bool = False,
+             month: np.ndarray | None = None, kwe_per_w: np.ndarray | None = None) -> SimResult:
     """Run every design x unit count over the hourly series.
 
     t_air and load_w start on Jul 1 of a warm-up year; full calendar years follow.
     n_units: (M,) candidate unit counts, used for every design.
+    month, kwe_per_w: optional hourly calendar month (0-11) and backup-chiller kWe per W of cooling
+    (1 / (1000 COP)); when given, the monthly peak backup draw is tracked for demand charges.
     """
     D, M = len(designs), len(n_units)
     K = D * M
@@ -97,6 +102,9 @@ def simulate(designs: list[Design], n_units: np.ndarray, t_air: np.ndarray, load
     frozen = np.zeros((Y, K)); losses = np.zeros((Y, K)); annual = np.zeros(Y)
     part_cell = partial_backup_w / N
     tr = [] if trace else None
+    track = month is not None and kwe_per_w is not None
+    pk_full = np.zeros((Y, 12, K)) if track else None
+    pk_part = np.zeros((Y, 12, K)) if track else None
     inv_2pikL = 1.0 / (2 * np.pi * K_ICE * L)
 
     for h in range(n_hours):
@@ -121,6 +129,10 @@ def simulate(designs: list[Design], n_units: np.ndarray, t_air: np.ndarray, load
                 bp = np.minimum(short, part_cell)
                 backup_p[y] += bp * N
                 unmet_p[y] += (short - bp) * N
+                if track:
+                    m, f = month[h], kwe_per_w[h] * N
+                    np.maximum(pk_full[y, m], short * f, out=pk_full[y, m])
+                    np.maximum(pk_part[y, m], bp * f, out=pk_part[y, m])
                 frozen[y] += q_f * N
                 losses[y] += q_loss * N
                 annual[y] += load_w[h]
@@ -130,4 +142,5 @@ def simulate(designs: list[Design], n_units: np.ndarray, t_air: np.ndarray, load
     return SimResult(Y, annual * to_mwh, unmet * to_mwh, unmet_p * to_mwh, backup_p * to_mwh,
                      frozen * to_mwh, losses * to_mwh,
                      np.where(H < 0, -H / (RHO_ICE * L_F), 0) / (p**2 * L),
-                     np.array(tr) if trace else None)
+                     trace=np.array(tr) if trace else None,
+                     peak_kwe_full=pk_full, peak_kwe_partial=pk_part)

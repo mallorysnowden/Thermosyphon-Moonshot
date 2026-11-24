@@ -6,12 +6,12 @@ business-as-usual (BAU) plant it would replace, for four cases. It supersedes th
 (`tea/cold_bank_cooling.py`), which froze soil and came out at about 3x BAU.
 
 ```bash
-cd icebank_tea && pip install -e .[test] && python -m pytest
-python -m icebank_tea.run            # ~2 min, writes outputs/ and RESULTS.md
+cd icebank_tea && pip install -e .[test,charts] && python -m pytest
+python -m icebank_tea.run            # ~3 min, writes outputs/, outputs/figures/ and RESULTS.md
 python -m icebank_tea.run --quick    # coarse grid
 ```
 
-Start with [`RESULTS.md`](RESULTS.md) and [`MODEL_LIMITATIONS.md`](MODEL_LIMITATIONS.md).
+Start with [`RESULTS.md`](RESULTS.md), the charts in [`outputs/figures/`](outputs/figures/), and [`MODEL_LIMITATIONS.md`](MODEL_LIMITATIONS.md).
 
 ## What changed from the first ice-bank model (Nov 23 doc)
 
@@ -30,6 +30,13 @@ Start with [`RESULTS.md`](RESULTS.md) and [`MODEL_LIMITATIONS.md`](MODEL_LIMITAT
    code-sized wall, plus installation priced bottom-up; FOAK = index 3.5, manual install, pricier civil works.
    Units longer than 12 m pay for a field joint. Condenser conductance calibrated to Li et al. (2020).
 6. **Repo conventions:** 8% customer discount rate; one-year lag before first cooling (the pit needs a winter).
+7. **Monthly demand charges** from each site's published tariff, billed on the chiller's (and discharge pumps')
+   highest draw each month: Xcel ND for the data center and process cases, Xcel MN for the hospital, and a
+   Bristol Bay co-op seasonal rate for the salmon plant. Removing the chiller removes most of this charge.
+8. **Auxiliaries, electrical service and water on both sides.** Conventional plants pay for chilled-water pumps
+   (and, with cooling towers, condenser-water pumps and tower fans) in energy, demand charges and electrical
+   service; the ice bank's discharge pumps now pay electrical service too. Tower plants (hospital, salmon
+   evaporative condensers) pay for makeup water, treatment and sewer at local rates.
 
 ## Files
 
@@ -40,4 +47,5 @@ Start with [`RESULTS.md`](RESULTS.md) and [`MODEL_LIMITATIONS.md`](MODEL_LIMITAT
 | `src/icebank_tea/costs.py` | Unit bill of materials, raw-material NOAK costing, pit cost curve, finance |
 | `src/icebank_tea/cases.py` | Cases A-D: loads, usable water temperature, BAU plant |
 | `src/icebank_tea/run.py` | Design search, backup options, sensitivities, outputs |
-| `outputs/` | `summary.csv`, `sensitivity.csv`, `unit_bom.csv`, `run_meta.json` |
+| `src/icebank_tea/charts.py` | Data-center cost-breakdown donuts and sensitivity tornados (needs matplotlib) |
+| `outputs/` | `summary.csv`, `sensitivity.csv` (ratios and $/MWh), `unit_bom.csv`, `run_meta.json`, `figures/` |

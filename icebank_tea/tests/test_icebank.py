@@ -67,3 +67,35 @@ def test_load_is_unmet_when_store_is_empty_and_warm():
     sim = simulate([d], np.array([1.0]), np.full(hours, 20.0), np.full(hours, 1000.0), 5.0, 10.0, phys,
                    warmup_hours=0)
     assert sim.unmet_mwh[0, 0] == pytest.approx(8.76, rel=1e-6)  # 1 kW all year, nothing served
+
+
+def test_month_and_demand_charge_by_hand():
+    from icebank_tea.cases import CASES, month_of_doy
+    from icebank_tea.run import demand_cost
+    assert list(month_of_doy(np.array([0, 30, 31, 151, 364]))) == [0, 0, 1, 5, 11]
+    c = CASES["D"]  # $15.38 Jun-Sep, $11.03 otherwise
+    peaks = np.full((3, 12), 200.0)  # 200 kWe every month, three years
+    assert demand_cost(peaks, c) == pytest.approx(200 * (4 * 15.38 + 8 * 11.03))
+
+
+def test_backup_peak_tracks_unmet_draw():
+    # Warm store, no freezing: every hour is unmet, so the monthly peak backup draw is load / COP
+    from icebank_tea.store import Design, Physics, simulate
+    n = 184 * 24 + 8760
+    t = np.full(n, 25.0)
+    load = np.full(n, 1e5)
+    month = np.zeros(n, dtype=int)
+    sim = simulate([Design(1.0, 12.0, 10.0)], np.array([10.0]), t, load, t_use_max=0.0, ground_c=8.0,
+                   phys=Physics(t_water_start=20.0), month=month, kwe_per_w=np.full(n, 1 / 5e3))
+    assert sim.peak_kwe_full[0, 0, 0] == pytest.approx(1e5 / 5e3)
+
+
+def test_tower_water_cost_by_hand():
+    from icebank_tea.cases import CASES
+    from icebank_tea.costs import CostInputs
+    from icebank_tea.run import water_usd_per_mwh_rejected
+    ci = CostInputs()
+    b = CASES["B"]  # Minneapolis: sewer billed on all water used
+    makeup = 1.6 * 4 / 3  # evaporation + blowdown at 4 cycles, m3 per MWh rejected
+    assert water_usd_per_mwh_rejected(b, ci) == pytest.approx(makeup * (b.water_usd_m3 + 0.15 + b.sewer_usd_m3))
+    assert water_usd_per_mwh_rejected(CASES["A"], ci) == 0.0  # air-cooled: no water
