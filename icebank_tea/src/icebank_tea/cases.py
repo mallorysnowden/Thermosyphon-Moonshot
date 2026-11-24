@@ -43,6 +43,18 @@ class Case:
     demand_winter: float = 0.0
     summer_months: tuple = (5, 6, 7, 8)   # 0-based: Jun-Sep
     demand_note: str = ""
+    # How the BAU plant rejects heat: "air" (dry/air-cooled condensers) or "tower" (cooling tower or
+    # evaporative condenser, which uses water and has condenser-water pumps and fans)
+    heat_rejection: str = "air"
+    water_usd_m3: float = 0.0           # makeup water, $/m3
+    sewer_usd_m3: float = 0.0           # sewer, $/m3 of water billed for sewer
+    sewer_on: str = "makeup"            # "makeup" (billed on all water used) or "blowdown" (evaporation deduct meter)
+    water_note: str = ""
+
+    def aux_kw_per_kwth(self) -> float:
+        """BAU auxiliary electric draw per kW of cooling, not in the chiller COP: chilled-water pumps (0.015),
+        plus condenser-water pumps and tower fans (0.015 each) for tower plants."""
+        return 0.045 if self.heat_rejection == "tower" else 0.015
 
     def demand_rates(self) -> np.ndarray:
         """$/kW for each calendar month (index 0 = Jan)."""
@@ -71,7 +83,12 @@ def _dc_load(c, t, doy):
 
 def _dc_cop(c, t):
     te = DC_SUPPLY - 3 + 273.15
-    tc = np.maximum(t + 12 + 273.15, te + 5)
+    if c.heat_rejection == "tower":
+        # Condensing ~11 K above wet bulb; wet bulb proxy = dry bulb minus a depression that grows with heat
+        wb = t - np.clip(0.3 * t, 1.0, 10.0)
+        tc = np.maximum(wb + 11 + 273.15, te + 5)
+    else:
+        tc = np.maximum(t + 12 + 273.15, te + 5)
     return np.clip(0.35 * te / (tc - te), 2.5, 8.0)
 
 
@@ -106,27 +123,37 @@ CASES = {
     "A": Case("A", "AI data center, 100 MW IT (Fargo / Ellendale, ND)", "fargo", 100e6, 27.0, 230.0, 1.2, 0.075,
               "Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity.",
               "Trim above what dry coolers can do at 32 degC supply / 42 degC return, 8 K approach. "
-              "Electricity 7.5 c/kWh (ND industrial 7.25 c, EIA 2024).",
+              "Electricity 7.5 c/kWh (ND industrial 7.25 c, EIA 2024). Air-cooled trim chillers (no water); "
+              "a water-cooled tower variant is a sensitivity.",
+              water_usd_m3=5.05 / 3.785, sewer_usd_m3=2.55 / 3.785,
+              water_note="Fargo water $5.05 per 1,000 gal above 2 million gal/month, sewer $2.55 per 1,000 gal billed "
+                         "on all water used (fargond.gov). Used only in the tower sensitivity.",
               demand_summer=13.28, demand_winter=8.93,
               demand_note="Xcel Energy ND General Time of Day (D17) on-peak demand, $15.38 Jun-Sep / $11.03 Oct-May, "
                           "less the $2.10 transmission-voltage discount (NDPSC PU-24-376 tariff sheets)."),
     "B": Case("B", "Hospital / campus, 3.5 MWth (Minneapolis, MN)", "minneapolis", 3.5e6, 4.0, 430.0, 1.5, 0.125,
               "Control case: chillers run all summer on cheap power, so it should lose.",
-              "Water-cooled chiller plant, 3 x 50%, ~$1,500/ton, COP 4.7. Electricity 12.5 c/kWh (MN commercial 12.15 c).",
+              "Water-cooled chiller plant with cooling towers, 3 x 50%, ~$1,500/ton, COP 4.7. "
+              "Electricity 12.5 c/kWh (MN commercial 12.15 c).",
+              heat_rejection="tower", water_usd_m3=3.82 * 1.09025 / 2.832, sewer_usd_m3=5.63 / 2.832,
+              water_note="Minneapolis water $3.82 per 100 ft3 plus 9.025% water tax, sewer $5.63 per 100 ft3; "
+                         "commercial sewer is billed on actual water use (minneapolismn.gov).",
               demand_summer=19.86, demand_winter=15.27,
               demand_note="Xcel Energy MN General Time of Day demand, $19.86 summer / $15.27 winter "
                           "(2026 rates proposed in the MN electric rate case)."),
     "C": Case("C", "Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK)", "dillingham", 1.5e6, 1.5, 710.0, 1.2, 0.45,
               "Best seasonal match: long freezing winter, six-week summer burst, diesel power.",
-              "Ammonia refrigeration, COP 3. Electricity 45 c/kWh (diesel self-generation; Naknek fuel $6.75/gal). "
+              "Ammonia refrigeration with evaporative condensers, COP 3. Electricity 45 c/kWh (diesel self-generation; Naknek fuel $6.75/gal). "
               "Ice alone chills to about +1 degC, not the -1 degC of refrigerated seawater.",
+              heat_rejection="tower", water_usd_m3=1.0, sewer_usd_m3=0.0,
+              water_note="Self-supplied well water with treatment, $1.00/m3 (assumption); no municipal sewer.",
               demand_summer=12.0, demand_winter=12.0,
               demand_note="Nushagak Cooperative (Dillingham) Large Commercial Seasonal rate, $12.00/kW; Naknek Electric's "
                           "tariff is not published online. A self-generating plant pays none (generators are in the "
-                          "electrical-service credit)."),
+                          "electrical service cost)."),
     "D": Case("D", "Year-round process cooling, 1 MWth at 5 degC (Fargo, ND)", "fargo", 1.0e6, 3.0, 430.0, 1.2, 0.075,
               "Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer.",
-              "BAU: chiller plus a dry-cooler economiser that cools for free below -3 degC.",
+              "BAU: air-cooled chiller plus a dry-cooler economiser that cools for free below -3 degC (no water).",
               extra_bau_capex_usd_kw=60.0, demand_summer=15.38, demand_winter=11.03,
               demand_note="Xcel Energy ND General Service (D16) at secondary voltage, $15.38 Jun-Sep / $11.03 Oct-May "
                           "(NDPSC PU-24-376 tariff sheets)."),

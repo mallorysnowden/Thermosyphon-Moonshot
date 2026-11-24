@@ -18,13 +18,15 @@ from .run import BACKUP_LABEL, OUT, fmt_design  # noqa: E402
 SURFACE, INK, INK2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 # One fixed color per cost item across both pies (orders validated for adjacent CVD / normal-vision separation)
 COLOR = {"plant": "#2a78d6", "elec_service": "#eb6834", "thermosiphons": "#eda100", "pit": "#e87ba4",
-         "discharge": "#008300", "energy": "#6250d6", "demand": "#e34948", "om": "#1baf7a"}
+         "discharge": "#008300", "energy": "#6250d6", "demand": "#e34948", "om": "#1baf7a",
+         "water": "#8a8986"}  # water only appears for tower plants; a neutral, not a ninth hue
 NAME = {"plant": "Chiller plant (capital)", "elec_service": "Electrical service (capital)",
         "thermosiphons": "Thermosiphons (capital)", "pit": "Insulated pit (capital)",
         "discharge": "Pumps and heat exchangers (capital)", "energy": "Electricity (energy)",
-        "demand": "Demand charges", "om": "Operations and maintenance"}
-BAU_ORDER = ["plant", "demand", "energy", "elec_service", "om"]
-ICE_ORDER = ["pit", "thermosiphons", "energy", "discharge", "demand", "om"]
+        "demand": "Demand charges", "om": "Operations and maintenance",
+        "water": "Cooling-tower water and sewer"}
+BAU_ORDER = ["plant", "demand", "energy", "elec_service", "om", "water"]
+ICE_ORDER = ["pit", "thermosiphons", "discharge", "demand", "om", "elec_service", "energy", "water"]
 LOW, HIGH = "#2a78d6", "#eb6834"
 
 def esc(t: str) -> str:
@@ -39,13 +41,15 @@ plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10, "text.color"
 def assumptions(res, ci: CostInputs, years: int) -> tuple[str, str, str]:
     c, b, r = res["case"], res["bau"], res["best"]["none"]
     d = r["design"]
-    bau = (f"Conventional: trim chillers for {c.peak_w / 1e6:.0f} MW peak, {c.redundancy:.1f}x redundancy at "
-           f"${c.mech_usd_kw:.0f}/kW; electricity {100 * c.elec_usd_kwh:.1f}¢/kWh; demand charge "
+    rej = "cooling towers" if c.heat_rejection == "tower" else "air-cooled, no water"
+    bau = (f"Conventional: chillers ({rej}) for {c.peak_w / 1e6:.0f} MW peak, {c.redundancy:.1f}x redundancy at "
+           f"${c.mech_usd_kw:.0f}/kW, plus pumps{' and tower fans' if c.heat_rejection == 'tower' else ''}; electricity {100 * c.elec_usd_kwh:.1f}¢/kWh; demand charge "
            f"${c.demand_summer:.2f} Jun-Sep / ${c.demand_winter:.2f} other months per kW; electrical service "
-           f"${ci.elec_service_usd_kwe:.0f}/kWe; {ci.life_mech:.0f}-yr life")
+           f"${ci.elec_service_usd_kwe:.0f}/kWe of peak draw; {ci.life_mech:.0f}-yr life")
     ice = (f"Ice only (no chiller): {r['n_units']:,} thermosiphons at ${r['unit_usd']:.0f} each "
            f"(raw material x {ci.index:g}); {r['pit_ha']:.1f} ha x {d['depth_m']:.0f} m pit "
-           f"({fmt_design(d)}); worst-year unmet <= 0.1%; {ci.life_icebank:.0f}-yr life, first cooling after one winter")
+           f"({fmt_design(d)}); pumps at {ci.pump_cop:.0f} kW cooling per kWe, same electrical service cost; "
+           f"worst-year unmet <= 0.1%; {ci.life_icebank:.0f}-yr life, first cooling after one winter")
     both = (f"Both: {100 * ci.rate:.0f}% discount rate, mass-production (NOAK) costs, median of {years} synthetic "
             f"weather years, {b['cold_mwh']:,.0f} MWh of cooling a year")
     return bau.replace("m2", "m²"), ice.replace("m2", "m²"), both
@@ -57,12 +61,23 @@ def _donut(ax, parts, order, cold, scale):
     total = vals.sum()
     wedges, _ = ax.pie(vals, colors=[COLOR[k] for k in keys], startangle=90, counterclock=False, radius=scale,
                        wedgeprops=dict(width=0.38 * scale, edgecolor=SURFACE, linewidth=2))
+    # Place labels outside, then push apart labels on the same side that would overlap
+    labs = []
     for w, k, v in zip(wedges, keys, vals):
         ang = np.deg2rad((w.theta1 + w.theta2) / 2)
-        x, y = np.cos(ang), np.sin(ang)
-        ax.annotate(f"{NAME[k]}\n${v:.0f}/MWh ({100 * v / total:.0f}%)", xy=(x * scale * 0.97, y * scale * 0.97),
-                    xytext=(x * 1.22, y * 1.2), ha="left" if x >= 0 else "right", va="center", fontsize=8.5,
-                    color=INK, arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
+        labs.append(dict(k=k, v=v, x=np.cos(ang), y=np.sin(ang), ty=np.sin(ang) * 1.2))
+    for side in (1, -1):
+        grp = sorted((l for l in labs if np.sign(l["x"]) == side or (l["x"] == 0 and side == 1)),
+                     key=lambda l: -l["ty"])
+        for a, b in zip(grp, grp[1:]):
+            if a["ty"] - b["ty"] < 0.2:
+                b["ty"] = a["ty"] - 0.2
+    for l in labs:
+        x, y = l["x"], l["y"]
+        ax.annotate(f"{NAME[l['k']]}\n${l['v']:.0f}/MWh ({100 * l['v'] / total:.0f}%)",
+                    xy=(x * scale * 0.97, y * scale * 0.97), xytext=(np.sign(x or 1) * max(abs(x) * 1.22, 0.55), l["ty"]),
+                    ha="left" if x >= 0 else "right", va="center", fontsize=8.5, color=INK,
+                    arrowprops=dict(arrowstyle="-", color=INK2, lw=0.8))
     ax.text(0, 0.08, f"${total:.0f}", ha="center", va="center", fontsize=20, fontweight="bold", color=INK)
     ax.text(0, -0.16, "per MWh", ha="center", va="center", fontsize=9, color=INK2)
     ax.set_xlim(-2.3, 2.3); ax.set_ylim(-1.45, 1.45); ax.set_aspect("equal")

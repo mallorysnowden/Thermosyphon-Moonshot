@@ -23,5 +23,10 @@
   sensitivity brackets them. The hospital uses Xcel MN's proposed 2026 rates. The salmon plant uses Nushagak
   Cooperative's seasonal rate because Naknek Electric's tariff is not online; a self-generating plant pays
   no demand charge.
+- **Water and auxiliaries are rules of thumb.** Tower evaporation is 1.6 m3 per MWh of heat rejected at 4 cycles of
+  concentration; auxiliaries are 0.015 kW per kW of cooling for chilled-water pumps (+0.03 for condenser pumps and
+  tower fans). The data-center tower variant uses a crude wet-bulb proxy, as the synthetic weather has no humidity.
+  The salmon plant's water price is an assumption. Dry coolers ahead of the data-center trim are identical in both
+  options and are not costed in either.
 - **No value for freed electrical capacity** beyond the electrical-service credit, no carbon price, and no
   learning curve between FOAK and NOAK.

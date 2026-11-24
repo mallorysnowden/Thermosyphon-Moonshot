@@ -88,3 +88,14 @@ def test_backup_peak_tracks_unmet_draw():
     sim = simulate([Design(1.0, 12.0, 10.0)], np.array([10.0]), t, load, t_use_max=0.0, ground_c=8.0,
                    phys=Physics(t_water_start=20.0), month=month, kwe_per_w=np.full(n, 1 / 5e3))
     assert sim.peak_kwe_full[0, 0, 0] == pytest.approx(1e5 / 5e3)
+
+
+def test_tower_water_cost_by_hand():
+    from icebank_tea.cases import CASES
+    from icebank_tea.costs import CostInputs
+    from icebank_tea.run import water_usd_per_mwh_rejected
+    ci = CostInputs()
+    b = CASES["B"]  # Minneapolis: sewer billed on all water used
+    makeup = 1.6 * 4 / 3  # evaporation + blowdown at 4 cycles, m3 per MWh rejected
+    assert water_usd_per_mwh_rejected(b, ci) == pytest.approx(makeup * (b.water_usd_m3 + 0.15 + b.sewer_usd_m3))
+    assert water_usd_per_mwh_rejected(CASES["A"], ci) == 0.0  # air-cooled: no water

@@ -10,10 +10,10 @@ Cost of cooling in $ per MWh of cold delivered (median year), and the ratio to B
 
 | Case | Why this case | BAU $/MWh | of which demand charges | Ice + full backup | Ice + 30% backup | Ice only | Ice only at FOAK |
 |---|---|---|---|---|---|---|---|
-| AI data center, 100 MW IT (Fargo / Ellendale, ND) | Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity. | 251 | 35 | 283 (1.13) | 212 (0.84) | 166 (0.66) | 245 (0.97) |
-| Hospital / campus, 3.5 MWth (Minneapolis, MN) | Control case: chillers run all summer on cheap power, so it should lose. | 92 | 11 | 127 (1.39) | 250 (2.73) | 245 (2.67) | 377 (4.11) |
-| Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK) | Best seasonal match: long freezing winter, six-week summer burst, diesel power. | 356 | 12 | 391 (1.10) | 340 (0.96) | 290 (0.82) | 421 (1.18) |
-| Year-round process cooling, 1 MWth at 5 degC (Fargo, ND) | Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer. | 24 | 3 | 64 (2.67) | 141 (5.87) | 138 (5.78) | 209 (8.74) |
+| AI data center, 100 MW IT (Fargo / Ellendale, ND) | Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity. | 260 | 39 | 297 (1.14) | 220 (0.85) | 173 (0.67) | 252 (0.97) |
+| Hospital / campus, 3.5 MWth (Minneapolis, MN) | Control case: chillers run all summer on cheap power, so it should lose. | 111 | 13 | 144 (1.30) | 252 (2.28) | 246 (2.22) | 378 (3.41) |
+| Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK) | Best seasonal match: long freezing winter, six-week summer burst, diesel power. | 385 | 13 | 418 (1.09) | 344 (0.89) | 292 (0.76) | 424 (1.10) |
+| Year-round process cooling, 1 MWth at 5 degC (Fargo, ND) | Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer. | 25 | 4 | 65 (2.56) | 141 (5.54) | 139 (5.45) | 210 (8.23) |
 
 FOAK costs are quoted against the BAU cost above, so the FOAK ratio is FOAK $/MWh / BAU $/MWh.
 
@@ -27,65 +27,89 @@ FOAK costs are quoted against the BAU cost above, so the FOAK ratio is FOAK $/MW
 | C | 1,531 | $466 | 928 kWh | 1 m pitch, 25 m2 fins, 10 m deep | 15,310 m3 (0.15 ha) | 0.00% | Dec 16 / Jan 20 |
 | D | 9,491 | $560 | 1097 kWh | 1 m pitch, 40 m2 fins, 10 m deep | 94,910 m3 (0.95 ha) | 0.00% | Jan 05 / Jan 27 |
 
-## Where the money goes ($ per MWh of cold, best configuration per case)
+## Where the money goes ($ per MWh of cold)
 
-| Case | Config | Thermosiphons | Pit | Discharge plant | Backup chiller | Energy | Demand charges | O&M | Total | BAU total | of which BAU demand charges |
+Ice-bank options:
+
+| Case | Config | Thermosiphons | Pit | Pumps + HX | Backup chiller | Electrical service | Energy | Demand charges | Water | O&M | Total |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| A | Ice only (no chiller) | 54 | 68 | 22 | 0 | 2 | 6 | 14 | 166 | 251 | 35 |
-| B | Ice + full backup chiller | 18 | 31 | 3 | 33 | 22 | 11 | 11 | 127 | 92 | 11 |
-| C | Ice only (no chiller) | 73 | 173 | 7 | 0 | 11 | 1 | 25 | 290 | 356 | 12 |
-| D | Ice + full backup chiller | 16 | 26 | 1 | 6 | 7 | 3 | 5 | 64 | 24 | 3 |
+| A | Ice + full backup chiller | 21 | 21 | 22 | 106 | 58 | 6 | 30 | 0 | 32 | 297 |
+| A | Ice + 30% backup chiller | 46 | 69 | 22 | 32 | 22 | 2 | 6 | 0 | 21 | 220 |
+| A | Ice only (no chiller) | 54 | 68 | 22 | 0 | 7 | 2 | 6 | 0 | 14 | 173 |
+| B | Ice + full backup chiller | 18 | 31 | 3 | 25 | 10 | 27 | 12 | 8 | 11 | 144 |
+| B | Ice + 30% backup chiller | 121 | 90 | 3 | 8 | 4 | 3 | 1 | 0 | 23 | 252 |
+| B | Ice only (no chiller) | 115 | 101 | 3 | 0 | 1 | 3 | 1 | 0 | 22 | 246 |
+| C | Ice + full backup chiller | 16 | 58 | 7 | 109 | 37 | 142 | 10 | 3 | 35 | 418 |
+| C | Ice + 30% backup chiller | 73 | 173 | 7 | 33 | 13 | 11 | 1 | 0 | 33 | 344 |
+| C | Ice only (no chiller) | 73 | 173 | 7 | 0 | 2 | 11 | 1 | 0 | 25 | 292 |
+| D | Ice + full backup chiller | 16 | 26 | 1 | 5 | 2 | 7 | 3 | 0 | 5 | 65 |
+| D | Ice + 30% backup chiller | 61 | 62 | 1 | 1 | 1 | 2 | 0 | 0 | 13 | 141 |
+| D | Ice only (no chiller) | 61 | 62 | 1 | 0 | 0 | 2 | 0 | 0 | 12 | 139 |
+
+Conventional (BAU):
+
+| Case | Heat rejection | Chiller plant | Electrical service | Energy (chiller + pumps/fans) | Demand charges | Water + sewer | O&M | Total | Water use, m3/yr |
+|---|---|---|---|---|---|---|---|---|---|
+| A | air-cooled | 128 | 51 | 11 | 39 | 0 | 31 | 260 | 0 |
+| B | cooling towers | 38 | 9 | 32 | 13 | 9 | 9 | 111 | 15,819 |
+| C | cooling towers | 131 | 35 | 170 | 13 | 3 | 32 | 385 | 2,824 |
+| D | air-cooled | 7 | 1 | 12 | 4 | 0 | 2 | 25 | 0 |
 
 ## Sensitivities (best configuration per case; ratio at the low / high input)
 
 | Case | Input | Base | Low | High |
 |---|---|---|---|---|
-| A | BAU plant $/kW (x0.6 / x1.5) | 0.66 | 0.88 | 0.50 |
-| A | FOAK costs (NOAK / FOAK) | 0.66 | 0.66 | 0.97 |
-| A | Electrical service credit ($0 / $1,500 per kWe) | 0.66 | 0.81 | 0.52 |
-| A | Pit cost (x0.7 / x1.5) | 0.66 | 0.57 | 0.81 |
-| A | Demand charge (none / x2, e.g. 12-month ratchet) | 0.66 | 0.74 | 0.60 |
-| A | Aluminium price (world $2.85 / US $5.3 x1.2) | 0.66 | 0.56 | 0.70 |
-| A | Finished/raw index (2.0 / 3.5) | 0.66 | 0.62 | 0.75 |
-| A | Discount rate (6% / 10%) | 0.66 | 0.62 | 0.70 |
-| A | Condenser conductance (3 / 8 W/m2K) | 0.66 | 0.68 | 0.63 |
-| A | Electricity price (x0.67 / x1.5) | 0.66 | 0.67 | 0.65 |
-| B | FOAK costs (NOAK / FOAK) | 1.39 | 1.39 | 1.72 |
-| B | BAU plant $/kW (x0.6 / x1.5) | 1.39 | 1.57 | 1.24 |
-| B | Pit cost (x0.7 / x1.5) | 1.39 | 1.28 | 1.57 |
-| B | Electricity price (x0.67 / x1.5) | 1.39 | 1.45 | 1.32 |
-| B | Aluminium price (world $2.85 / US $5.3 x1.2) | 1.39 | 1.30 | 1.43 |
-| B | Finished/raw index (2.0 / 3.5) | 1.39 | 1.35 | 1.47 |
-| B | Discount rate (6% / 10%) | 1.39 | 1.33 | 1.44 |
-| B | Demand charge (none / x2, e.g. 12-month ratchet) | 1.39 | 1.44 | 1.34 |
-| B | Electrical service credit ($0 / $1,500 per kWe) | 1.39 | 1.42 | 1.35 |
-| B | Condenser conductance (3 / 8 W/m2K) | 1.39 | 1.39 | 1.39 |
-| C | Pit cost (x0.7 / x1.5) | 0.82 | 0.66 | 1.08 |
-| C | FOAK costs (NOAK / FOAK) | 0.82 | 0.82 | 1.18 |
-| C | BAU plant $/kW (x0.6 / x1.5) | 0.82 | 1.00 | 0.66 |
-| C | Electricity price (x0.67 / x1.5) | 0.82 | 0.94 | 0.69 |
-| C | Electrical service credit ($0 / $1,500 per kWe) | 0.82 | 0.89 | 0.72 |
-| C | Discount rate (6% / 10%) | 0.82 | 0.74 | 0.89 |
-| C | Aluminium price (world $2.85 / US $5.3 x1.2) | 0.82 | 0.72 | 0.86 |
-| C | Finished/raw index (2.0 / 3.5) | 0.82 | 0.77 | 0.90 |
-| C | Condenser conductance (3 / 8 W/m2K) | 0.82 | 0.86 | 0.78 |
-| C | Demand charge (none / x2, e.g. 12-month ratchet) | 0.82 | 0.84 | 0.79 |
-| D | FOAK costs (NOAK / FOAK) | 2.67 | 2.67 | 3.78 |
-| D | Pit cost (x0.7 / x1.5) | 2.67 | 2.32 | 3.26 |
-| D | Electricity price (x0.67 / x1.5) | 2.67 | 3.03 | 2.29 |
-| D | Demand charge (none / x2, e.g. 12-month ratchet) | 2.67 | 2.98 | 2.44 |
-| D | BAU plant $/kW (x0.6 / x1.5) | 2.67 | 2.93 | 2.42 |
-| D | Discount rate (6% / 10%) | 2.67 | 2.43 | 2.91 |
-| D | Aluminium price (world $2.85 / US $5.3 x1.2) | 2.67 | 2.35 | 2.81 |
-| D | Finished/raw index (2.0 / 3.5) | 2.67 | 2.53 | 2.96 |
-| D | Electrical service credit ($0 / $1,500 per kWe) | 2.67 | 2.77 | 2.54 |
-| D | Condenser conductance (3 / 8 W/m2K) | 2.67 | 2.71 | 2.64 |
+| A | BAU plant $/kW (x0.6 / x1.5) | 0.67 | 0.88 | 0.51 |
+| A | FOAK costs (NOAK / FOAK) | 0.67 | 0.67 | 0.97 |
+| A | Electrical service cost ($0 / $1,500 per kWe) | 0.67 | 0.80 | 0.54 |
+| A | Pit cost (x0.7 / x1.5) | 0.67 | 0.58 | 0.81 |
+| A | Demand charge (none / x2, e.g. 12-month ratchet) | 0.67 | 0.76 | 0.60 |
+| A | Aluminium price (world $2.85 / US $5.3 x1.2) | 0.67 | 0.57 | 0.71 |
+| A | Finished/raw index (2.0 / 3.5) | 0.67 | 0.62 | 0.75 |
+| A | Discount rate (6% / 10%) | 0.67 | 0.62 | 0.70 |
+| A | Condenser conductance (3 / 8 W/m2K) | 0.67 | 0.68 | 0.63 |
+| A | Electricity price (x0.67 / x1.5) | 0.67 | 0.67 | 0.66 |
+| A | Trim chillers (air-cooled / water-cooled + towers) | 0.67 | 0.67 | 0.66 |
+| B | FOAK costs (NOAK / FOAK) | 1.30 | 1.30 | 1.58 |
+| B | Pit cost (x0.7 / x1.5) | 1.30 | 1.21 | 1.45 |
+| B | BAU plant $/kW (x0.6 / x1.5) | 1.30 | 1.43 | 1.19 |
+| B | Electricity price (x0.67 / x1.5) | 1.30 | 1.35 | 1.24 |
+| B | Discount rate (6% / 10%) | 1.30 | 1.25 | 1.35 |
+| B | Aluminium price (world $2.85 / US $5.3 x1.2) | 1.30 | 1.23 | 1.33 |
+| B | Finished/raw index (2.0 / 3.5) | 1.30 | 1.27 | 1.37 |
+| B | Demand charge (none / x2, e.g. 12-month ratchet) | 1.30 | 1.35 | 1.26 |
+| B | Water + sewer price (x0.5 / x2) | 1.30 | 1.32 | 1.26 |
+| B | Electrical service cost ($0 / $1,500 per kWe) | 1.30 | 1.32 | 1.28 |
+| B | Condenser conductance (3 / 8 W/m2K) | 1.30 | 1.31 | 1.30 |
+| C | Pit cost (x0.7 / x1.5) | 0.76 | 0.61 | 1.01 |
+| C | FOAK costs (NOAK / FOAK) | 0.76 | 0.76 | 1.10 |
+| C | BAU plant $/kW (x0.6 / x1.5) | 0.76 | 0.92 | 0.63 |
+| C | Electricity price (x0.67 / x1.5) | 0.76 | 0.88 | 0.63 |
+| C | Discount rate (6% / 10%) | 0.76 | 0.68 | 0.84 |
+| C | Electrical service cost ($0 / $1,500 per kWe) | 0.76 | 0.83 | 0.68 |
+| C | Aluminium price (world $2.85 / US $5.3 x1.2) | 0.76 | 0.67 | 0.80 |
+| C | Finished/raw index (2.0 / 3.5) | 0.76 | 0.72 | 0.84 |
+| C | Condenser conductance (3 / 8 W/m2K) | 0.76 | 0.80 | 0.72 |
+| C | Demand charge (none / x2, e.g. 12-month ratchet) | 0.76 | 0.78 | 0.74 |
+| C | Water + sewer price (x0.5 / x2) | 0.76 | 0.76 | 0.75 |
+| D | FOAK costs (NOAK / FOAK) | 2.56 | 2.56 | 3.60 |
+| D | Pit cost (x0.7 / x1.5) | 2.56 | 2.22 | 3.11 |
+| D | Electricity price (x0.67 / x1.5) | 2.56 | 2.92 | 2.18 |
+| D | Demand charge (none / x2, e.g. 12-month ratchet) | 2.56 | 2.85 | 2.34 |
+| D | Discount rate (6% / 10%) | 2.56 | 2.32 | 2.79 |
+| D | BAU plant $/kW (x0.6 / x1.5) | 2.56 | 2.79 | 2.34 |
+| D | Aluminium price (world $2.85 / US $5.3 x1.2) | 2.56 | 2.26 | 2.69 |
+| D | Finished/raw index (2.0 / 3.5) | 2.56 | 2.42 | 2.83 |
+| D | Electrical service cost ($0 / $1,500 per kWe) | 2.56 | 2.65 | 2.44 |
+| D | Condenser conductance (3 / 8 W/m2K) | 2.56 | 2.60 | 2.52 |
 
 ## Case notes
 
-- **A. AI data center, 100 MW IT (Fargo / Ellendale, ND).** Trim above what dry coolers can do at 32 degC supply / 42 degC return, 8 K approach. Electricity 7.5 c/kWh (ND industrial 7.25 c, EIA 2024). Demand charge: Xcel Energy ND General Time of Day (D17) on-peak demand, $15.38 Jun-Sep / $11.03 Oct-May, less the $2.10 transmission-voltage discount (NDPSC PU-24-376 tariff sheets). Median freezing degree-days 1315 degC-days; median-year cooling 22,022 MWh.
-- **B. Hospital / campus, 3.5 MWth (Minneapolis, MN).** Water-cooled chiller plant, 3 x 50%, ~$1,500/ton, COP 4.7. Electricity 12.5 c/kWh (MN commercial 12.15 c). Demand charge: Xcel Energy MN General Time of Day demand, $19.86 summer / $15.27 winter (2026 rates proposed in the MN electric rate case). Median freezing degree-days 820 degC-days; median-year cooling 6,114 MWh.
-- **C. Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK).** Ammonia refrigeration, COP 3. Electricity 45 c/kWh (diesel self-generation; Naknek fuel $6.75/gal). Ice alone chills to about +1 degC, not the -1 degC of refrigerated seawater. Demand charge: Nushagak Cooperative (Dillingham) Large Commercial Seasonal rate, $12.00/kW; Naknek Electric's tariff is not published online. A self-generating plant pays none (generators are in the electrical-service credit). Median freezing degree-days 1322 degC-days; median-year cooling 993 MWh.
-- **D. Year-round process cooling, 1 MWth at 5 degC (Fargo, ND).** BAU: chiller plus a dry-cooler economiser that cools for free below -3 degC. Demand charge: Xcel Energy ND General Service (D16) at secondary voltage, $15.38 Jun-Sep / $11.03 Oct-May (NDPSC PU-24-376 tariff sheets). Median freezing degree-days 1315 degC-days; median-year cooling 8,760 MWh.
+- **A. AI data center, 100 MW IT (Fargo / Ellendale, ND).** Trim above what dry coolers can do at 32 degC supply / 42 degC return, 8 K approach. Electricity 7.5 c/kWh (ND industrial 7.25 c, EIA 2024). Air-cooled trim chillers (no water); a water-cooled tower variant is a sensitivity. Demand charge: Xcel Energy ND General Time of Day (D17) on-peak demand, $15.38 Jun-Sep / $11.03 Oct-May, less the $2.10 transmission-voltage discount (NDPSC PU-24-376 tariff sheets). Median freezing degree-days 1315 degC-days; median-year cooling 22,022 MWh.
+- **B. Hospital / campus, 3.5 MWth (Minneapolis, MN).** Water-cooled chiller plant with cooling towers, 3 x 50%, ~$1,500/ton, COP 4.7. Electricity 12.5 c/kWh (MN commercial 12.15 c). Demand charge: Xcel Energy MN General Time of Day demand, $19.86 summer / $15.27 winter (2026 rates proposed in the MN electric rate case). Median freezing degree-days 820 degC-days; median-year cooling 6,114 MWh.
+- **C. Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK).** Ammonia refrigeration with evaporative condensers, COP 3. Electricity 45 c/kWh (diesel self-generation; Naknek fuel $6.75/gal). Ice alone chills to about +1 degC, not the -1 degC of refrigerated seawater. Demand charge: Nushagak Cooperative (Dillingham) Large Commercial Seasonal rate, $12.00/kW; Naknek Electric's tariff is not published online. A self-generating plant pays none (generators are in the electrical service cost). Median freezing degree-days 1322 degC-days; median-year cooling 993 MWh.
+- **D. Year-round process cooling, 1 MWth at 5 degC (Fargo, ND).** BAU: air-cooled chiller plus a dry-cooler economiser that cools for free below -3 degC (no water). Demand charge: Xcel Energy ND General Service (D16) at secondary voltage, $15.38 Jun-Sep / $11.03 Oct-May (NDPSC PU-24-376 tariff sheets). Median freezing degree-days 1315 degC-days; median-year cooling 8,760 MWh.
+
+Water: A: Fargo water $5.05 per 1,000 gal above 2 million gal/month, sewer $2.55 per 1,000 gal billed on all water used (fargond.gov). Used only in the tower sensitivity. B: Minneapolis water $3.82 per 100 ft3 plus 9.025% water tax, sewer $5.63 per 100 ft3; commercial sewer is billed on actual water use (minneapolismn.gov). C: Self-supplied well water with treatment, $1.00/m3 (assumption); no municipal sewer. Tower makeup = evaporation (1.6 m3 per MWh of heat rejected, ~1.8 gal per ton-hour) + blowdown at 4 cycles of concentration, plus $0.15/m3 treatment chemicals.
 
 Demand charges bill the chiller's (and discharge pumps') highest draw in each month, assuming it adds fully to the site's monthly peak. Ratchets, interim surcharges and coincident-peak tariffs are not modelled; the x2 sensitivity brackets them.

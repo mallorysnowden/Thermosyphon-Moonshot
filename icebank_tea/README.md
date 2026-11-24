@@ -33,6 +33,10 @@ Start with [`RESULTS.md`](RESULTS.md), the charts in [`outputs/figures/`](output
 7. **Monthly demand charges** from each site's published tariff, billed on the chiller's (and discharge pumps')
    highest draw each month: Xcel ND for the data center and process cases, Xcel MN for the hospital, and a
    Bristol Bay co-op seasonal rate for the salmon plant. Removing the chiller removes most of this charge.
+8. **Auxiliaries, electrical service and water on both sides.** Conventional plants pay for chilled-water pumps
+   (and, with cooling towers, condenser-water pumps and tower fans) in energy, demand charges and electrical
+   service; the ice bank's discharge pumps now pay electrical service too. Tower plants (hospital, salmon
+   evaporative condensers) pay for makeup water, treatment and sewer at local rates.
 
 ## Files
 

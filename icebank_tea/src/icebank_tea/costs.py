@@ -40,7 +40,12 @@ class CostInputs:
     icebank_om_frac: float = 0.01
     mech_om_frac: float = 0.025
     pump_cop: float = 40.0             # kWth delivered per kWe of pumping
-    elec_service_usd_kwe: float = 600.0  # electrical service + generators for a chiller's peak draw
+    elec_service_usd_kwe: float = 600.0  # electrical service + generators per kW of peak draw (chillers and pumps)
+    # Cooling-tower / evaporative-condenser water (only where the BAU plant rejects heat that way)
+    evap_m3_per_mwh_rej: float = 1.6   # ~1.8 gal evaporated per ton-hour of cooling (EPA WaterSense) at COP ~4.7
+    cycles_of_conc: float = 4.0        # blowdown = evaporation / (cycles - 1)
+    tower_chem_usd_m3: float = 0.15    # water treatment chemicals per m3 of makeup (assumption)
+    water_price_mult: float = 1.0      # sensitivity knob on water + sewer prices
     rate: float = 0.08                 # repo convention: customer discount rate (inputs/conventions.toml)
     life_icebank: float = 25.0
     life_mech: float = 20.0
