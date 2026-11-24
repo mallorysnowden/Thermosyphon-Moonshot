@@ -30,6 +30,9 @@ Start with [`RESULTS.md`](RESULTS.md) and [`MODEL_LIMITATIONS.md`](MODEL_LIMITAT
    code-sized wall, plus installation priced bottom-up; FOAK = index 3.5, manual install, pricier civil works.
    Units longer than 12 m pay for a field joint. Condenser conductance calibrated to Li et al. (2020).
 6. **Repo conventions:** 8% customer discount rate; one-year lag before first cooling (the pit needs a winter).
+7. **Monthly demand charges** from each site's published tariff, billed on the chiller's (and discharge pumps')
+   highest draw each month: Xcel ND for the data center and process cases, Xcel MN for the hospital, and a
+   Bristol Bay co-op seasonal rate for the salmon plant. Removing the chiller removes most of this charge.
 
 ## Files
 

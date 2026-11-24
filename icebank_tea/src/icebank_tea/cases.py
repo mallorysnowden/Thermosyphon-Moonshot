@@ -17,6 +17,14 @@ def day_of_year(n_hours: int, start_doy: int = 181) -> np.ndarray:
     return days % 365  # years are 365 days; the warm-up half-year has 184 days
 
 
+_MONTH_STARTS = np.cumsum([0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30])
+
+
+def month_of_doy(doy: np.ndarray) -> np.ndarray:
+    """Calendar month (0 = Jan ... 11 = Dec) for a 0-based day of a 365-day year."""
+    return np.searchsorted(_MONTH_STARTS, np.asarray(doy), side="right") - 1
+
+
 @dataclass(frozen=True)
 class Case:
     key: str
@@ -30,6 +38,17 @@ class Case:
     why: str
     notes: str = ""
     extra_bau_capex_usd_kw: float = 0.0  # e.g. dry-cooler economiser the ice option doesn't need
+    # Monthly demand charge on the chiller's peak electric draw, $/kW-month
+    demand_summer: float = 0.0
+    demand_winter: float = 0.0
+    summer_months: tuple = (5, 6, 7, 8)   # 0-based: Jun-Sep
+    demand_note: str = ""
+
+    def demand_rates(self) -> np.ndarray:
+        """$/kW for each calendar month (index 0 = Jan)."""
+        r = np.full(12, self.demand_winter)
+        r[list(self.summer_months)] = self.demand_summer
+        return r
 
     def load_w(self, t_air: np.ndarray, doy: np.ndarray) -> np.ndarray:
         return LOADS[self.key](self, t_air, doy)
@@ -87,16 +106,28 @@ CASES = {
     "A": Case("A", "AI data center, 100 MW IT (Fargo / Ellendale, ND)", "fargo", 100e6, 27.0, 230.0, 1.2, 0.075,
               "Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity.",
               "Trim above what dry coolers can do at 32 degC supply / 42 degC return, 8 K approach. "
-              "Electricity 7.5 c/kWh (ND industrial 7.25 c, EIA 2024)."),
+              "Electricity 7.5 c/kWh (ND industrial 7.25 c, EIA 2024).",
+              demand_summer=13.28, demand_winter=8.93,
+              demand_note="Xcel Energy ND General Time of Day (D17) on-peak demand, $15.38 Jun-Sep / $11.03 Oct-May, "
+                          "less the $2.10 transmission-voltage discount (NDPSC PU-24-376 tariff sheets)."),
     "B": Case("B", "Hospital / campus, 3.5 MWth (Minneapolis, MN)", "minneapolis", 3.5e6, 4.0, 430.0, 1.5, 0.125,
               "Control case: chillers run all summer on cheap power, so it should lose.",
-              "Water-cooled chiller plant, 3 x 50%, ~$1,500/ton, COP 4.7. Electricity 12.5 c/kWh (MN commercial 12.15 c)."),
+              "Water-cooled chiller plant, 3 x 50%, ~$1,500/ton, COP 4.7. Electricity 12.5 c/kWh (MN commercial 12.15 c).",
+              demand_summer=19.86, demand_winter=15.27,
+              demand_note="Xcel Energy MN General Time of Day demand, $19.86 summer / $15.27 winter "
+                          "(2026 rates proposed in the MN electric rate case)."),
     "C": Case("C", "Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK)", "dillingham", 1.5e6, 1.5, 710.0, 1.2, 0.45,
               "Best seasonal match: long freezing winter, six-week summer burst, diesel power.",
               "Ammonia refrigeration, COP 3. Electricity 45 c/kWh (diesel self-generation; Naknek fuel $6.75/gal). "
-              "Ice alone chills to about +1 degC, not the -1 degC of refrigerated seawater."),
+              "Ice alone chills to about +1 degC, not the -1 degC of refrigerated seawater.",
+              demand_summer=12.0, demand_winter=12.0,
+              demand_note="Nushagak Cooperative (Dillingham) Large Commercial Seasonal rate, $12.00/kW; Naknek Electric's "
+                          "tariff is not published online. A self-generating plant pays none (generators are in the "
+                          "electrical-service credit)."),
     "D": Case("D", "Year-round process cooling, 1 MWth at 5 degC (Fargo, ND)", "fargo", 1.0e6, 3.0, 430.0, 1.2, 0.075,
               "Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer.",
               "BAU: chiller plus a dry-cooler economiser that cools for free below -3 degC.",
-              extra_bau_capex_usd_kw=60.0),
+              extra_bau_capex_usd_kw=60.0, demand_summer=15.38, demand_winter=11.03,
+              demand_note="Xcel Energy ND General Service (D16) at secondary voltage, $15.38 Jun-Sep / $11.03 Oct-May "
+                          "(NDPSC PU-24-376 tariff sheets)."),
 }

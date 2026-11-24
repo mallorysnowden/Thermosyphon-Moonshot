@@ -1,37 +1,41 @@
 case,config,input,base_ratio,low_case_ratio,high_case_ratio
-A,Ice only (no chiller),Finished/raw index (2.0 / 3.5),0.743,0.691,0.848
-A,Ice only (no chiller),Aluminium price (world $2.85 / US $5.3 x1.2),0.743,0.627,0.793
-A,Ice only (no chiller),Pit cost (x0.7 / x1.5),0.743,0.639,0.917
-A,Ice only (no chiller),Discount rate (6% / 10%),0.743,0.705,0.779
-A,Ice only (no chiller),Electricity price (x0.67 / x1.5),0.743,0.751,0.731
-A,Ice only (no chiller),BAU plant $/kW (x0.6 / x1.5),0.743,1.053,0.543
-A,Ice only (no chiller),"Electrical service credit ($0 / $1,500 per kWe)",0.743,0.951,0.56
-A,Ice only (no chiller),FOAK costs (NOAK / FOAK),0.743,0.743,1.109
-A,Ice only (no chiller),Condenser conductance (3 / 8 W/m2K),0.743,0.761,0.705
-B,Ice + full backup chiller,Finished/raw index (2.0 / 3.5),1.444,1.399,1.535
-B,Ice + full backup chiller,Aluminium price (world $2.85 / US $5.3 x1.2),1.444,1.344,1.488
-B,Ice + full backup chiller,Pit cost (x0.7 / x1.5),1.444,1.319,1.653
-B,Ice + full backup chiller,Discount rate (6% / 10%),1.444,1.383,1.502
-B,Ice + full backup chiller,Electricity price (x0.67 / x1.5),1.444,1.519,1.357
-B,Ice + full backup chiller,BAU plant $/kW (x0.6 / x1.5),1.444,1.679,1.27
-B,Ice + full backup chiller,"Electrical service credit ($0 / $1,500 per kWe)",1.444,1.489,1.39
-B,Ice + full backup chiller,FOAK costs (NOAK / FOAK),1.444,1.444,1.822
-B,Ice + full backup chiller,Condenser conductance (3 / 8 W/m2K),1.444,1.449,1.443
-C,Ice only (no chiller),Finished/raw index (2.0 / 3.5),0.841,0.796,0.93
-C,Ice only (no chiller),Aluminium price (world $2.85 / US $5.3 x1.2),0.841,0.741,0.884
-C,Ice only (no chiller),Pit cost (x0.7 / x1.5),0.841,0.675,1.117
-C,Ice only (no chiller),Discount rate (6% / 10%),0.841,0.76,0.92
-C,Ice only (no chiller),Electricity price (x0.67 / x1.5),0.841,0.969,0.704
-C,Ice only (no chiller),BAU plant $/kW (x0.6 / x1.5),0.841,1.038,0.68
-C,Ice only (no chiller),"Electrical service credit ($0 / $1,500 per kWe)",0.841,0.923,0.741
-C,Ice only (no chiller),FOAK costs (NOAK / FOAK),0.841,0.841,1.222
-C,Ice only (no chiller),Condenser conductance (3 / 8 W/m2K),0.841,0.888,0.8
-D,Ice + full backup chiller,Finished/raw index (2.0 / 3.5),2.978,2.811,3.312
-D,Ice + full backup chiller,Aluminium price (world $2.85 / US $5.3 x1.2),2.978,2.608,3.138
-D,Ice + full backup chiller,Pit cost (x0.7 / x1.5),2.978,2.564,3.668
-D,Ice + full backup chiller,Discount rate (6% / 10%),2.978,2.711,3.242
-D,Ice + full backup chiller,Electricity price (x0.67 / x1.5),2.978,3.476,2.483
-D,Ice + full backup chiller,BAU plant $/kW (x0.6 / x1.5),2.978,3.343,2.648
-D,Ice + full backup chiller,"Electrical service credit ($0 / $1,500 per kWe)",2.978,3.122,2.795
-D,Ice + full backup chiller,FOAK costs (NOAK / FOAK),2.978,2.978,4.268
-D,Ice + full backup chiller,Condenser conductance (3 / 8 W/m2K),2.978,3.009,2.952
+A,Ice only (no chiller),Finished/raw index (2.0 / 3.5),0.66,0.616,0.75
+A,Ice only (no chiller),Aluminium price (world $2.85 / US $5.3 x1.2),0.66,0.561,0.703
+A,Ice only (no chiller),Pit cost (x0.7 / x1.5),0.66,0.571,0.809
+A,Ice only (no chiller),Discount rate (6% / 10%),0.66,0.619,0.699
+A,Ice only (no chiller),Electricity price (x0.67 / x1.5),0.66,0.667,0.651
+A,Ice only (no chiller),BAU plant $/kW (x0.6 / x1.5),0.66,0.884,0.502
+A,Ice only (no chiller),"Electrical service credit ($0 / $1,500 per kWe)",0.66,0.813,0.515
+A,Ice only (no chiller),"Demand charge (none / x2, e.g. 12-month ratchet)",0.66,0.743,0.598
+A,Ice only (no chiller),FOAK costs (NOAK / FOAK),0.66,0.66,0.975
+A,Ice only (no chiller),Condenser conductance (3 / 8 W/m2K),0.66,0.676,0.628
+B,Ice + full backup chiller,Finished/raw index (2.0 / 3.5),1.387,1.347,1.467
+B,Ice + full backup chiller,Aluminium price (world $2.85 / US $5.3 x1.2),1.387,1.299,1.425
+B,Ice + full backup chiller,Pit cost (x0.7 / x1.5),1.387,1.277,1.571
+B,Ice + full backup chiller,Discount rate (6% / 10%),1.387,1.33,1.443
+B,Ice + full backup chiller,Electricity price (x0.67 / x1.5),1.387,1.446,1.316
+B,Ice + full backup chiller,BAU plant $/kW (x0.6 / x1.5),1.387,1.572,1.241
+B,Ice + full backup chiller,"Electrical service credit ($0 / $1,500 per kWe)",1.387,1.421,1.345
+B,Ice + full backup chiller,"Demand charge (none / x2, e.g. 12-month ratchet)",1.387,1.444,1.342
+B,Ice + full backup chiller,FOAK costs (NOAK / FOAK),1.387,1.387,1.72
+B,Ice + full backup chiller,Condenser conductance (3 / 8 W/m2K),1.387,1.394,1.386
+C,Ice only (no chiller),Finished/raw index (2.0 / 3.5),0.816,0.773,0.902
+C,Ice only (no chiller),Aluminium price (world $2.85 / US $5.3 x1.2),0.816,0.72,0.857
+C,Ice only (no chiller),Pit cost (x0.7 / x1.5),0.816,0.656,1.083
+C,Ice only (no chiller),Discount rate (6% / 10%),0.816,0.736,0.894
+C,Ice only (no chiller),Electricity price (x0.67 / x1.5),0.816,0.936,0.687
+C,Ice only (no chiller),BAU plant $/kW (x0.6 / x1.5),0.816,0.999,0.664
+C,Ice only (no chiller),"Electrical service credit ($0 / $1,500 per kWe)",0.816,0.893,0.722
+C,Ice only (no chiller),"Demand charge (none / x2, e.g. 12-month ratchet)",0.816,0.841,0.793
+C,Ice only (no chiller),FOAK costs (NOAK / FOAK),0.816,0.816,1.185
+C,Ice only (no chiller),Condenser conductance (3 / 8 W/m2K),0.816,0.861,0.777
+D,Ice + full backup chiller,Finished/raw index (2.0 / 3.5),2.671,2.528,2.958
+D,Ice + full backup chiller,Aluminium price (world $2.85 / US $5.3 x1.2),2.671,2.355,2.808
+D,Ice + full backup chiller,Pit cost (x0.7 / x1.5),2.671,2.316,3.263
+D,Ice + full backup chiller,Discount rate (6% / 10%),2.671,2.429,2.915
+D,Ice + full backup chiller,Electricity price (x0.67 / x1.5),2.671,3.033,2.291
+D,Ice + full backup chiller,BAU plant $/kW (x0.6 / x1.5),2.671,2.933,2.423
+D,Ice + full backup chiller,"Electrical service credit ($0 / $1,500 per kWe)",2.671,2.775,2.537
+D,Ice + full backup chiller,"Demand charge (none / x2, e.g. 12-month ratchet)",2.671,2.978,2.441
+D,Ice + full backup chiller,FOAK costs (NOAK / FOAK),2.671,2.671,3.777
+D,Ice + full backup chiller,Condenser conductance (3 / 8 W/m2K),2.671,2.709,2.638
