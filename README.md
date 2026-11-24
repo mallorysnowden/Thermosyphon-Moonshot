@@ -39,6 +39,20 @@ cd geowell_tea && pip install -e .[test] && python -m pytest
 python -m geowell_tea.cli run configs/case_a_pa.yaml
 ```
 
+## icebank_tea: seasonal thermosiphon ice bank vs conventional cooling
+
+A self-contained application in [`icebank_tea/`](icebank_tea/) (own `pyproject.toml` and tests). Passive ammonia
+thermosiphons freeze an insulated water pit in winter, and the store cools a load later in the year. An hourly
+store model and a joint design search are costed with raw-material NOAK costs (same philosophy as
+`geowell_tea`) for four cases: a 100 MW AI data center (ND), a hospital (MN), a salmon processor (AK) and a
+year-round process load (ND), each with a full, partial or no backup chiller. Start with
+[`icebank_tea/RESULTS.md`](icebank_tea/RESULTS.md).
+
+```bash
+cd icebank_tea && pip install -e .[test] && python -m pytest
+python -m icebank_tea.run
+```
+
 ## Thermosyphon platform v2: base case
 
 NPV about **-$34M** over 15 years, peak cash need about **$52M**, revenue about **$29M** in year 15, and a 39% chance of NPV > 0 across the input ranges. It fails all four kill metrics: NOAK cost is 24% below the incumbent (target 30%), well short of the 10x target, roads cost 12x more than repairing them as they settle, and revenue is ~3% of the big-enough line. Full output: `results/thermosyphon_platform/summary.md`.
