@@ -10,19 +10,19 @@ Cost of cooling in $ per MWh of cold delivered (median year), and the ratio to B
 
 | Case | Why this case | BAU $/MWh | of which demand charges | Ice + full backup | Ice + 30% backup | Ice only | Ice only at FOAK |
 |---|---|---|---|---|---|---|---|
-| AI data center, 100 MW IT (Fargo / Ellendale, ND) | Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity. | 260 | 39 | 297 (1.14) | 220 (0.85) | 173 (0.67) | 252 (0.97) |
-| Hospital / campus, 3.5 MWth (Minneapolis, MN) | Control case: chillers run all summer on cheap power, so it should lose. | 111 | 13 | 144 (1.30) | 252 (2.28) | 246 (2.22) | 378 (3.41) |
-| Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK) | Best seasonal match: long freezing winter, six-week summer burst, diesel power. | 385 | 13 | 418 (1.09) | 344 (0.89) | 292 (0.76) | 424 (1.10) |
-| Year-round process cooling, 1 MWth at 5 degC (Fargo, ND) | Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer. | 25 | 4 | 65 (2.56) | 141 (5.54) | 139 (5.45) | 210 (8.23) |
+| AI data center, 100 MW IT (Fargo / Ellendale, ND) | Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity. | 259 | 37 | 292 (1.13) | 190 (0.73) | 170 (0.65) | 247 (0.95) |
+| Hospital / campus, 3.5 MWth (Minneapolis, MN) | Control case: chillers run all summer on cheap power, so it should lose. | 111 | 13 | 143 (1.29) | 214 (1.92) | 246 (2.21) | 378 (3.39) |
+| Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK) | Best seasonal match: long freezing winter, six-week summer burst, diesel power. | 385 | 13 | 417 (1.08) | 344 (0.89) | 292 (0.76) | 424 (1.10) |
+| Year-round process cooling, 1 MWth at 5 degC (Fargo, ND) | Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer. | 25 | 4 | 67 (2.63) | 127 (4.99) | 139 (5.45) | 210 (8.23) |
 
-FOAK costs are quoted against the BAU cost above, so the FOAK ratio is FOAK $/MWh / BAU $/MWh.
+Smart charging: the 30% backup also charges the pit in off-peak hours wherever that lowers the annual cost. It is used in case(s) A, B, D; elsewhere the 30% backup only covers what the pit cannot. FOAK costs are quoted against the BAU cost above.
 
 
 ## Best ice-only design per case
 
 | Case | Thermosiphons | Cost per unit | Ice per unit per winter | Design | Pit | Worst-year unmet | Store 50% / 90% full |
 |---|---|---|---|---|---|---|---|
-| A | 30,631 | $385 | 790 kWh | 1.2 m pitch, 12 m2 fins, 10 m deep | 478,609 m3 (4.79 ha) | 0.00% | Jan 17 / Mar 01 |
+| A | 21,518 | $466 | 1114 kWh | 1.5 m pitch, 25 m2 fins, 10 m deep, dry cooler 10% of peak | 484,155 m3 (4.84 ha) | 0.00% | Jan 20 / Mar 04 |
 | B | 18,134 | $385 | 452 kWh | 0.8 m pitch, 12 m2 fins, 10 m deep | 116,058 m3 (1.16 ha) | 0.00% | Jan 07 / Jan 31 |
 | C | 1,531 | $466 | 928 kWh | 1 m pitch, 25 m2 fins, 10 m deep | 15,310 m3 (0.15 ha) | 0.00% | Dec 16 / Jan 20 |
 | D | 9,491 | $560 | 1097 kWh | 1 m pitch, 40 m2 fins, 10 m deep | 94,910 m3 (0.95 ha) | 0.00% | Jan 05 / Jan 27 |
@@ -31,27 +31,27 @@ FOAK costs are quoted against the BAU cost above, so the FOAK ratio is FOAK $/MW
 
 Ice-bank options:
 
-| Case | Config | Thermosiphons | Pit | Pumps + HX | Backup chiller | Electrical service | Energy | Demand charges | Water | O&M | Total |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| A | Ice + full backup chiller | 21 | 21 | 22 | 106 | 58 | 6 | 30 | 0 | 32 | 297 |
-| A | Ice + 30% backup chiller | 46 | 69 | 22 | 32 | 22 | 2 | 6 | 0 | 21 | 220 |
-| A | Ice only (no chiller) | 54 | 68 | 22 | 0 | 7 | 2 | 6 | 0 | 14 | 173 |
-| B | Ice + full backup chiller | 18 | 31 | 3 | 25 | 10 | 27 | 12 | 8 | 11 | 144 |
-| B | Ice + 30% backup chiller | 121 | 90 | 3 | 8 | 4 | 3 | 1 | 0 | 23 | 252 |
-| B | Ice only (no chiller) | 115 | 101 | 3 | 0 | 1 | 3 | 1 | 0 | 22 | 246 |
-| C | Ice + full backup chiller | 16 | 58 | 7 | 109 | 37 | 142 | 10 | 3 | 35 | 418 |
-| C | Ice + 30% backup chiller | 73 | 173 | 7 | 33 | 13 | 11 | 1 | 0 | 33 | 344 |
-| C | Ice only (no chiller) | 73 | 173 | 7 | 0 | 2 | 11 | 1 | 0 | 25 | 292 |
-| D | Ice + full backup chiller | 16 | 26 | 1 | 5 | 2 | 7 | 3 | 0 | 5 | 65 |
-| D | Ice + 30% backup chiller | 61 | 62 | 1 | 1 | 1 | 2 | 0 | 0 | 13 | 141 |
-| D | Ice only (no chiller) | 61 | 62 | 1 | 0 | 0 | 2 | 0 | 0 | 12 | 139 |
+| Case | Config | Thermosiphons | Pit | Pumps + HX | Dry cooler | Backup chiller | Electrical service | Energy | Demand charges | Water | O&M | Total |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A | Ice + full backup chiller | 21 | 21 | 22 | 0 | 106 | 58 | 6 | 24 | 0 | 32 | 292 |
+| A | Ice + 30% backup chiller (smart charging) | 21 | 47 | 22 | 0 | 36 | 22 | 16 | 8 | 0 | 18 | 190 |
+| A | Ice only (no chiller) | 46 | 69 | 22 | 3 | 0 | 8 | 2 | 6 | 0 | 14 | 170 |
+| B | Ice + full backup chiller | 18 | 31 | 3 | 0 | 25 | 10 | 27 | 11 | 8 | 11 | 143 |
+| B | Ice + 30% backup chiller (smart charging) | 81 | 81 | 3 | 0 | 8 | 4 | 15 | 2 | 3 | 18 | 214 |
+| B | Ice only (no chiller) | 115 | 101 | 3 | 0 | 0 | 1 | 3 | 1 | 0 | 22 | 246 |
+| C | Ice + full backup chiller | 16 | 58 | 7 | 0 | 109 | 37 | 142 | 10 | 3 | 35 | 417 |
+| C | Ice + 30% backup chiller (smart charging) | 73 | 173 | 7 | 0 | 33 | 13 | 11 | 1 | 0 | 33 | 344 |
+| C | Ice only (no chiller) | 73 | 173 | 7 | 0 | 0 | 2 | 11 | 1 | 0 | 25 | 292 |
+| D | Ice + full backup chiller | 16 | 26 | 1 | 0 | 5 | 2 | 9 | 3 | 0 | 5 | 67 |
+| D | Ice + 30% backup chiller (smart charging) | 53 | 54 | 1 | 0 | 2 | 1 | 4 | 2 | 0 | 11 | 127 |
+| D | Ice only (no chiller) | 61 | 62 | 1 | 0 | 0 | 0 | 2 | 0 | 0 | 12 | 139 |
 
 Conventional (BAU):
 
 | Case | Heat rejection | Chiller plant | Electrical service | Energy (chiller + pumps/fans) | Demand charges | Water + sewer | O&M | Total | Water use, m3/yr |
 |---|---|---|---|---|---|---|---|---|---|
-| A | air-cooled | 128 | 51 | 11 | 39 | 0 | 31 | 260 | 0 |
-| B | cooling towers | 38 | 9 | 32 | 13 | 9 | 9 | 111 | 15,819 |
+| A | air-cooled | 128 | 51 | 12 | 37 | 0 | 31 | 259 | 0 |
+| B | cooling towers | 38 | 9 | 33 | 13 | 9 | 9 | 111 | 15,819 |
 | C | cooling towers | 131 | 35 | 170 | 13 | 3 | 32 | 385 | 2,824 |
 | D | air-cooled | 7 | 1 | 12 | 4 | 0 | 2 | 25 | 0 |
 
@@ -59,28 +59,28 @@ Conventional (BAU):
 
 | Case | Input | Base | Low | High |
 |---|---|---|---|---|
-| A | BAU plant $/kW (x0.6 / x1.5) | 0.67 | 0.88 | 0.51 |
-| A | FOAK costs (NOAK / FOAK) | 0.67 | 0.67 | 0.97 |
-| A | Electrical service cost ($0 / $1,500 per kWe) | 0.67 | 0.80 | 0.54 |
-| A | Pit cost (x0.7 / x1.5) | 0.67 | 0.58 | 0.81 |
-| A | Demand charge (none / x2, e.g. 12-month ratchet) | 0.67 | 0.76 | 0.60 |
-| A | Aluminium price (world $2.85 / US $5.3 x1.2) | 0.67 | 0.57 | 0.71 |
-| A | Finished/raw index (2.0 / 3.5) | 0.67 | 0.62 | 0.75 |
-| A | Discount rate (6% / 10%) | 0.67 | 0.62 | 0.70 |
-| A | Condenser conductance (3 / 8 W/m2K) | 0.67 | 0.68 | 0.63 |
-| A | Electricity price (x0.67 / x1.5) | 0.67 | 0.67 | 0.66 |
-| A | Trim chillers (air-cooled / water-cooled + towers) | 0.67 | 0.67 | 0.66 |
-| B | FOAK costs (NOAK / FOAK) | 1.30 | 1.30 | 1.58 |
-| B | Pit cost (x0.7 / x1.5) | 1.30 | 1.21 | 1.45 |
-| B | BAU plant $/kW (x0.6 / x1.5) | 1.30 | 1.43 | 1.19 |
-| B | Electricity price (x0.67 / x1.5) | 1.30 | 1.35 | 1.24 |
-| B | Discount rate (6% / 10%) | 1.30 | 1.25 | 1.35 |
-| B | Aluminium price (world $2.85 / US $5.3 x1.2) | 1.30 | 1.23 | 1.33 |
-| B | Finished/raw index (2.0 / 3.5) | 1.30 | 1.27 | 1.37 |
-| B | Demand charge (none / x2, e.g. 12-month ratchet) | 1.30 | 1.35 | 1.26 |
-| B | Water + sewer price (x0.5 / x2) | 1.30 | 1.32 | 1.26 |
-| B | Electrical service cost ($0 / $1,500 per kWe) | 1.30 | 1.32 | 1.28 |
-| B | Condenser conductance (3 / 8 W/m2K) | 1.30 | 1.31 | 1.30 |
+| A | BAU plant $/kW (x0.6 / x1.5) | 0.65 | 0.87 | 0.50 |
+| A | FOAK costs (NOAK / FOAK) | 0.65 | 0.65 | 0.95 |
+| A | Electrical service cost ($0 / $1,500 per kWe) | 0.65 | 0.78 | 0.54 |
+| A | Pit cost (x0.7 / x1.5) | 0.65 | 0.57 | 0.80 |
+| A | Demand charge (none / x2, e.g. 12-month ratchet) | 0.65 | 0.74 | 0.59 |
+| A | Aluminium price (world $2.85 / US $5.3 x1.2) | 0.65 | 0.57 | 0.69 |
+| A | Finished/raw index (2.0 / 3.5) | 0.65 | 0.62 | 0.73 |
+| A | Discount rate (6% / 10%) | 0.65 | 0.61 | 0.69 |
+| A | Condenser conductance (3 / 8 W/m2K) | 0.65 | 0.68 | 0.64 |
+| A | Electricity price (x0.67 / x1.5) | 0.65 | 0.66 | 0.64 |
+| A | Trim chillers (air-cooled / water-cooled + towers) | 0.65 | 0.65 | 0.64 |
+| B | FOAK costs (NOAK / FOAK) | 1.29 | 1.29 | 1.56 |
+| B | Pit cost (x0.7 / x1.5) | 1.29 | 1.20 | 1.44 |
+| B | BAU plant $/kW (x0.6 / x1.5) | 1.29 | 1.41 | 1.18 |
+| B | Electricity price (x0.67 / x1.5) | 1.29 | 1.34 | 1.23 |
+| B | Discount rate (6% / 10%) | 1.29 | 1.23 | 1.34 |
+| B | Aluminium price (world $2.85 / US $5.3 x1.2) | 1.29 | 1.21 | 1.32 |
+| B | Demand charge (none / x2, e.g. 12-month ratchet) | 1.29 | 1.34 | 1.24 |
+| B | Finished/raw index (2.0 / 3.5) | 1.29 | 1.25 | 1.35 |
+| B | Water + sewer price (x0.5 / x2) | 1.29 | 1.31 | 1.25 |
+| B | Electrical service cost ($0 / $1,500 per kWe) | 1.29 | 1.30 | 1.27 |
+| B | Condenser conductance (3 / 8 W/m2K) | 1.29 | 1.29 | 1.28 |
 | C | Pit cost (x0.7 / x1.5) | 0.76 | 0.61 | 1.01 |
 | C | FOAK costs (NOAK / FOAK) | 0.76 | 0.76 | 1.10 |
 | C | BAU plant $/kW (x0.6 / x1.5) | 0.76 | 0.92 | 0.63 |
@@ -92,16 +92,16 @@ Conventional (BAU):
 | C | Condenser conductance (3 / 8 W/m2K) | 0.76 | 0.80 | 0.72 |
 | C | Demand charge (none / x2, e.g. 12-month ratchet) | 0.76 | 0.78 | 0.74 |
 | C | Water + sewer price (x0.5 / x2) | 0.76 | 0.76 | 0.75 |
-| D | FOAK costs (NOAK / FOAK) | 2.56 | 2.56 | 3.60 |
-| D | Pit cost (x0.7 / x1.5) | 2.56 | 2.22 | 3.11 |
-| D | Electricity price (x0.67 / x1.5) | 2.56 | 2.92 | 2.18 |
-| D | Demand charge (none / x2, e.g. 12-month ratchet) | 2.56 | 2.85 | 2.34 |
-| D | Discount rate (6% / 10%) | 2.56 | 2.32 | 2.79 |
-| D | BAU plant $/kW (x0.6 / x1.5) | 2.56 | 2.79 | 2.34 |
-| D | Aluminium price (world $2.85 / US $5.3 x1.2) | 2.56 | 2.26 | 2.69 |
-| D | Finished/raw index (2.0 / 3.5) | 2.56 | 2.42 | 2.83 |
-| D | Electrical service cost ($0 / $1,500 per kWe) | 2.56 | 2.65 | 2.44 |
-| D | Condenser conductance (3 / 8 W/m2K) | 2.56 | 2.60 | 2.52 |
+| D | FOAK costs (NOAK / FOAK) | 2.63 | 2.63 | 3.67 |
+| D | Pit cost (x0.7 / x1.5) | 2.63 | 2.30 | 3.19 |
+| D | Electricity price (x0.67 / x1.5) | 2.63 | 2.97 | 2.28 |
+| D | Demand charge (none / x2, e.g. 12-month ratchet) | 2.63 | 2.95 | 2.39 |
+| D | BAU plant $/kW (x0.6 / x1.5) | 2.63 | 2.87 | 2.40 |
+| D | Discount rate (6% / 10%) | 2.63 | 2.40 | 2.86 |
+| D | Aluminium price (world $2.85 / US $5.3 x1.2) | 2.63 | 2.33 | 2.76 |
+| D | Finished/raw index (2.0 / 3.5) | 2.63 | 2.49 | 2.90 |
+| D | Electrical service cost ($0 / $1,500 per kWe) | 2.63 | 2.72 | 2.51 |
+| D | Condenser conductance (3 / 8 W/m2K) | 2.63 | 2.68 | 2.59 |
 
 ## Case notes
 

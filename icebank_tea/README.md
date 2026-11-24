@@ -37,6 +37,15 @@ Start with [`RESULTS.md`](RESULTS.md), the charts in [`outputs/figures/`](output
    (and, with cooling towers, condenser-water pumps and tower fans) in energy, demand charges and electrical
    service; the ice bank's discharge pumps now pay electrical service too. Tower plants (hospital, salmon
    evaporative condensers) pay for makeup water, treatment and sewer at local rates.
+9. **Hourly time-of-use billing and year-round night recharge.** The data-center and hospital tariffs are billed
+   on-peak (9 a.m.-9 p.m. weekdays) vs off-peak, with on-peak demand charges. The thermosiphons already recharge
+   the pit whenever the air is colder than the water, in any season; the design search can also add a dry cooler
+   (0, 10% or 30% of peak load) that cools liquid pit water on cool nights and shoulder seasons.
+10. **Smart charging for the 30% backup.** The 30% backup chiller may also charge the pit in off-peak hours
+   (ice-making at 70% of its chilled-water COP and capacity, plus $30/kW of in-pit coils); each case reports
+   whichever of "charge" or "don't charge" is cheaper. It lowers the 30% option's cost in the data-center,
+   hospital and process cases but does not make it the best configuration in any case. Off-peak charging by a
+   full backup chiller is not modelled.
 
 ## Files
 

@@ -22,7 +22,7 @@ COLOR = {"plant": "#2a78d6", "elec_service": "#eb6834", "thermosiphons": "#eda10
          "water": "#8a8986"}  # water only appears for tower plants; a neutral, not a ninth hue
 NAME = {"plant": "Chiller plant (capital)", "elec_service": "Electrical service (capital)",
         "thermosiphons": "Thermosiphons (capital)", "pit": "Insulated pit (capital)",
-        "discharge": "Pumps and heat exchangers (capital)", "energy": "Electricity (energy)",
+        "discharge": "Pumps, HX + dry cooler (capital)", "energy": "Electricity (energy)",
         "demand": "Demand charges", "om": "Operations and maintenance",
         "water": "Cooling-tower water and sewer"}
 BAU_ORDER = ["plant", "demand", "energy", "elec_service", "om", "water"]
@@ -87,7 +87,8 @@ def _donut(ax, parts, order, cold, scale):
 def pies(res, ci, years, path: Path):
     bau_txt, ice_txt, both_txt = assumptions(res, ci, years)
     cold = res["bau"]["cold_mwh"]
-    bp, ip = res["bau"]["parts"], res["best"]["none"]["parts"]
+    bp, ip = res["bau"]["parts"], dict(res["best"]["none"]["parts"])
+    ip["discharge"] = ip.get("discharge", 0.0) + ip.pop("dry_cooler", 0.0)  # one slice for the water-side plant
     bt = sum(bp.values()) / cold; it = sum(ip.values()) / cold
     fig, axes = plt.subplots(1, 2, figsize=(16, 7.8), facecolor=SURFACE)
     fig.suptitle(f"{res['case'].title}: what a MWh of cooling costs", x=0.04, ha="left", fontsize=15,

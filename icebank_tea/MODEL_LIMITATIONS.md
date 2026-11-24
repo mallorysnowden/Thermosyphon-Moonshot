@@ -28,5 +28,13 @@
   tower fans). The data-center tower variant uses a crude wet-bulb proxy, as the synthetic weather has no humidity.
   The salmon plant's water price is an assumption. Dry coolers ahead of the data-center trim are identical in both
   options and are not costed in either.
+- **Time-of-use prices are approximate.** On/off-peak spreads come from Xcel base energy charges (ND D17; SD
+  General TOD as a proxy for MN) with a flat adder that keeps each case's average price; holidays are ignored and
+  the series is assumed to start on a Monday. Wholesale or real-time prices are not modelled.
+- **Dry cooler is simple.** Sensible cooling of liquid pit water only (above 1 degC), linear in the water-air
+  temperature difference, fans at full power whenever it runs; $70/kW at a 10 K ITD is an assumption.
+- **Off-peak charging is rule-based, not optimised.** When allowed (off-peak hours in months with load), the 30%
+  chiller charges at whatever capacity it has spare until the pit is full, with no weather or price forecast.
+  A smarter controller could do somewhat better. Full-backup charging is not modelled.
 - **No value for freed electrical capacity** beyond the electrical-service credit, no carbon price, and no
   learning curve between FOAK and NOAK.
