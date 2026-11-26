@@ -86,7 +86,7 @@ def _donut(ax, parts, order, cold, scale):
 
 def pies(res, ci, years, path: Path):
     bau_txt, ice_txt, both_txt = assumptions(res, ci, years)
-    cold = res["bau"]["cold_mwh"]
+    cold = res["bau"]["service_mwh"]
     bp, ip = res["bau"]["parts"], dict(res["best"]["none"]["parts"])
     ip["discharge"] = ip.get("discharge", 0.0) + ip.pop("dry_cooler", 0.0)  # one slice for the water-side plant
     bt = sum(bp.values()) / cold; it = sum(ip.values()) / cold

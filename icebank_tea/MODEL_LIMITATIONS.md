@@ -10,7 +10,7 @@
   heat below 0 degC, no natural ice growth on the pit surface, no stratification. Ice melts from the outside
   of each icicle as discharge water flows past.
 - **Dispatch is ice first**; a backup chiller only covers what the store cannot.
-- **Usable water temperature is set per case** (data center 27 degC, hospital 4 degC, salmon 1.5 degC,
+- **Usable water temperature is set per case** (liquid-cooled data center 27 degC, air-cooled 13 degC, hospital 4 degC, salmon 1.5 degC,
   process 3 degC). For the data center this counts a lot of sensible storage in warm meltwater.
 - **Salmon ice-only chills to about +1 degC**, not the -1 degC of refrigerated seawater.
 - **Costs are estimates, not quotes:** the finished/raw index, installation, field joints, pit cost curve and
@@ -38,3 +38,17 @@
   A smarter controller could do somewhat better. Full-backup charging is not modelled.
 - **No value for freed electrical capacity** beyond the electrical-service credit, no carbon price, and no
   learning curve between FOAK and NOAK.
+- **Hospital heating is a simple profile.** Heat demand is a 25% year-round floor plus space heat linear in
+  outdoor temperature below 15 degC, scaled to an assumed 80 kBtu/ft2-yr for a 300,000 ft2 hospital; there is
+  no occupancy, solar or ventilation schedule. Steam for sterilisers and humidifiers stays on boilers in every
+  option and is left out, and boiler capital is assumed to cancel because boilers stay as backup in all options.
+- **Heat pumps are rules of thumb.** Pit heat pump: half of Carnot, 55 degC supply, evaporating 5 K below the pit
+  water, $400/kW plus $30/kW of brine coils (assumptions); it extracts heat as uniform ice in the pit and stops
+  when the pit's ice cap is reached. Air-source heat pumps: 45% of Carnot, clipped to COP 1.3-4.5, $600/kW, with
+  no defrost penalty or loss of capacity in the cold beyond the COP. Neither plant is given N+1 redundancy.
+- **The BAU hospital has no heat-recovery chiller.** Many modern hospitals recover chiller condenser heat for
+  summer reheat; that would make BAU cheaper in both B and F. Heat-pump and thermosiphon power are tallied on the
+  main pit trajectory for every configuration, including the off-peak-charging one.
+- **The heat-pump reserve uses the average heating profile** (no weather forecast), and thermosiphons are either
+  fully on or valved off.
+
