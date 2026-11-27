@@ -6,16 +6,50 @@ Weather: 12 synthetic years per site. Store must leave no more than 0.1% of a me
 
 ## Headline (demand charges included)
 
-Cost of cooling in $ per MWh of cold delivered (median year), and the ratio to BAU in brackets.
+Cost of cooling in $ per MWh of cold delivered (median year), and the ratio to BAU in brackets. For the hospital cases (B, F), which include heating, it is $ per MWh of heat plus cold.
 
 | Case | Why this case | BAU $/MWh | of which demand charges | Ice + full backup | Ice + 30% backup | Ice only | Ice only at FOAK |
 |---|---|---|---|---|---|---|---|
 | AI data center, 100 MW IT (Fargo / Ellendale, ND) | Big, growing market; chillers sit idle except on hot days, so the ice bank competes with idle capacity. | 259 | 37 | 292 (1.13) | 190 (0.73) | 170 (0.65) | 247 (0.95) |
-| Hospital / campus, 3.5 MWth (Minneapolis, MN) | Control case: chillers run all summer on cheap power, so it should lose. | 111 | 13 | 143 (1.29) | 214 (1.92) | 246 (2.21) | 378 (3.39) |
+| Hospital, 3.5 MW cooling + 1.9 MW heating (Minneapolis, MN), gas-heated BAU | Heating and cooling: a heat pump that draws its heat from the pit makes ice all winter. | 67 | 6 | 67 (1.01) | 92 (1.38) | 104 (1.56) | 145 (2.18) |
 | Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK) | Best seasonal match: long freezing winter, six-week summer burst, diesel power. | 385 | 13 | 417 (1.08) | 344 (0.89) | 292 (0.76) | 424 (1.10) |
 | Year-round process cooling, 1 MWth at 5 degC (Fargo, ND) | Tests cooling all year: thermosiphons serve the load directly in winter and the store carries summer. | 25 | 4 | 67 (2.63) | 127 (4.99) | 139 (5.45) | 210 (8.23) |
+| Air-cooled data center, 100 MW IT (Fargo / Ellendale, ND) | Tests an air-cooled hall: far more chiller hours, but pit water must stay below 13 degC. | 44 | 9 | 66 (1.51) | 67 (1.53) | 78 (1.78) | 122 (2.79) |
+| Hospital, 3.5 MW cooling + 1.9 MW heating (Minneapolis, MN), electrified BAU | Same hospital, but the comparison is an all-electric plant with air-source heat pumps. | 98 | 13 | 99 (1.00) | 97 (0.99) | 123 (1.25) | 164 (1.67) |
 
-Smart charging: the 30% backup also charges the pit in off-peak hours wherever that lowers the annual cost. It is used in case(s) A, B, D; elsewhere the 30% backup only covers what the pit cannot. FOAK costs are quoted against the BAU cost above.
+Smart charging: the 30% backup also charges the pit in off-peak hours wherever that lowers the annual cost. It is used in case(s) A, B, D, E, F; elsewhere the 30% backup only covers what the pit cannot. FOAK costs are quoted against the BAU cost above.
+
+
+## Hospital with heating: the pit as a heat-pump source
+
+A water-to-water heat pump draws its heat from the pit and so makes ice; boilers (case B) or air-source heat pumps (case F) cover what it does not. Heat-pump size is a fraction of the 1.9 MW heating peak. Annual cost in $k/yr; heat from the pit heat pump as a share of the year's heat.
+
+
+**B. Hospital, 3.5 MW cooling + 1.9 MW heating (Minneapolis, MN), gas-heated BAU.**
+
+| Case | Config | Annual cost, $k | Ratio | Pit heat pump size | Heat from pit heat pump | Thermosiphons | Pit | Gas, $k | Heat pumps (capital), $k |
+|---|---|---|---|---|---|---|---|---|---|
+| B | Conventional (BAU) | 880 | 1.00 | - | 0% | - | - | 199 | 0 |
+| B | Ice + full backup chiller | 888 | 1.01 | 0% | 0% | 331 at 1 m pitch | 3,310 m3 (0.03 ha) | 199 | 0 |
+| B | Ice + 30% backup chiller (smart charging) | 1,210 | 1.38 | 75% | 99% | 1,404 at 2 m pitch | 56,160 m3 (0.56 ha) | 2 | 63 |
+| B | Ice only (no chiller) | 1,374 | 1.56 | 25% | 59% | 8,210 at 1 m pitch | 82,100 m3 (0.82 ha) | 81 | 21 |
+
+B: 7,080 MWh of heat and 6,114 MWh of cold a year (median).
+
+Best feasible ice-bank option at each heat-pump size (B), ratio to BAU: 0% -> 1.01, 25% -> 1.07, 50% -> 1.09, 75% -> 1.12, 100% -> 1.15.
+
+**F. Hospital, 3.5 MW cooling + 1.9 MW heating (Minneapolis, MN), electrified BAU.**
+
+| Case | Config | Annual cost, $k | Ratio | Pit heat pump size | Heat from pit heat pump | Thermosiphons | Pit | Gas, $k | Heat pumps (capital), $k |
+|---|---|---|---|---|---|---|---|---|---|
+| F | Conventional (BAU) | 1,299 | 1.00 | - | 0% | - | - | 0 | 117 |
+| F | Ice + full backup chiller | 1,302 | 1.00 | 0% | 0% | 331 at 1 m pitch | 3,310 m3 (0.03 ha) | 0 | 117 |
+| F | Ice + 30% backup chiller (smart charging) | 1,284 | 0.99 | 100% | 100% | 1,018 at 2 m pitch | 61,080 m3 (0.41 ha) | 0 | 84 |
+| F | Ice only (no chiller) | 1,623 | 1.25 | 50% | 88% | 8,210 at 1 m pitch | 82,100 m3 (0.82 ha) | 0 | 100 |
+
+F: 7,080 MWh of heat and 6,114 MWh of cold a year (median).
+
+Best feasible ice-bank option at each heat-pump size (F), ratio to BAU: 0% -> 1.00, 25% -> 1.02, 50% -> 1.04, 75% -> 1.00, 100% -> 0.99.
 
 
 ## Best ice-only design per case
@@ -23,37 +57,47 @@ Smart charging: the 30% backup also charges the pit in off-peak hours wherever t
 | Case | Thermosiphons | Cost per unit | Ice per unit per winter | Design | Pit | Worst-year unmet | Store 50% / 90% full |
 |---|---|---|---|---|---|---|---|
 | A | 21,518 | $466 | 1114 kWh | 1.5 m pitch, 25 m2 fins, 10 m deep, dry cooler 10% of peak | 484,155 m3 (4.84 ha) | 0.00% | Jan 20 / Mar 04 |
-| B | 18,134 | $385 | 452 kWh | 0.8 m pitch, 12 m2 fins, 10 m deep | 116,058 m3 (1.16 ha) | 0.00% | Jan 07 / Jan 31 |
+| B | 8,210 | $466 | 484 kWh | 1 m pitch, 25 m2 fins, 10 m deep, pit heat pump 25% of peak heat | 82,100 m3 (0.82 ha) | 0.00% | Jan 07 / Feb 16 |
 | C | 1,531 | $466 | 928 kWh | 1 m pitch, 25 m2 fins, 10 m deep | 15,310 m3 (0.15 ha) | 0.00% | Dec 16 / Jan 20 |
 | D | 9,491 | $560 | 1097 kWh | 1 m pitch, 40 m2 fins, 10 m deep | 94,910 m3 (0.95 ha) | 0.00% | Jan 05 / Jan 27 |
+| E | 199,319 | $466 | 1495 kWh | 2 m pitch, 25 m2 fins, 10 m deep | 7,972,760 m3 (79.73 ha) | 0.00% | Jan 21 / Mar 02 |
+| F | 8,210 | $466 | 303 kWh | 1 m pitch, 25 m2 fins, 10 m deep, pit heat pump 50% of peak heat | 82,100 m3 (0.82 ha) | 0.00% | Dec 27 / Mar 17 |
 
-## Where the money goes ($ per MWh of cold)
+## Where the money goes ($ per MWh of cold; hospital cases B and F: per MWh of heat + cold)
 
 Ice-bank options:
 
-| Case | Config | Thermosiphons | Pit | Pumps + HX | Dry cooler | Backup chiller | Electrical service | Energy | Demand charges | Water | O&M | Total |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| A | Ice + full backup chiller | 21 | 21 | 22 | 0 | 106 | 58 | 6 | 24 | 0 | 32 | 292 |
-| A | Ice + 30% backup chiller (smart charging) | 21 | 47 | 22 | 0 | 36 | 22 | 16 | 8 | 0 | 18 | 190 |
-| A | Ice only (no chiller) | 46 | 69 | 22 | 3 | 0 | 8 | 2 | 6 | 0 | 14 | 170 |
-| B | Ice + full backup chiller | 18 | 31 | 3 | 0 | 25 | 10 | 27 | 11 | 8 | 11 | 143 |
-| B | Ice + 30% backup chiller (smart charging) | 81 | 81 | 3 | 0 | 8 | 4 | 15 | 2 | 3 | 18 | 214 |
-| B | Ice only (no chiller) | 115 | 101 | 3 | 0 | 0 | 1 | 3 | 1 | 0 | 22 | 246 |
-| C | Ice + full backup chiller | 16 | 58 | 7 | 0 | 109 | 37 | 142 | 10 | 3 | 35 | 417 |
-| C | Ice + 30% backup chiller (smart charging) | 73 | 173 | 7 | 0 | 33 | 13 | 11 | 1 | 0 | 33 | 344 |
-| C | Ice only (no chiller) | 73 | 173 | 7 | 0 | 0 | 2 | 11 | 1 | 0 | 25 | 292 |
-| D | Ice + full backup chiller | 16 | 26 | 1 | 0 | 5 | 2 | 9 | 3 | 0 | 5 | 67 |
-| D | Ice + 30% backup chiller (smart charging) | 53 | 54 | 1 | 0 | 2 | 1 | 4 | 2 | 0 | 11 | 127 |
-| D | Ice only (no chiller) | 61 | 62 | 1 | 0 | 0 | 0 | 2 | 0 | 0 | 12 | 139 |
+| Case | Config | Thermosiphons | Pit | Pumps + HX | Dry cooler | Backup chiller | Heat pumps | Electrical service | Energy | Demand charges | Gas | Water | O&M | Total |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A | Ice + full backup chiller | 21 | 21 | 22 | 0 | 106 | 0 | 58 | 6 | 24 | 0 | 0 | 32 | 292 |
+| A | Ice + 30% backup chiller (smart charging) | 21 | 47 | 22 | 0 | 36 | 0 | 22 | 16 | 8 | 0 | 0 | 18 | 190 |
+| A | Ice only (no chiller) | 46 | 69 | 22 | 3 | 0 | 0 | 8 | 2 | 6 | 0 | 0 | 14 | 170 |
+| B | Ice + full backup chiller | 1 | 5 | 1 | 0 | 12 | 0 | 5 | 15 | 6 | 15 | 4 | 4 | 67 |
+| B | Ice + 30% backup chiller (smart charging) | 5 | 30 | 1 | 0 | 4 | 5 | 3 | 32 | 6 | 0 | 1 | 6 | 92 |
+| B | Ice only (no chiller) | 29 | 37 | 1 | 0 | 0 | 2 | 1 | 17 | 3 | 6 | 0 | 7 | 104 |
+| C | Ice + full backup chiller | 16 | 58 | 7 | 0 | 109 | 0 | 37 | 142 | 10 | 0 | 3 | 35 | 417 |
+| C | Ice + 30% backup chiller (smart charging) | 73 | 173 | 7 | 0 | 33 | 0 | 13 | 11 | 1 | 0 | 0 | 33 | 344 |
+| C | Ice only (no chiller) | 73 | 173 | 7 | 0 | 0 | 0 | 2 | 11 | 1 | 0 | 0 | 25 | 292 |
+| D | Ice + full backup chiller | 16 | 26 | 1 | 0 | 5 | 0 | 2 | 9 | 3 | 0 | 0 | 5 | 67 |
+| D | Ice + 30% backup chiller (smart charging) | 53 | 54 | 1 | 0 | 2 | 0 | 1 | 4 | 2 | 0 | 0 | 11 | 127 |
+| D | Ice only (no chiller) | 61 | 62 | 1 | 0 | 0 | 0 | 0 | 2 | 0 | 0 | 0 | 12 | 139 |
+| E | Ice + full backup chiller | 18 | 8 | 2 | 0 | 9 | 0 | 8 | 12 | 7 | 0 | 0 | 5 | 66 |
+| E | Ice + 30% backup chiller (smart charging) | 21 | 24 | 2 | 0 | 3 | 0 | 3 | 8 | 1 | 0 | 0 | 5 | 67 |
+| E | Ice only (no chiller) | 34 | 32 | 2 | 0 | 0 | 0 | 1 | 2 | 1 | 0 | 0 | 7 | 78 |
+| F | Ice + full backup chiller | 1 | 5 | 1 | 0 | 12 | 9 | 5 | 43 | 13 | 0 | 4 | 6 | 99 |
+| F | Ice + 30% backup chiller (smart charging) | 6 | 31 | 1 | 0 | 4 | 6 | 3 | 32 | 6 | 0 | 1 | 6 | 97 |
+| F | Ice only (no chiller) | 29 | 37 | 1 | 0 | 0 | 8 | 4 | 28 | 7 | 0 | 0 | 9 | 123 |
 
 Conventional (BAU):
 
-| Case | Heat rejection | Chiller plant | Electrical service | Energy (chiller + pumps/fans) | Demand charges | Water + sewer | O&M | Total | Water use, m3/yr |
-|---|---|---|---|---|---|---|---|---|---|
-| A | air-cooled | 128 | 51 | 12 | 37 | 0 | 31 | 259 | 0 |
-| B | cooling towers | 38 | 9 | 33 | 13 | 9 | 9 | 111 | 15,819 |
-| C | cooling towers | 131 | 35 | 170 | 13 | 3 | 32 | 385 | 2,824 |
-| D | air-cooled | 7 | 1 | 12 | 4 | 0 | 2 | 25 | 0 |
+| Case | Heat rejection | Chiller plant | Heat pumps | Electrical service | Energy (chiller + pumps/fans) | Demand charges | Gas | Water + sewer | O&M | Total | Water use, m3/yr |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| A | air-cooled | 128 | 0 | 51 | 12 | 37 | 0 | 0 | 31 | 259 | 0 |
+| B | cooling towers | 17 | 0 | 4 | 15 | 6 | 15 | 4 | 4 | 67 | 15,819 |
+| C | cooling towers | 131 | 0 | 35 | 170 | 13 | 0 | 3 | 32 | 385 | 2,824 |
+| D | air-cooled | 7 | 0 | 1 | 12 | 4 | 0 | 0 | 2 | 25 | 0 |
+| E | air-cooled | 10 | 0 | 7 | 15 | 9 | 0 | 0 | 3 | 44 | 0 |
+| F | cooling towers | 17 | 9 | 5 | 43 | 13 | 0 | 4 | 6 | 98 | 15,819 |
 
 ## Sensitivities (best configuration per case; ratio at the low / high input)
 
@@ -70,17 +114,19 @@ Conventional (BAU):
 | A | Condenser conductance (3 / 8 W/m2K) | 0.65 | 0.68 | 0.64 |
 | A | Electricity price (x0.67 / x1.5) | 0.65 | 0.66 | 0.64 |
 | A | Trim chillers (air-cooled / water-cooled + towers) | 0.65 | 0.65 | 0.64 |
-| B | FOAK costs (NOAK / FOAK) | 1.29 | 1.29 | 1.56 |
-| B | Pit cost (x0.7 / x1.5) | 1.29 | 1.20 | 1.44 |
-| B | BAU plant $/kW (x0.6 / x1.5) | 1.29 | 1.41 | 1.18 |
-| B | Electricity price (x0.67 / x1.5) | 1.29 | 1.34 | 1.23 |
-| B | Discount rate (6% / 10%) | 1.29 | 1.23 | 1.34 |
-| B | Aluminium price (world $2.85 / US $5.3 x1.2) | 1.29 | 1.21 | 1.32 |
-| B | Demand charge (none / x2, e.g. 12-month ratchet) | 1.29 | 1.34 | 1.24 |
-| B | Finished/raw index (2.0 / 3.5) | 1.29 | 1.25 | 1.35 |
-| B | Water + sewer price (x0.5 / x2) | 1.29 | 1.31 | 1.25 |
-| B | Electrical service cost ($0 / $1,500 per kWe) | 1.29 | 1.30 | 1.27 |
-| B | Condenser conductance (3 / 8 W/m2K) | 1.29 | 1.29 | 1.28 |
+| B | BAU plant $/kW (x0.6 / x1.5) | 1.01 | 1.06 | 0.96 |
+| B | Pit cost (x0.7 / x1.5) | 1.01 | 0.99 | 1.05 |
+| B | FOAK costs (NOAK / FOAK) | 1.01 | 1.01 | 1.06 |
+| B | Discount rate (6% / 10%) | 1.01 | 1.00 | 1.02 |
+| B | Electrical service cost ($0 / $1,500 per kWe) | 1.01 | 1.00 | 1.02 |
+| B | Aluminium price (world $2.85 / US $5.3 x1.2) | 1.01 | 1.00 | 1.01 |
+| B | Finished/raw index (2.0 / 3.5) | 1.01 | 1.01 | 1.02 |
+| B | Electricity price (x0.67 / x1.5) | 1.01 | 1.01 | 1.01 |
+| B | Water + sewer price (x0.5 / x2) | 1.01 | 1.01 | 1.01 |
+| B | Demand charge (none / x2, e.g. 12-month ratchet) | 1.01 | 1.01 | 1.01 |
+| B | Condenser conductance (3 / 8 W/m2K) | 1.01 | 1.01 | 1.01 |
+| B | Gas price (x0.67 / x1.5) | 1.01 | 1.01 | 1.01 |
+| B | Pit heat pump $/kW (x0.6 / x1.5) | 1.01 | 1.01 | 1.01 |
 | C | Pit cost (x0.7 / x1.5) | 0.76 | 0.61 | 1.01 |
 | C | FOAK costs (NOAK / FOAK) | 0.76 | 0.76 | 1.10 |
 | C | BAU plant $/kW (x0.6 / x1.5) | 0.76 | 0.92 | 0.63 |
@@ -102,14 +148,40 @@ Conventional (BAU):
 | D | Finished/raw index (2.0 / 3.5) | 2.63 | 2.49 | 2.90 |
 | D | Electrical service cost ($0 / $1,500 per kWe) | 2.63 | 2.72 | 2.51 |
 | D | Condenser conductance (3 / 8 W/m2K) | 2.63 | 2.68 | 2.59 |
+| E | FOAK costs (NOAK / FOAK) | 1.51 | 1.51 | 2.02 |
+| E | Demand charge (none / x2, e.g. 12-month ratchet) | 1.51 | 1.69 | 1.39 |
+| E | Aluminium price (world $2.85 / US $5.3 x1.2) | 1.51 | 1.33 | 1.59 |
+| E | Finished/raw index (2.0 / 3.5) | 1.51 | 1.43 | 1.68 |
+| E | Electricity price (x0.67 / x1.5) | 1.51 | 1.61 | 1.39 |
+| E | Electrical service cost ($0 / $1,500 per kWe) | 1.51 | 1.60 | 1.43 |
+| E | BAU plant $/kW (x0.6 / x1.5) | 1.51 | 1.60 | 1.43 |
+| E | Discount rate (6% / 10%) | 1.51 | 1.43 | 1.59 |
+| E | Pit cost (x0.7 / x1.5) | 1.51 | 1.45 | 1.61 |
+| E | Condenser conductance (3 / 8 W/m2K) | 1.51 | 1.52 | 1.51 |
+| F | Pit cost (x0.7 / x1.5) | 0.99 | 0.88 | 1.16 |
+| F | BAU plant $/kW (x0.6 / x1.5) | 0.99 | 1.06 | 0.91 |
+| F | FOAK costs (NOAK / FOAK) | 0.99 | 0.99 | 1.14 |
+| F | Demand charge (none / x2, e.g. 12-month ratchet) | 0.99 | 1.06 | 0.93 |
+| F | Air-source heat pump $/kW (x0.6 / x1.5) | 0.99 | 1.03 | 0.94 |
+| F | Discount rate (6% / 10%) | 0.99 | 0.94 | 1.03 |
+| F | Electricity price (x0.67 / x1.5) | 0.99 | 1.03 | 0.94 |
+| F | Pit heat pump $/kW (x0.6 / x1.5) | 0.99 | 0.96 | 1.03 |
+| F | Electrical service cost ($0 / $1,500 per kWe) | 0.99 | 1.01 | 0.96 |
+| F | Water + sewer price (x0.5 / x2) | 0.99 | 1.00 | 0.96 |
+| F | Aluminium price (world $2.85 / US $5.3 x1.2) | 0.99 | 0.97 | 1.00 |
+| F | Finished/raw index (2.0 / 3.5) | 0.99 | 0.98 | 1.01 |
+| F | Condenser conductance (3 / 8 W/m2K) | 0.99 | 0.99 | 0.99 |
+| F | Gas price (x0.67 / x1.5) | 0.99 | 0.99 | 0.99 |
 
 ## Case notes
 
 - **A. AI data center, 100 MW IT (Fargo / Ellendale, ND).** Trim above what dry coolers can do at 32 degC supply / 42 degC return, 8 K approach. Electricity 7.5 c/kWh (ND industrial 7.25 c, EIA 2024). Air-cooled trim chillers (no water); a water-cooled tower variant is a sensitivity. Demand charge: Xcel Energy ND General Time of Day (D17) on-peak demand, $15.38 Jun-Sep / $11.03 Oct-May, less the $2.10 transmission-voltage discount (NDPSC PU-24-376 tariff sheets). Median freezing degree-days 1315 degC-days; median-year cooling 22,022 MWh.
-- **B. Hospital / campus, 3.5 MWth (Minneapolis, MN).** Water-cooled chiller plant with cooling towers, 3 x 50%, ~$1,500/ton, COP 4.7. Electricity 12.5 c/kWh (MN commercial 12.15 c). Demand charge: Xcel Energy MN General Time of Day demand, $19.86 summer / $15.27 winter (2026 rates proposed in the MN electric rate case). Median freezing degree-days 820 degC-days; median-year cooling 6,114 MWh.
+- **B. Hospital, 3.5 MW cooling + 1.9 MW heating (Minneapolis, MN), gas-heated BAU.** Cooling: water-cooled chiller plant with cooling towers, 3 x 50%, ~$1,500/ton, COP 4.7. Heating: gas boilers at 82%, gas $7.00/Mcf (MN commercial $6.44/Mcf, Nov 2025, EIA). Electricity 12.5 c/kWh (MN commercial 12.15 c). Demand charge: Xcel Energy MN General Time of Day demand, $19.86 summer / $15.27 winter (2026 rates proposed in the MN electric rate case). Median freezing degree-days 820 degC-days; median-year cooling 6,114 MWh. Heating: 300,000 ft2 hospital (about 300 ft2 per ton of cooling) using 80 kBtu/ft2-yr of delivered space heat, reheat and hot water (DOE reference hospitals: 52-108), 7,000 MWh/yr: a 25% year-round floor plus space heat below 15 degC, peaking at 1.9 MW at -26 degC. Steam for sterilisers and humidifiers stays on boilers in every option and is left out. Boilers stay in every option as backup, so their capital cost cancels.
 - **C. Salmon processor, 1.5 MWth (Naknek, Bristol Bay, AK).** Ammonia refrigeration with evaporative condensers, COP 3. Electricity 45 c/kWh (diesel self-generation; Naknek fuel $6.75/gal). Ice alone chills to about +1 degC, not the -1 degC of refrigerated seawater. Demand charge: Nushagak Cooperative (Dillingham) Large Commercial Seasonal rate, $12.00/kW; Naknek Electric's tariff is not published online. A self-generating plant pays none (generators are in the electrical service cost). Median freezing degree-days 1322 degC-days; median-year cooling 993 MWh.
 - **D. Year-round process cooling, 1 MWth at 5 degC (Fargo, ND).** BAU: air-cooled chiller plus a dry-cooler economiser that cools for free below -3 degC (no water). Demand charge: Xcel Energy ND General Service (D16) at secondary voltage, $15.38 Jun-Sep / $11.03 Oct-May (NDPSC PU-24-376 tariff sheets). Median freezing degree-days 1315 degC-days; median-year cooling 8,760 MWh.
+- **E. Air-cooled data center, 100 MW IT (Fargo / Ellendale, ND).** Chilled water 18 degC supply / 26 degC return to air handlers, 8 K dry-cooler approach; otherwise as A. Demand charge: Xcel Energy ND General Time of Day (D17) on-peak demand, $15.38 Jun-Sep / $11.03 Oct-May, less the $2.10 transmission-voltage discount (NDPSC PU-24-376 tariff sheets). Median freezing degree-days 1315 degC-days; median-year cooling 275,464 MWh.
+- **F. Hospital, 3.5 MW cooling + 1.9 MW heating (Minneapolis, MN), electrified BAU.** Cooling: water-cooled chiller plant with cooling towers, 3 x 50%, ~$1,500/ton, COP 4.7. Heating: air-to-water heat pumps, $600/kW, COP about 1.6 at -26 degC, 2.7 at 10 degC (55 degC supply); boilers kept as backup only. Electricity 12.5 c/kWh (MN commercial 12.15 c). Demand charge: Xcel Energy MN General Time of Day demand, $19.86 summer / $15.27 winter (2026 rates proposed in the MN electric rate case). Median freezing degree-days 820 degC-days; median-year cooling 6,114 MWh. Heating: 300,000 ft2 hospital (about 300 ft2 per ton of cooling) using 80 kBtu/ft2-yr of delivered space heat, reheat and hot water (DOE reference hospitals: 52-108), 7,000 MWh/yr: a 25% year-round floor plus space heat below 15 degC, peaking at 1.9 MW at -26 degC. Steam for sterilisers and humidifiers stays on boilers in every option and is left out. Boilers stay in every option as backup, so their capital cost cancels.
 
-Water: A: Fargo water $5.05 per 1,000 gal above 2 million gal/month, sewer $2.55 per 1,000 gal billed on all water used (fargond.gov). Used only in the tower sensitivity. B: Minneapolis water $3.82 per 100 ft3 plus 9.025% water tax, sewer $5.63 per 100 ft3; commercial sewer is billed on actual water use (minneapolismn.gov). C: Self-supplied well water with treatment, $1.00/m3 (assumption); no municipal sewer. Tower makeup = evaporation (1.6 m3 per MWh of heat rejected, ~1.8 gal per ton-hour) + blowdown at 4 cycles of concentration, plus $0.15/m3 treatment chemicals.
+Water: A: Fargo water $5.05 per 1,000 gal above 2 million gal/month, sewer $2.55 per 1,000 gal billed on all water used (fargond.gov). Used only in the tower sensitivity. B: Minneapolis water $3.82 per 100 ft3 plus 9.025% water tax, sewer $5.63 per 100 ft3; commercial sewer is billed on actual water use (minneapolismn.gov). C: Self-supplied well water with treatment, $1.00/m3 (assumption); no municipal sewer. E: Fargo water $5.05 per 1,000 gal above 2 million gal/month, sewer $2.55 per 1,000 gal billed on all water used (fargond.gov). Used only in the tower sensitivity. F: Minneapolis water $3.82 per 100 ft3 plus 9.025% water tax, sewer $5.63 per 100 ft3; commercial sewer is billed on actual water use (minneapolismn.gov). Tower makeup = evaporation (1.6 m3 per MWh of heat rejected, ~1.8 gal per ton-hour) + blowdown at 4 cycles of concentration, plus $0.15/m3 treatment chemicals.
 
 Demand charges bill the chiller's (and discharge pumps') highest draw in each month, assuming it adds fully to the site's monthly peak. Ratchets, interim surcharges and coincident-peak tariffs are not modelled; the x2 sensitivity brackets them.

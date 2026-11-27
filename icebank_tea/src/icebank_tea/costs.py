@@ -53,6 +53,11 @@ class CostInputs:
     charge_coil_usd_kw: float = 30.0   # ice-on-coil / brine loop in the pit per kW of charging capacity (assumption)
     ice_cop_factor: float = 0.7        # chiller COP and capacity when making ice vs chilled water
     chiller_charging: bool = True
+    # Heating (hospital cases). Boilers stay in every option as backup, so their capital cancels.
+    wshp_usd_kw: float = 400.0         # water-to-water heat pump, installed, per kW of heat (assumption)
+    hp_coil_usd_kw: float = 30.0       # brine coils in the pit per kW of heat (as charge_coil_usd_kw)
+    awhp_usd_kw: float = 600.0         # air-to-water heat pump, installed (ACEEE: $150-200 per kBtu/h)
+    gas_price_mult: float = 1.0
     rate: float = 0.08                 # repo convention: customer discount rate (inputs/conventions.toml)
     life_icebank: float = 25.0
     life_mech: float = 20.0

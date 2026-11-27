@@ -132,3 +132,78 @@ def test_offpeak_charging_reduces_unmet():
                    warmup_hours=0, el=el)
     assert sim.charge_mwh.sum() > 0
     assert sim.unmet_pcharge_mwh.sum() < sim.unmet_partial_mwh.sum()
+
+
+def _heat_el(hours, heat_w, peak, awhp=None, reserve=False):
+    from icebank_tea.store import ElecInputs
+    return ElecInputs(month=np.zeros(hours, int), onpk=np.zeros(hours, bool), kwe_per_w=np.full(hours, 2.5e-4),
+                      peak_w=1.0, heat_w=np.asarray(heat_w, float), heat_peak_w=peak, awhp_kwe_per_w=awhp,
+                      hp_reserve=reserve)
+
+
+def test_pit_heat_pump_energy_balance():
+    """Warm air (no thermosiphon freezing), no cooling load, constant heat demand: the heat pump pulls
+    heat x (1 - 1/COP) out of the pit and the rest of the heat comes from its electricity."""
+    d = Design(pitch_m=2.0, cond_area_m2=25.0, depth_m=10.0, hp_frac=1.0)
+    phys = Physics(u_cover=0.0, u_ground=0.0, t_water_start=0.0)
+    hours = 8760 * 2
+    el = _heat_el(hours, np.full(hours, 2000.0), 2000.0)        # 2 kW, one cell
+    sim = simulate([d], np.array([1.0]), np.full(hours, 20.0), np.zeros(hours), 1.0, 0.0, phys,
+                   warmup_hours=0, el=el)
+    t_cond, t_evap = 55 + 3 + 273.15, 0 - 5 + 273.15
+    cop = 0.5 * t_cond / (t_cond - t_evap)
+    heat0 = sim.hp_heat_mwh[0, 0]
+    assert sim.hp_ice_mwh[0, 0] == pytest.approx(heat0 * (1 - 1 / cop), rel=1e-6)
+    assert heat0 + sim.boiler_heat_mwh[0, 0] == pytest.approx(2000 * 8760 / 1e6, rel=1e-9)
+    # The pit's ice cap: heat-pump extraction stops once it is full, and the boilers take the rest
+    cap_mwh = KWH_PER_M3_ICE * math.pi * (0.85 * 4 / math.pi) * d.evap_len_m / 1e3
+    assert sim.hp_ice_mwh.sum() == pytest.approx(cap_mwh, rel=1e-3)
+    assert sim.boiler_heat_mwh[1, 0] > 0.9 * 2000 * 8760 / 1e6
+    # Heat-pump electricity: delivered heat / COP, in the "none" config's energy tally
+    kwh = sim.elec["none"]["kwh_on"][0, 0] + sim.elec["none"]["kwh_off"][0, 0]
+    assert kwh == pytest.approx(heat0 * 1e3 / cop, rel=1e-6)
+
+
+def test_air_source_heat_pumps_take_the_rest():
+    """Electrified case: what the pit heat pump can't serve goes to air-source heat pumps up to their size."""
+    d = Design(pitch_m=4.0, cond_area_m2=25.0, depth_m=10.0, hp_frac=0.25)   # big cell: room for a year of ice
+    phys = Physics(u_cover=0.0, u_ground=0.0, t_water_start=10.0)
+    hours = 8760 * 2
+    el = _heat_el(hours, np.full(hours, 1000.0), 1000.0, awhp=np.full(hours, 1 / 3e3))
+    sim = simulate([d], np.array([1.0]), np.full(hours, 20.0), np.zeros(hours), 1.0, 0.0, phys,
+                   warmup_hours=0, el=el)
+    y = 0
+    assert sim.hp_heat_mwh[y, 0] == pytest.approx(0.25 * 8.76, rel=1e-6)   # sized 250 W, pit never fills in year 1
+    assert sim.awhp_heat_mwh[y, 0] == pytest.approx(0.75 * 8.76, rel=1e-6)
+    assert sim.boiler_heat_mwh[y, 0] == pytest.approx(0.0, abs=1e-9)
+
+
+def test_heat_pump_reserve_holds_room_for_the_heat_pump():
+    """Cold winter, steady heating, a summer cooling load that melts the pit: with the reserve on, thermosiphons
+    stop freezing early, so the heat pump gets more of the ice room and the boilers less."""
+    d = Design(pitch_m=1.0, cond_area_m2=25.0, depth_m=10.0, hp_frac=1.0)
+    phys = Physics(u_cover=0.0, u_ground=0.0, t_water_start=0.0)
+    hours = 8760 * 2
+    month = np.tile(np.repeat(np.arange(12), 730), 2)
+    t = np.where(np.isin(month, [4, 5, 6, 7, 8]), 20.0, -15.0)
+    runs = {}
+    for flag in (False, True):
+        el = _heat_el(hours, np.full(hours, 150.0), 150.0, reserve=flag)
+        el.month = month
+        load = np.where(np.isin(month, [4, 5, 6, 7, 8]), 200.0, 0.0)
+        runs[flag] = simulate([d], np.array([1.0]), t, load, 1.0, 0.0, phys, warmup_hours=8760, el=el)
+    assert runs[True].hp_heat_mwh[0, 0] > runs[False].hp_heat_mwh[0, 0]
+    assert runs[True].boiler_heat_mwh[0, 0] < runs[False].boiler_heat_mwh[0, 0]
+
+
+def test_gas_heating_cost_by_hand():
+    from icebank_tea.cases import CASES
+    from icebank_tea.run import bau, series
+    c = CASES["B"]
+    t, load = series(c, 2)
+    b = bau(c, t, load, CostInputs())
+    warm = 184 * 24
+    heat = [c.heat_w(t[warm + y * 8760: warm + (y + 1) * 8760]).sum() / 1e6 for y in range(2)]
+    assert b["heat_mwh"] == pytest.approx(np.median(heat))
+    assert b["parts"]["heat_fuel"] == pytest.approx(b["heat_mwh"] / 0.82 * 7.0 / (1.037 * 0.29307))
+    assert b["lcoc"] == pytest.approx(b["total"] / (b["cold_mwh"] + b["heat_mwh"]))

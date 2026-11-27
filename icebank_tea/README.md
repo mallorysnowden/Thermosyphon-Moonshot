@@ -2,12 +2,14 @@
 
 Passive ammonia thermosiphons freeze an insulated water pit in winter; the ice (and the cold water around it)
 carries cooling later in the year. This app compares the ice bank's annualized cost of cooling with the
-business-as-usual (BAU) plant it would replace, for four cases. It supersedes the ground "cold bank"
+business-as-usual (BAU) plant it would replace, for six cases: a liquid-cooled data center (A), a
+hospital with heating and cooling against a gas-heated (B) and an all-electric (F) plant, a salmon processor (C),
+year-round process cooling (D) and an air-cooled data center (E). It supersedes the ground "cold bank"
 (`tea/cold_bank_cooling.py`), which froze soil and came out at about 3x BAU.
 
 ```bash
 cd icebank_tea && pip install -e .[test,charts] && python -m pytest
-python -m icebank_tea.run            # ~3 min, writes outputs/, outputs/figures/ and RESULTS.md
+python -m icebank_tea.run            # ~1.5 h (12 years, six cases); writes outputs/, outputs/figures/ and RESULTS.md
 python -m icebank_tea.run --quick    # coarse grid
 ```
 
@@ -46,6 +48,23 @@ Start with [`RESULTS.md`](RESULTS.md), the charts in [`outputs/figures/`](output
    whichever of "charge" or "don't charge" is cheaper. It lowers the 30% option's cost in the data-center,
    hospital and process cases but does not make it the best configuration in any case. Off-peak charging by a
    full backup chiller is not modelled.
+11. **Hospital heating and cooling (cases B and F).** The hospital now needs heat as well as cold: 7,000 MWh a
+   year of space heat, reheat and hot water, peaking at 1.9 MW at -26 degC, with a 25% year-round floor. A
+   water-to-water heat pump can draw its heat from the pit (55 degC hot water, half of Carnot, COP about 2.6 from
+   a frozen pit), which freezes the pit and so makes ice for the summer. Case B compares against gas boilers;
+   case F against air-source heat pumps (boilers kept as backup only, so in F the heat pumps must carry the
+   heating to the same 0.1% standard as the cooling). The design search adds the heat-pump size (0-100% of peak
+   heat) and wider tube spacing (up to 4 m, i.e. fewer thermosiphons per m3 of pit, since the heat pump can make
+   much of the ice). From October to April a valve on the thermosiphons closes once the pit's spare ice room is
+   down to what the heat pump will need until May, so free freezing doesn't shut the heat pump out. Costs per
+   MWh in these cases are per MWh of heat plus cold.
+   *Result:* against gas (B) the best "ice bank" is the smallest pit in the grid with a full chiller (1.01x BAU),
+   i.e. don't build one: at 12.5 c/kWh and $7/Mcf, heat from a COP-2.6 heat pump costs more than heat from gas
+   ($46 vs $28 per MWh), so the free ice doesn't pay for the pit. The heat-pump options need gas at roughly
+   $19/Mcf to break even. Against the electrified plant (F) the best option breaks even (0.99x): a pit heat pump
+   sized for the whole 1.9 MW heating peak, a 61,000 m3 pit (0.4 ha, 15 m deep) with 1,018 thermosiphons at 2 m
+   spacing, and a 30% backup chiller. It replaces the air-source heat pumps and most of the chiller; the pit
+   cost (x0.7 gives 0.88x) and demand charges (x2 gives 0.93x) decide whether it wins.
 
 ## Files
 
@@ -54,7 +73,7 @@ Start with [`RESULTS.md`](RESULTS.md), the charts in [`outputs/figures/`](output
 | `src/icebank_tea/weather.py` | Synthetic hourly weather from monthly normals; `load_csv` swaps in real hourly data |
 | `src/icebank_tea/store.py` | Vectorized hourly ice-store model (every design x unit count at once) |
 | `src/icebank_tea/costs.py` | Unit bill of materials, raw-material NOAK costing, pit cost curve, finance |
-| `src/icebank_tea/cases.py` | Cases A-D: loads, usable water temperature, BAU plant |
+| `src/icebank_tea/cases.py` | Cases A-F: loads, heating demand, usable water temperature, BAU plant |
 | `src/icebank_tea/run.py` | Design search, backup options, sensitivities, outputs |
 | `src/icebank_tea/charts.py` | Data-center cost-breakdown donuts and sensitivity tornados (needs matplotlib) |
 | `outputs/` | `summary.csv`, `sensitivity.csv` (ratios and $/MWh), `unit_bom.csv`, `run_meta.json`, `figures/` |
