@@ -1,0 +1,39 @@
+case,input,base,low,high
+A,Drilling $/m (250 / 500),0.814,0.854,0.771
+A,Platform drilling cut (0% / 40%),0.814,0.871,0.757
+A,Mobilization ($75k / $400k),0.814,0.815,0.813
+A,Finished/raw index (2.0 / 3.5),0.814,0.806,0.831
+A,Warming (0.3 / 0.8 C per decade),0.814,0.814,0.814
+A,Condenser U (3 / 8 W/m2K),0.814,0.814,0.814
+A,Discount rate (6% / 10%),0.814,0.815,0.814
+A,Engineering fixed ($75k / $300k),0.814,0.79,0.862
+A,Thermopile depth (9 / 15 m),0.814,0.683,0.946
+A,P(relevel) on plain piles (0.2 / 0.9),0.814,0.852,0.769
+B,Drilling $/m (250 / 500),0.703,0.703,0.703
+B,Platform drilling cut (0% / 40%),0.703,0.703,0.703
+B,Mobilization ($75k / $400k),0.703,0.701,0.708
+B,Finished/raw index (2.0 / 3.5),0.703,0.692,0.724
+B,Warming (0.3 / 0.8 C per decade),0.703,0.709,0.692
+B,Condenser U (3 / 8 W/m2K),0.703,0.662,0.731
+B,Discount rate (6% / 10%),0.703,0.7,0.704
+B,Engineering fixed ($75k / $300k),0.703,0.704,0.699
+B,Hall air temp (18 / 32 C),0.703,0.734,0.675
+C,Drilling $/m (250 / 500),0.786,0.751,0.839
+C,Platform drilling cut (0% / 40%),0.786,0.817,0.755
+C,Mobilization ($75k / $400k),0.786,0.756,0.886
+C,Finished/raw index (2.0 / 3.5),0.786,0.781,0.796
+C,Warming (0.3 / 0.8 C per decade),0.786,0.782,0.786
+C,Condenser U (3 / 8 W/m2K),0.786,0.825,0.759
+C,Discount rate (6% / 10%),0.786,0.748,0.923
+C,Engineering fixed ($75k / $300k),0.786,0.764,0.831
+C,Relevel interval (3 / 10 yr),0.786,0.739,1.565
+C,Thaw-bulb depth (2 / 8 m),0.786,0.773,0.886
+D,Drilling $/m (250 / 500),10.213,8.588,12.65
+D,Platform drilling cut (0% / 40%),10.213,11.634,8.791
+D,Mobilization ($75k / $400k),10.213,9.969,11.024
+D,Finished/raw index (2.0 / 3.5),10.213,10.028,10.581
+D,Warming (0.3 / 0.8 C per decade),10.213,10.213,10.213
+D,Condenser U (3 / 8 W/m2K),10.213,10.213,10.213
+D,Discount rate (6% / 10%),10.213,8.514,12.024
+D,Engineering fixed ($75k / $300k),10.213,10.03,10.578
+D,Repair CAD/km/yr (15k / 120k),10.213,20.175,2.768

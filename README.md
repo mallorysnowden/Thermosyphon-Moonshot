@@ -53,6 +53,20 @@ cd icebank_tea && pip install -e .[test] && python -m pytest
 python -m icebank_tea.run
 ```
 
+## permafrost_tea: thermosiphon permafrost stabilization, retrofits and new builds
+
+A self-contained application in [`permafrost_tea/`](permafrost_tea/) (own `pyproject.toml` and tests). It prices the
+platform's aluminium/ammonia thermosiphon against today's steel/CO2 incumbent and the non-thermosiphon alternatives
+for four cases: a new school on thermopiles (Y-K Delta), a new 10,000 m2 heated slab (North Slope data hall or
+hangar), a retrofit of a school on thawing ground (Ross River-type) and 1 km of highway on warm ice-rich permafrost
+(Alaska Highway). Incumbent costs are calibrated to the Dry Creek project. Start with
+[`permafrost_tea/README.md`](permafrost_tea/README.md).
+
+```bash
+cd permafrost_tea && pip install -e .[test] && python -m pytest
+python -m permafrost_tea.run
+```
+
 ## Thermosyphon platform v2: base case
 
 NPV about **-$34M** over 15 years, peak cash need about **$52M**, revenue about **$29M** in year 15, and a 39% chance of NPV > 0 across the input ranges. It fails all four kill metrics: NOAK cost is 24% below the incumbent (target 30%), well short of the 10x target, roads cost 12x more than repairing them as they settle, and revenue is ~3% of the big-enough line. Full output: `results/thermosyphon_platform/summary.md`.

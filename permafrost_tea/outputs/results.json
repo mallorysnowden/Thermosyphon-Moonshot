@@ -1,0 +1,737 @@
+{
+ "results": {
+  "A": [
+   {
+    "case": "A",
+    "option": "Adfreeze piles, 18 m (BAU)",
+    "units": 125,
+    "capex": 1753229.6874999998,
+    "capex_per_fu": 1168.8197916666666,
+    "npv": 1891305.5542750596,
+    "annual_per_fu": 111.99987875823062,
+    "ratio": 1.0,
+    "note": "125 piles x 18 m",
+    "items": {
+     "Piles (drill, steel, set)": 1498281,
+     "Mobilization": 150000,
+     "Engineering + design": 104948
+    },
+    "annual": {}
+   },
+   {
+    "case": "A",
+    "option": "Incumbent thermopiles, 12 m",
+    "units": 125,
+    "capex": 1955696.875,
+    "capex_per_fu": 1303.7979166666667,
+    "npv": 2157807.6901734876,
+    "annual_per_fu": 127.78167924095287,
+    "ratio": 1.14090908541776,
+    "note": "125 thermopiles x 12 m; capacity 386 kWh vs 270 kWh needed per pile",
+    "items": {
+     "Piles (drill, steel, set)": 998854,
+     "Thermosyphon hardware": 425000,
+     "Insert in pile + charge": 75000,
+     "Monitoring strings": 78000,
+     "Mobilization": 150000,
+     "Engineering + design": 228843
+    },
+    "annual": {
+     "Monitoring": 11250,
+     "Unit replacements": 4250
+    }
+   },
+   {
+    "case": "A",
+    "option": "Platform thermopiles, 12 m (NOAK)",
+    "units": 125,
+    "capex": 1379150.4868840892,
+    "capex_per_fu": 919.4336579227261,
+    "npv": 1540071.515373395,
+    "annual_per_fu": 91.20039996231047,
+    "ratio": 0.814290166859742,
+    "note": "125 thermopiles x 12 m; capacity 386 kWh vs 270 kWh needed per pile",
+    "items": {
+     "Piles (drill, steel, set)": 893854,
+     "Thermosyphon hardware": 118243,
+     "Insert in pile + charge": 45000,
+     "Monitoring strings": 78000,
+     "Mobilization": 120000,
+     "Engineering + design": 124053
+    },
+    "annual": {
+     "Monitoring": 11250,
+     "Unit replacements": 591
+    }
+   },
+   {
+    "case": "A",
+    "option": "Platform thermopiles, 12 m (FOAK)",
+    "units": 125,
+    "capex": 1663970.9133200108,
+    "capex_per_fu": 1109.3139422133404,
+    "npv": 1834803.7506634146,
+    "annual_per_fu": 108.65393862718119,
+    "ratio": 0.9701255022045857,
+    "note": "125 thermopiles x 12 m; capacity 386 kWh vs 270 kWh needed per pile",
+    "items": {
+     "Piles (drill, steel, set)": 998854,
+     "Thermosyphon hardware": 147166,
+     "Insert in pile + charge": 75000,
+     "Monitoring strings": 78000,
+     "Mobilization": 150000,
+     "Engineering + design": 214951
+    },
+    "annual": {
+     "Monitoring": 11250,
+     "Unit replacements": 1472
+    }
+   }
+  ],
+  "B": [
+   {
+    "case": "B",
+    "option": "Elevated on piles (BAU)",
+    "units": 500,
+    "capex": 7799399.305555555,
+    "capex_per_fu": 779.9399305555555,
+    "npv": 7799399.305555555,
+    "annual_per_fu": 69.28006222749737,
+    "ratio": 1.0,
+    "note": "500 piles x 10 m + structural floor",
+    "items": {
+     "Piles (drill, steel, set)": 3329514,
+     "Elevated structural floor": 4000000,
+     "Mobilization": 150000,
+     "Engineering + design": 319885
+    },
+    "annual": {}
+   },
+   {
+    "case": "B",
+    "option": "Incumbent flat-loop thermosyphons",
+    "units": 114,
+    "capex": 4049655.0,
+    "capex_per_fu": 404.9655,
+    "npv": 4293960.15632921,
+    "annual_per_fu": 38.14214597539341,
+    "ratio": 0.5505501113746797,
+    "note": "114 units, 3.0 m pitch, 40 m2 condensers, 6.1 MWh/unit/yr at end of life; design heat 0.69 GWh/yr",
+    "items": {
+     "Slab + insulation": 2000000,
+     "Thermosyphon hardware": 1100100,
+     "Lay evaporators in pad": 228000,
+     "Risers + radiators set": 171000,
+     "Monitoring strings": 72000,
+     "Mobilization": 150000,
+     "Engineering + design": 328555
+    },
+    "annual": {
+     "Monitoring": 10700,
+     "Unit replacements": 11001
+    }
+   },
+   {
+    "case": "B",
+    "option": "Platform pad thermosyphons (NOAK)",
+    "units": 92,
+    "capex": 2889555.8047227478,
+    "capex_per_fu": 288.9555804722748,
+    "npv": 3017236.5449808077,
+    "annual_per_fu": 26.80133782129262,
+    "ratio": 0.3868549905928798,
+    "note": "92 units, 3.0 m pitch, 60 m2 condensers, 7.5 MWh/unit/yr at end of life; design heat 0.69 GWh/yr",
+    "items": {
+     "Slab + insulation": 2000000,
+     "Thermosyphon hardware": 348310,
+     "Lay evaporators in pad": 110400,
+     "Risers + radiators set": 82800,
+     "Monitoring strings": 60000,
+     "Mobilization": 120000,
+     "Engineering + design": 168045
+    },
+    "annual": {
+     "Monitoring": 9600,
+     "Unit replacements": 1742
+    }
+   },
+   {
+    "case": "B",
+    "option": "Platform pad thermosyphons (FOAK)",
+    "units": 92,
+    "capex": 3255156.4203324653,
+    "capex_per_fu": 325.51564203324654,
+    "npv": 3411913.700480384,
+    "annual_per_fu": 30.30715369525429,
+    "ratio": 0.4374585229980543,
+    "note": "92 units, 3.0 m pitch, 60 m2 condensers, 7.5 MWh/unit/yr at end of life; design heat 0.69 GWh/yr",
+    "items": {
+     "Slab + insulation": 2000000,
+     "Thermosyphon hardware": 432435,
+     "Lay evaporators in pad": 184000,
+     "Risers + radiators set": 138000,
+     "Monitoring strings": 60000,
+     "Mobilization": 150000,
+     "Engineering + design": 290722
+    },
+    "annual": {
+     "Monitoring": 9600,
+     "Unit replacements": 4324
+    }
+   }
+  ],
+  "C": [
+   {
+    "case": "C",
+    "option": "Keep relevelling (BAU)",
+    "units": 0,
+    "capex": 0.0,
+    "capex_per_fu": 0.0,
+    "npv": 2009737.8410364846,
+    "annual_per_fu": 119.01323613369915,
+    "ratio": 1.0,
+    "note": "relevel every 5 yr at $0.88M",
+    "items": {
+     "(none up front)": 0
+    },
+    "annual": {
+     "Inspections": 29200
+    }
+   },
+   {
+    "case": "C",
+    "option": "Replace the school",
+    "units": 0,
+    "capex": 9000000.0,
+    "capex_per_fu": 6000.0,
+    "npv": 9000000.0,
+    "annual_per_fu": 532.9646003236336,
+    "ratio": 4.4781960195158685,
+    "note": "new 1,500 m2 school at $6,000/m2 (~$560/sq ft)",
+    "items": {
+     "Replace school": 9000000
+    },
+    "annual": {}
+   },
+   {
+    "case": "C",
+    "option": "Active refrigeration",
+    "units": 0,
+    "capex": 1168000.0,
+    "capex_per_fu": 778.6666666666666,
+    "npv": 3018128.333888292,
+    "annual_per_fu": 178.72839568846751,
+    "ratio": 1.501752254578512,
+    "note": "Ross River 2019 bid CAD 1.6M; COP 2.5; replace plant at yr 15",
+    "items": {
+     "Crawlspace refrigeration": 1168000
+    },
+    "annual": {
+     "Power": 11700,
+     "O&M (3%/yr)": 35040,
+     "Inspections": 29200
+    }
+   },
+   {
+    "case": "C",
+    "option": "Incumbent inclined thermosyphons",
+    "units": 47,
+    "capex": 1153256.7180579226,
+    "capex_per_fu": 768.8378120386151,
+    "npv": 2136682.2828802303,
+    "annual_per_fu": 126.53066876820566,
+    "ratio": 1.0631646771293695,
+    "note": "47 units from both long sides, 2.5 m pitch, 18 m evaporators, 30 m2 condensers; refreeze in 3 winters, then one relevel",
+    "items": {
+     "Thermosyphon hardware": 363483,
+     "Drilling / bores": 301642,
+     "Install + backfill": 117500,
+     "Monitoring strings": 30000,
+     "Mobilization": 150000,
+     "Engineering + design": 190631
+    },
+    "annual": {
+     "Monitoring": 7350,
+     "Unit replacements": 3635,
+     "Inspections": 14600
+    }
+   },
+   {
+    "case": "C",
+    "option": "Platform inclined thermosyphons (NOAK)",
+    "units": 47,
+    "capex": 633578.6453448765,
+    "capex_per_fu": 422.385763563251,
+    "npv": 1579992.0480925916,
+    "annual_per_fu": 93.56442560290971,
+    "ratio": 0.7861682334038853,
+    "note": "47 units from both long sides, 2.5 m pitch, 18 m evaporators, 30 m2 condensers; refreeze in 3 winters, then one relevel",
+    "items": {
+     "Thermosyphon hardware": 69428,
+     "Drilling / bores": 241314,
+     "Install + backfill": 70500,
+     "Monitoring strings": 30000,
+     "Mobilization": 120000,
+     "Engineering + design": 102337
+    },
+    "annual": {
+     "Monitoring": 7350,
+     "Unit replacements": 347,
+     "Inspections": 14600
+    }
+   },
+   {
+    "case": "C",
+    "option": "Platform inclined thermosyphons (FOAK)",
+    "units": 47,
+    "capex": 864527.1628475774,
+    "capex_per_fu": 576.3514418983849,
+    "npv": 1816996.0155049744,
+    "annual_per_fu": 107.59939502147148,
+    "ratio": 0.9040960360122855,
+    "note": "47 units from both long sides, 2.5 m pitch, 18 m evaporators, 30 m2 condensers; refreeze in 3 winters, then one relevel",
+    "items": {
+     "Thermosyphon hardware": 88503,
+     "Drilling / bores": 301642,
+     "Install + backfill": 117500,
+     "Monitoring strings": 30000,
+     "Mobilization": 150000,
+     "Engineering + design": 176882
+    },
+    "annual": {
+     "Monitoring": 7350,
+     "Unit replacements": 885,
+     "Inspections": 14600
+    }
+   }
+  ],
+  "D": [
+   {
+    "case": "D",
+    "option": "Repair as it settles (BAU)",
+    "units": 0,
+    "capex": 0.0,
+    "capex_per_fu": 0.0,
+    "npv": 246545.45521449193,
+    "annual_per_fu": 21900.0,
+    "ratio": 1.0,
+    "note": "Yukon ~CAD 30k/km/yr on permafrost sections",
+    "items": {
+     "(none up front)": 0
+    },
+    "annual": {
+     "Repair as it settles": 21900
+    }
+   },
+   {
+    "case": "D",
+    "option": "Air-convection embankment",
+    "units": 0,
+    "capex": 730000.0,
+    "capex_per_fu": 730000.0,
+    "npv": 791636.363803623,
+    "annual_per_fu": 70319.02637270876,
+    "ratio": 3.210914446242409,
+    "note": "Yukon ~CAD 1M/km; 25% of repairs remain",
+    "items": {
+     "Air-convection embankment": 730000
+    },
+    "annual": {
+     "Residual repair": 5475
+    }
+   },
+   {
+    "case": "D",
+    "option": "Incumbent sloped thermosyphons",
+    "units": 143,
+    "capex": 3716568.75,
+    "capex_per_fu": 3716568.75,
+    "npv": 4039349.0995683153,
+    "annual_per_fu": 358805.01306984277,
+    "ratio": 16.38379055113437,
+    "note": "143 units/km; 3.5 MWh/unit/yr today",
+    "items": {
+     "Thermosyphon hardware": 1104675,
+     "Drilling / bores": 1701700,
+     "Install + backfill": 357500,
+     "Monitoring strings": 90000,
+     "Mobilization": 150000,
+     "Engineering + design": 312694
+    },
+    "annual": {
+     "Monitoring": 12150,
+     "Unit replacements": 11047,
+     "Residual repair": 5475
+    }
+   },
+   {
+    "case": "D",
+    "option": "Platform sloped thermosyphons (NOAK)",
+    "units": 143,
+    "capex": 2299037.158701328,
+    "capex_per_fu": 2299037.158701328,
+    "npv": 2517850.8330347287,
+    "annual_per_fu": 223654.22715048035,
+    "ratio": 10.212521787693166,
+    "note": "143 units/km; 3.5 MWh/unit/yr today",
+    "items": {
+     "Thermosyphon hardware": 362331,
+     "Drilling / bores": 1361360,
+     "Install + backfill": 214500,
+     "Monitoring strings": 90000,
+     "Mobilization": 120000,
+     "Engineering + design": 150846
+    },
+    "annual": {
+     "Monitoring": 12150,
+     "Unit replacements": 1812,
+     "Residual repair": 5475
+    }
+   },
+   {
+    "case": "D",
+    "option": "Platform sloped thermosyphons (FOAK)",
+    "units": 143,
+    "capex": 3024872.8318358758,
+    "capex_per_fu": 3024872.8318358758,
+    "npv": 3273491.631061169,
+    "annual_per_fu": 290775.8598018792,
+    "ratio": 13.277436520633755,
+    "note": "143 units/km; 3.5 MWh/unit/yr today",
+    "items": {
+     "Thermosyphon hardware": 445917,
+     "Drilling / bores": 1701700,
+     "Install + backfill": 357500,
+     "Monitoring strings": 90000,
+     "Mobilization": 150000,
+     "Engineering + design": 279756
+    },
+    "annual": {
+     "Monitoring": 12150,
+     "Unit replacements": 4459,
+     "Residual repair": 5475
+    }
+   }
+  ]
+ },
+ "sensitivity": [
+  {
+   "case": "A",
+   "input": "Drilling $/m (250 / 500)",
+   "base": 0.814290166859742,
+   "low": 0.8535246149033857,
+   "high": 0.7706677244092027
+  },
+  {
+   "case": "A",
+   "input": "Platform drilling cut (0% / 40%)",
+   "base": 0.814290166859742,
+   "low": 0.8714728890039986,
+   "high": 0.7571074447154853
+  },
+  {
+   "case": "A",
+   "input": "Mobilization ($75k / $400k)",
+   "base": 0.814290166859742,
+   "low": 0.8148802451711572,
+   "high": 0.8126217726841406
+  },
+  {
+   "case": "A",
+   "input": "Finished/raw index (2.0 / 3.5)",
+   "base": 0.814290166859742,
+   "low": 0.8059842545281923,
+   "high": 0.8309019915228413
+  },
+  {
+   "case": "A",
+   "input": "Warming (0.3 / 0.8 C per decade)",
+   "base": 0.814290166859742,
+   "low": 0.814290166859742,
+   "high": 0.814290166859742
+  },
+  {
+   "case": "A",
+   "input": "Condenser U (3 / 8 W/m2K)",
+   "base": 0.814290166859742,
+   "low": 0.814290166859742,
+   "high": 0.814290166859742
+  },
+  {
+   "case": "A",
+   "input": "Discount rate (6% / 10%)",
+   "base": 0.814290166859742,
+   "low": 0.8154452262392188,
+   "high": 0.813605764829408
+  },
+  {
+   "case": "A",
+   "input": "Engineering fixed ($75k / $300k)",
+   "base": 0.814290166859742,
+   "low": 0.7904970785889001,
+   "high": 0.8618763434014257
+  },
+  {
+   "case": "A",
+   "input": "Thermopile depth (9 / 15 m)",
+   "base": 0.814290166859742,
+   "low": 0.6828107839821004,
+   "high": 0.9464940761633516
+  },
+  {
+   "case": "A",
+   "input": "P(relevel) on plain piles (0.2 / 0.9)",
+   "base": 0.814290166859742,
+   "low": 0.8515927840485196,
+   "high": 0.7693563207725571
+  },
+  {
+   "case": "B",
+   "input": "Drilling $/m (250 / 500)",
+   "base": 0.7026698979806467,
+   "low": 0.7026698979806467,
+   "high": 0.7026698979806467
+  },
+  {
+   "case": "B",
+   "input": "Platform drilling cut (0% / 40%)",
+   "base": 0.7026698979806467,
+   "low": 0.7026698979806467,
+   "high": 0.7026698979806467
+  },
+  {
+   "case": "B",
+   "input": "Mobilization ($75k / $400k)",
+   "base": 0.7026698979806467,
+   "low": 0.700939671246815,
+   "high": 0.7080248141039639
+  },
+  {
+   "case": "B",
+   "input": "Finished/raw index (2.0 / 3.5)",
+   "base": 0.7026698979806467,
+   "low": 0.6920290002516222,
+   "high": 0.7239516934386958
+  },
+  {
+   "case": "B",
+   "input": "Warming (0.3 / 0.8 C per decade)",
+   "base": 0.7026698979806467,
+   "low": 0.7086545397361441,
+   "high": 0.6919775355964848
+  },
+  {
+   "case": "B",
+   "input": "Condenser U (3 / 8 W/m2K)",
+   "base": 0.7026698979806467,
+   "low": 0.6617884484706414,
+   "high": 0.7314790139358961
+  },
+  {
+   "case": "B",
+   "input": "Discount rate (6% / 10%)",
+   "base": 0.7026698979806467,
+   "low": 0.700417269104743,
+   "high": 0.7043513694964838
+  },
+  {
+   "case": "B",
+   "input": "Engineering fixed ($75k / $300k)",
+   "base": 0.7026698979806467,
+   "low": 0.704495049691785,
+   "high": 0.6992044113076478
+  },
+  {
+   "case": "B",
+   "input": "Hall air temp (18 / 32 C)",
+   "base": 0.7026698979806467,
+   "low": 0.7340522689175987,
+   "high": 0.6754706561216625
+  },
+  {
+   "case": "C",
+   "input": "Drilling $/m (250 / 500)",
+   "base": 0.7861682334038853,
+   "low": 0.7508327051364864,
+   "high": 0.8391715258049837
+  },
+  {
+   "case": "C",
+   "input": "Platform drilling cut (0% / 40%)",
+   "base": 0.7861682334038853,
+   "low": 0.8170868206378594,
+   "high": 0.7552496461699113
+  },
+  {
+   "case": "C",
+   "input": "Mobilization ($75k / $400k)",
+   "base": 0.7861682334038853,
+   "low": 0.7563135932737796,
+   "high": 0.885683700504238
+  },
+  {
+   "case": "C",
+   "input": "Finished/raw index (2.0 / 3.5)",
+   "base": 0.7861682334038853,
+   "low": 0.7810130630819698,
+   "high": 0.7964785740477164
+  },
+  {
+   "case": "C",
+   "input": "Warming (0.3 / 0.8 C per decade)",
+   "base": 0.7861682334038853,
+   "low": 0.7816895879615774,
+   "high": 0.7861682334038853
+  },
+  {
+   "case": "C",
+   "input": "Condenser U (3 / 8 W/m2K)",
+   "base": 0.7861682334038853,
+   "low": 0.8250724248757504,
+   "high": 0.7592963607500373
+  },
+  {
+   "case": "C",
+   "input": "Discount rate (6% / 10%)",
+   "base": 0.7861682334038853,
+   "low": 0.7479030572386516,
+   "high": 0.9226131975235927
+  },
+  {
+   "case": "C",
+   "input": "Engineering fixed ($75k / $300k)",
+   "base": 0.7861682334038853,
+   "low": 0.763777253306306,
+   "high": 0.830950193599044
+  },
+  {
+   "case": "C",
+   "input": "Relevel interval (3 / 10 yr)",
+   "base": 0.7861682334038853,
+   "low": 0.7394604526615792,
+   "high": 1.565148892550411
+  },
+  {
+   "case": "C",
+   "input": "Thaw-bulb depth (2 / 8 m)",
+   "base": 0.7861682334038853,
+   "low": 0.7730631148701361,
+   "high": 0.8863698435591556
+  },
+  {
+   "case": "D",
+   "input": "Drilling $/m (250 / 500)",
+   "base": 10.212521787693166,
+   "low": 8.587552470568836,
+   "high": 12.64997576337966
+  },
+  {
+   "case": "D",
+   "input": "Platform drilling cut (0% / 40%)",
+   "base": 10.212521787693166,
+   "low": 11.634369940176954,
+   "high": 8.790673635209377
+  },
+  {
+   "case": "D",
+   "input": "Mobilization ($75k / $400k)",
+   "base": 10.212521787693166,
+   "low": 9.96915895649516,
+   "high": 11.023731225019853
+  },
+  {
+   "case": "D",
+   "input": "Finished/raw index (2.0 / 3.5)",
+   "base": 10.212521787693166,
+   "low": 10.028381150438067,
+   "high": 10.580803062203357
+  },
+  {
+   "case": "D",
+   "input": "Warming (0.3 / 0.8 C per decade)",
+   "base": 10.212521787693166,
+   "low": 10.212521787693166,
+   "high": 10.212521787693166
+  },
+  {
+   "case": "D",
+   "input": "Condenser U (3 / 8 W/m2K)",
+   "base": 10.212521787693166,
+   "low": 10.212521787693166,
+   "high": 10.212521787693166
+  },
+  {
+   "case": "D",
+   "input": "Discount rate (6% / 10%)",
+   "base": 10.212521787693166,
+   "low": 8.514118910314922,
+   "high": 12.023597743423869
+  },
+  {
+   "case": "D",
+   "input": "Engineering fixed ($75k / $300k)",
+   "base": 10.212521787693166,
+   "low": 10.029999664294662,
+   "high": 10.577566034490175
+  },
+  {
+   "case": "D",
+   "input": "Repair CAD/km/yr (15k / 120k)",
+   "base": 10.212521787693166,
+   "low": 20.175043575386333,
+   "high": 2.7676744692360007
+  }
+ ],
+ "capacity_decline": [
+  {
+   "case": "A",
+   "site": "Bethel / Y-K Delta, AK (warm permafrost)",
+   "freezing_index_now": 1719,
+   "freezing_index_30yr": 1361,
+   "kwh_now": 509,
+   "kwh_30yr": 385,
+   "decline": 0.24270260363176943
+  },
+  {
+   "case": "B",
+   "site": "Deadhorse / Prudhoe Bay, AK",
+   "freezing_index_now": 4458,
+   "freezing_index_30yr": 4002,
+   "kwh_now": 7004,
+   "kwh_30yr": 6228,
+   "decline": 0.11076803693453063
+  },
+  {
+   "case": "C",
+   "site": "Ross River, YT",
+   "freezing_index_now": 3043,
+   "freezing_index_30yr": 2654,
+   "kwh_now": 2462,
+   "kwh_30yr": 2115,
+   "decline": 0.14078945046931124
+  },
+  {
+   "case": "D",
+   "site": "Beaver Creek, YT (Alaska Highway)",
+   "freezing_index_now": 3528,
+   "freezing_index_30yr": 3129,
+   "kwh_now": 3520,
+   "kwh_30yr": 3086,
+   "decline": 0.12316735608252705
+  }
+ ],
+ "dry_creek_usd": 1685212.5,
+ "road_breakeven": {
+  "breakeven_repair_usd_km_yr": 290905.63620064047,
+  "vs_repair": 27731.78088109137,
+  "vs_ace": 572822.6894702225,
+  "platform_capex": 2299037.158701328,
+  "incumbent_capex": 3716568.75
+ },
+ "unit_costs": {
+  "platform_thermopile_insert": 945.9471473197868,
+  "incumbent_thermopile_insert": 3400.0,
+  "platform_dry_creek_unit": 2533.7861273767935,
+  "incumbent_dry_creek_unit": 7725.0
+ }
+}
