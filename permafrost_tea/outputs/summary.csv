@@ -1,0 +1,20 @@
+case,option,units,capex_usd,capex_per_fu,npv_30yr,annual_per_fu,ratio_vs_bau,note
+A,"Adfreeze piles, 18 m (BAU)",125,1753230,1168.8,1891306,112.0,1.0,125 piles x 18 m
+A,"Incumbent thermopiles, 12 m",125,1955697,1303.8,2157808,127.78,1.141,125 thermopiles x 12 m; capacity 386 kWh vs 270 kWh needed per pile
+A,"Platform thermopiles, 12 m (NOAK)",125,1379150,919.4,1540072,91.2,0.814,125 thermopiles x 12 m; capacity 386 kWh vs 270 kWh needed per pile
+A,"Platform thermopiles, 12 m (FOAK)",125,1663971,1109.3,1834804,108.65,0.97,125 thermopiles x 12 m; capacity 386 kWh vs 270 kWh needed per pile
+B,Elevated on piles (BAU),500,7799399,779.9,7799399,69.28,1.0,500 piles x 10 m + structural floor
+B,Incumbent flat-loop thermosyphons,114,4049655,405.0,4293960,38.14,0.551,"114 units, 3.0 m pitch, 40 m2 condensers, 6.1 MWh/unit/yr at end of life; design heat 0.69 GWh/yr"
+B,Platform pad thermosyphons (NOAK),92,2889556,289.0,3017237,26.8,0.387,"92 units, 3.0 m pitch, 60 m2 condensers, 7.5 MWh/unit/yr at end of life; design heat 0.69 GWh/yr"
+B,Platform pad thermosyphons (FOAK),92,3255156,325.5,3411914,30.31,0.437,"92 units, 3.0 m pitch, 60 m2 condensers, 7.5 MWh/unit/yr at end of life; design heat 0.69 GWh/yr"
+C,Keep relevelling (BAU),0,0,0.0,2009738,119.01,1.0,relevel every 5 yr at $0.88M
+C,Replace the school,0,9000000,6000.0,9000000,532.96,4.478,"new 1,500 m2 school at $6,000/m2 (~$560/sq ft)"
+C,Active refrigeration,0,1168000,778.7,3018128,178.73,1.502,Ross River 2019 bid CAD 1.6M; COP 2.5; replace plant at yr 15
+C,Incumbent inclined thermosyphons,47,1153257,768.8,2136682,126.53,1.063,"47 units from both long sides, 2.5 m pitch, 18 m evaporators, 30 m2 condensers; refreeze in 3 winters, then one relevel"
+C,Platform inclined thermosyphons (NOAK),47,633579,422.4,1579992,93.56,0.786,"47 units from both long sides, 2.5 m pitch, 18 m evaporators, 30 m2 condensers; refreeze in 3 winters, then one relevel"
+C,Platform inclined thermosyphons (FOAK),47,864527,576.4,1816996,107.6,0.904,"47 units from both long sides, 2.5 m pitch, 18 m evaporators, 30 m2 condensers; refreeze in 3 winters, then one relevel"
+D,Repair as it settles (BAU),0,0,0.0,246545,21900.0,1.0,Yukon ~CAD 30k/km/yr on permafrost sections
+D,Air-convection embankment,0,730000,730000.0,791636,70319.03,3.211,Yukon ~CAD 1M/km; 25% of repairs remain
+D,Incumbent sloped thermosyphons,143,3716569,3716568.8,4039349,358805.01,16.384,143 units/km; 3.5 MWh/unit/yr today
+D,Platform sloped thermosyphons (NOAK),143,2299037,2299037.2,2517851,223654.23,10.213,143 units/km; 3.5 MWh/unit/yr today
+D,Platform sloped thermosyphons (FOAK),143,3024873,3024872.8,3273492,290775.86,13.277,143 units/km; 3.5 MWh/unit/yr today
